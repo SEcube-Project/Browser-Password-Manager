@@ -8,7 +8,18 @@
         }
       }
       return undefined;
-}
+	}
+
+	function getPassword(hostname){
+		const Http = new XMLHttpRequest();
+		const url='https://jsonplaceholder.typicode.com/posts';
+		Http.open("GET", url);
+		Http.send();
+
+		Http.onreadystatechange = (e) => {
+		  console.log(Http.responseText)
+		}
+	}
   /** @type {Element | null} */
   let lastFocusedElement = null;
 
@@ -20,13 +31,13 @@
           let nextInput = nextField();
           if (nextInput.type.toLowerCase() == "password"){
             /* Username + Password fields */ 
-            console.log("Found username and password fields!");
+            console.log("Found username and password fields for: " + window.location.hostname);
             focusedElement.value = "username";
             nextInput.value = "password";
           }
         } else {
           /* Only password field */
-          console.log("Found only username field!");
+          console.log("Found only username field for: " + window.location.hostname);
           focusedElement.value = "password";
         }
       }
