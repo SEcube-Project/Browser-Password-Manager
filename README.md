@@ -28,3 +28,21 @@
 ### Enable/Disable automatic fill
 - Autocomplete if possible? Only if specified by user
 - Always list the corresponding password in the extension tab (like BitWarden)
+
+
+## Host Endpoint for Extension (REST API)
+- addPassword(hostname, username, password)
+- addPassword(hostname, password) ????
+- deletePassword(hostname, username)
+- deletePassword(id)
+- generateRandomPassword(n_char, special_char, ....)
+- getPassword(hostname)
+- getAllPassword() // return only the hostname + username if present. Passwords are not returned.
+- exportEncryptedFile(file, pass)
+- importEncryptedFile(file, pass)
+
+Update is done by deleting and re-adding. Master password sent at every REST call.
+
+## FW endpoint for Host application
+- exportEncryptedPassword(pass) : byte[]
+- importEncryptedPassword(pass) : byte[]
