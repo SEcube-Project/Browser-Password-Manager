@@ -46,3 +46,19 @@ Update is done by deleting and re-adding. Master password sent at every REST cal
 ## FW endpoint for Host application
 - exportEncryptedPassword(pass) : byte[]
 - importEncryptedPassword(pass) : byte[]
+- addPassword(hostname, username, password)
+- addPassword(hostname, password) ????
+- deletePassword(hostname, username)
+- deletePassword(id)
+- generateRandomPassword(n_char, special_char, ....)
+- getPassword(hostname)
+- getAllPassword() // return only the hostname + username if present. Passwords are not returned.
+
++ Flash management
+
+
+
+# Work distribution
+Matteo: FW
+Gabriele: Host
+Giovanni: Chrome ext
