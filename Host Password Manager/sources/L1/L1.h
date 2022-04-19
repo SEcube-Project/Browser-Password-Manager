@@ -58,6 +58,7 @@ private:
 	void Se3PayloadDecrypt(uint16_t flags, const uint8_t* iv, uint8_t* data, uint16_t nBlocks, const uint8_t* auth);
 	void L1Config(uint16_t type, uint16_t op, std::array<uint8_t, L1Parameters::Size::PIN>& value);
 	void KeyList(uint16_t maxKeys, uint16_t skip, se3Key* keyArray, uint16_t* count);
+	void PassList(uint8_t *buffer, uint16_t *buflen);
 public:
 	L1(); /**< Default constructor. */
 	L1(uint8_t index); /**< Custom constructor used only in a very specific case by the APIs of the SEkey library (L2). Do not use elsewhere. */
@@ -221,15 +222,11 @@ public:
 
 	bool L1SEpass_GetKeyEnc(uint32_t key_export_id, uint32_t key_wrapping_key, std::shared_ptr<uint8_t[]>& key_export_data, uint16_t& key_export_len);
 
-	void L1SEpass_Maintenance(uint8_t *buffer, uint16_t *buflen);
+	void L1SEGetAllPasswords(std::vector<se3Pass>& passList);
 
-	bool L1SEpass_DeleteKey(uint32_t key_id);
+	bool L1SEpass_DeletePassword(uint32_t pass_id);
 
-	bool L1SEpass_isReady();
-
-	bool L1SEpass_DeleteAllKeys(std::vector<uint32_t>& keep);
-
-	bool L1SEpass_InsertKey(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len,
+	bool L1SEpass_AddPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len,
 			std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data);
 };
 

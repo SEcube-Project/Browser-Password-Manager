@@ -75,12 +75,16 @@ int main(){
 		index++;
 	}
 	int sel = 0;
-	cout << "\nEnter the number corresponding to the SEcube device that you want to use..." << endl;
-	/* warning: if cin does not wait for input in debug mode with eclipse, open the launch configuration and select
-	 * the "use external console for inferior" checkbox under the debugger tab (see https://stackoverflow.com/questions/44283534/c-debug-mode-in-eclipse-causes-program-to-not-wait-for-cin)*/
-	if(!(cin >> sel)){
-		cout << "Input error...quit." << endl;
-		return -1;
+	if (numdevices > 1){
+		cout << "\nEnter the number corresponding to the SEcube device that you want to use..." << endl;
+		/* warning: if cin does not wait for input in debug mode with eclipse, open the launch configuration and select
+		 * the "use external console for inferior" checkbox under the debugger tab (see https://stackoverflow.com/questions/44283534/c-debug-mode-in-eclipse-causes-program-to-not-wait-for-cin)*/
+		if(!(cin >> sel)){
+			cout << "Input error...quit." << endl;
+			return -1;
+		}
+	} else {
+		sel = 0;
 	}
 
 	if((sel >= 0) && (sel < numdevices)){
@@ -98,32 +102,6 @@ int main(){
 		array<uint8_t, 32> pin = {'t','e','s','t'}; // customize this PIN according to the PIN that you set on your SEcube device
 		l1->L1Login(pin, SE3_ACCESS_USER, true); // login to the SEcube
 
-		// preliminary step: save list of existing keys
-		vector<pair<uint32_t, uint16_t>> preexistingkeys;
-		vector<pair<uint32_t, uint16_t>> keys;
-		try{
-			l1->L1KeyList(preexistingkeys);
-		} catch (...) {
-			cout << "Unexpected error...quit." << endl;
-			l1->L1Logout();
-			return -1;
-		}
-
-		cout << "\nLet us start listing the keys currently stored inside the SEcube device..." << endl;
-		if(preexistingkeys.size() == 0){
-			cout << "\nThere are no keys currently stored inside the SEcube device." << endl;
-		} else {
-			int cnt = 0;
-			for(pair<uint32_t, uint16_t> k : preexistingkeys){
-				cout << cnt << ") Key ID " << k.first << " - length: " << 8*k.second << " bit" << endl;
-				cnt++;
-			}
-		}
-
-		cout << "\nNow we're gonna create 3 new keys inside the memory of the SEcube." << endl;
-		cout << "The keys will have sizes of 128, 192, and 256 bit respectively." << endl;
-		cout << "We will provide the key value only for the first one (128 bit), the other two will be generated automatically inside the SEcube with the embedded TRNG." << endl;
-		cout << "The identifiers of the keys, which are numbers of 32 bits, will be generated randomly." << endl;
 
 		// flash first key (128 bit) to the device, here we provide explicitly also the value of the key
 		shared_ptr<uint8_t[]> hostVal = make_unique<uint8_t[]>(3);
@@ -138,8 +116,27 @@ int main(){
 		userVal[0] = 'f';
 		userVal[1] = 'g';
 
-		if(l1->L1SEpass_InsertKey(10, 3, 2, 2, hostVal, userVal, passVal)){
+		if(l1->L1SEpass_AddPassword(10, 3, 2, 2, hostVal, userVal, passVal)){
 			printf("OK!\n");
+		} else {
+			printf("NOT!\n");
+		}
+		if(l1->L1SEpass_AddPassword(11, 3, 2, 2, hostVal, userVal, passVal)){
+			printf("OK!\n");
+		} else {
+			printf("NOT!\n");
+		}
+
+		std::vector<se3Pass> passList;
+		l1->L1SEGetAllPasswords(passList);
+		for(se3Pass elem : passList){
+			printf("%d\n", elem.id);
+		}
+
+		if(l1->L1SEpass_DeletePassword(10)){
+			printf("OK!\n");
+		} else {
+			printf("NOT!\n");
 		}
 	}
 
