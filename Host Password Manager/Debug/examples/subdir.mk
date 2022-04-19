@@ -8,21 +8,24 @@ CPP_SRCS += \
 ../examples/digest_algorithms.cpp \
 ../examples/encryption_algorithms.cpp \
 ../examples/hello_world.cpp \
-../examples/manual_key_management.cpp 
+../examples/manual_key_management.cpp \
+../examples/manual_pass_management.cpp 
 
 CPP_DEPS += \
 ./examples/device_init.d \
 ./examples/digest_algorithms.d \
 ./examples/encryption_algorithms.d \
 ./examples/hello_world.d \
-./examples/manual_key_management.d 
+./examples/manual_key_management.d \
+./examples/manual_pass_management.d 
 
 OBJS += \
 ./examples/device_init.o \
 ./examples/digest_algorithms.o \
 ./examples/encryption_algorithms.o \
 ./examples/hello_world.o \
-./examples/manual_key_management.o 
+./examples/manual_key_management.o \
+./examples/manual_pass_management.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -37,7 +40,7 @@ examples/%.o: ../examples/%.cpp examples/subdir.mk
 clean: clean-examples
 
 clean-examples:
-	-$(RM) ./examples/device_init.d ./examples/device_init.o ./examples/digest_algorithms.d ./examples/digest_algorithms.o ./examples/encryption_algorithms.d ./examples/encryption_algorithms.o ./examples/hello_world.d ./examples/hello_world.o ./examples/manual_key_management.d ./examples/manual_key_management.o
+	-$(RM) ./examples/device_init.d ./examples/device_init.o ./examples/digest_algorithms.d ./examples/digest_algorithms.o ./examples/encryption_algorithms.d ./examples/encryption_algorithms.o ./examples/hello_world.d ./examples/hello_world.o ./examples/manual_key_management.d ./examples/manual_key_management.o ./examples/manual_pass_management.d ./examples/manual_pass_management.o
 
 .PHONY: clean-examples
 

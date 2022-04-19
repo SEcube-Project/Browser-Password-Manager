@@ -214,6 +214,23 @@ public:
 	 * @param [in] key_data The value of the key to be written. Can be null if the key must be generated inside the SEcube with the TRNG.
 	 * @return True on success, false otherwise. */
 	bool L1SEkey_InsertKey(uint32_t key_id, uint16_t key_len, uint32_t dec_id, std::shared_ptr<uint8_t[]> key_data);
+
+
+
+	bool L1SEpass_Info(std::string& id, std::string& name, uint8_t mode);
+
+	bool L1SEpass_GetKeyEnc(uint32_t key_export_id, uint32_t key_wrapping_key, std::shared_ptr<uint8_t[]>& key_export_data, uint16_t& key_export_len);
+
+	void L1SEpass_Maintenance(uint8_t *buffer, uint16_t *buflen);
+
+	bool L1SEpass_DeleteKey(uint32_t key_id);
+
+	bool L1SEpass_isReady();
+
+	bool L1SEpass_DeleteAllKeys(std::vector<uint32_t>& keep);
+
+	bool L1SEpass_InsertKey(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len,
+			std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data);
 };
 
 #endif

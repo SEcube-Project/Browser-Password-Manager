@@ -7,19 +7,22 @@ CPP_SRCS += \
 ../sources/L1/L1.cpp \
 ../sources/L1/L1_login_logout.cpp \
 ../sources/L1/L1_security.cpp \
-../sources/L1/L1_sekey.cpp 
+../sources/L1/L1_sekey.cpp \
+../sources/L1/L1_sepass.cpp 
 
 CPP_DEPS += \
 ./sources/L1/L1.d \
 ./sources/L1/L1_login_logout.d \
 ./sources/L1/L1_security.d \
-./sources/L1/L1_sekey.d 
+./sources/L1/L1_sekey.d \
+./sources/L1/L1_sepass.d 
 
 OBJS += \
 ./sources/L1/L1.o \
 ./sources/L1/L1_login_logout.o \
 ./sources/L1/L1_security.o \
-./sources/L1/L1_sekey.o 
+./sources/L1/L1_sekey.o \
+./sources/L1/L1_sepass.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -34,7 +37,7 @@ sources/L1/%.o: ../sources/L1/%.cpp sources/L1/subdir.mk
 clean: clean-sources-2f-L1
 
 clean-sources-2f-L1:
-	-$(RM) ./sources/L1/L1.d ./sources/L1/L1.o ./sources/L1/L1_login_logout.d ./sources/L1/L1_login_logout.o ./sources/L1/L1_security.d ./sources/L1/L1_security.o ./sources/L1/L1_sekey.d ./sources/L1/L1_sekey.o
+	-$(RM) ./sources/L1/L1.d ./sources/L1/L1.o ./sources/L1/L1_login_logout.d ./sources/L1/L1_login_logout.o ./sources/L1/L1_security.d ./sources/L1/L1_security.o ./sources/L1/L1_sekey.d ./sources/L1/L1_sekey.o ./sources/L1/L1_sepass.d ./sources/L1/L1_sepass.o
 
 .PHONY: clean-sources-2f-L1
 

@@ -420,7 +420,8 @@ namespace L1Commands {
 			CRYPTO_UPDATE = 9,
 			CRYPTO_LIST = 10,
 			FORCED_LOGOUT=11,
-			SEKEY = 12
+			SEKEY = 12,
+			SEPASS = 13
 		};
 	};
 
@@ -436,7 +437,14 @@ namespace L1Commands {
 			SE3_SEKEY_DELETEKEY = 6,
 			SE3_SEKEY_OP_GETKEYENC = 7,
 			SE3_SEKEY_INSERTKEY = 8,
-			SE3_SEKEY_ISREADY = 9
+			SE3_SEKEY_ISREADY = 9,
+			SE3_SEPASS_OP_ADD = 10, /**< Add password */
+			SE3_SEPASS_OP_DELETE = 11, /**< Delete password */
+			SE3_SEPASS_OP_GET = 12, /**< Generate Random Password */
+			SE3_SEPASS_OP_GETALL = 13, /**< Get all password items */
+			SE3_SEPASS_OP_GENERATE_RANDOM = 14, /**< Generate Random Password */
+			SE3_SEPASS_OP_EXPORT = 15, /**< Export Passwords */
+			SE3_SEPASS_OP_IMPORT = 16 /**< Import Passwords */
 		};
 	};
 
