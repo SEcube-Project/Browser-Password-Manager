@@ -81,7 +81,7 @@ uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
 	}
 
 	memcpy(host, req+4+2+2+2, 		 			host_len);
-	memcpy(user, req+4+2+2+2+host_len, 			pass_len);
+	memcpy(user, req+4+2+2+2+host_len, 			user_len);
 	memcpy(pass, req+4+2+2+2+host_len+user_len, pass_len);
 
 	// now everything is ready to store the pass in the SEcube
@@ -177,6 +177,7 @@ uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 uint16_t get_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
 	uint32_t key_id = 0, kid = 0;
 	uint32_t pass_id = 0;
+	uint8_t* tmp = NULL;
 	uint16_t offset = 0, host_len = 0, user_len = 0, pass_len = 0;
 	bool error_ = true;
 	se3_flash_it it = { .addr = NULL };
@@ -204,7 +205,38 @@ uint16_t get_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
 				offset += 2;
 				memcpy(resp + offset, &pass_len, 2);
 				offset += 2;
-				*resp_size = (*resp_size) + 10;
+
+				// Hostname
+				if(tmp != NULL){
+					free(tmp);
+					tmp = NULL;
+				}
+				tmp = (uint8_t*)malloc(host_len*sizeof(uint8_t));
+				if(tmp == NULL){ return SE3_ERR_MEMORY;	}
+				memcpy(tmp, pass_iterator.addr + offset, host_len);
+				offset += host_len;
+
+				// Username
+				if(tmp != NULL){
+					free(tmp);
+					tmp = NULL;
+				}
+				tmp = (uint8_t*)malloc(user_len*sizeof(uint8_t));
+				if(tmp == NULL){ return SE3_ERR_MEMORY;	}
+				memcpy(tmp, pass_iterator.addr + offset, user_len);
+				offset += user_len;
+
+				// Pass
+				if(tmp != NULL){
+					free(tmp);
+					tmp = NULL;
+				}
+				tmp = (uint8_t*)malloc(pass_len*sizeof(uint8_t));
+				if(tmp == NULL){ return SE3_ERR_MEMORY;	}
+				memcpy(tmp, pass_iterator.addr + offset, pass_len);
+				offset += pass_len;
+
+				*resp_size = (*resp_size) + offset;
 				error_ = false;
 			}
 		}
@@ -239,7 +271,15 @@ uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 			offset += 2;
 			memcpy(resp + offset, &pass_len, 2);
 			offset += 2;
-			*resp_size = (*resp_size) + 10;
+
+			memcpy(resp + offset, pass_iterator.addr + SE3_FLASH_PASS_OFF_DATA, host_len);
+			offset += host_len;
+			memcpy(resp + offset, pass_iterator.addr + SE3_FLASH_PASS_OFF_DATA + host_len, user_len);
+			offset += user_len;
+			memcpy(resp + offset, pass_iterator.addr + SE3_FLASH_PASS_OFF_DATA + host_len + user_len, pass_len);
+			offset += pass_len;
+
+			*resp_size = (*resp_size) + offset;
 		}
 	} while (se3_flash_it_next(&pass_iterator));
 	/* reset the iterator to the beginning of the flash (required for next call of load_key_ids).

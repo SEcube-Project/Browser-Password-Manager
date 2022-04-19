@@ -32,11 +32,27 @@
 #include "../sources/L1/L1.h"
 #include <thread> 		// thread::sleep_for
 #include <algorithm> 	// std::find
+#include <string>
 
 using namespace std;
 
 /* WARNING: this example will write and delete keys in the internal memory of the SEcube. The internal memory will be scanned for
  * existing keys, those keys won't be affected by any change. */
+
+int fillByteArray(std::string s, shared_ptr<uint8_t[]> val){
+	int cnt = 0;
+	for (char c : s){
+		val[cnt++] = c;
+	}
+	return cnt;
+}
+
+void printArray(uint8_t* string, int len){
+	for(int i=0; i <len; i++){
+		printf("%c", string[i]);
+	}
+	printf("\n");
+}
 
 // RENAME THIS TO main()
 int main(){
@@ -102,43 +118,56 @@ int main(){
 		array<uint8_t, 32> pin = {'t','e','s','t'}; // customize this PIN according to the PIN that you set on your SEcube device
 		l1->L1Login(pin, SE3_ACCESS_USER, true); // login to the SEcube
 
+		shared_ptr<uint8_t[]> hostVal = make_unique<uint8_t[]>(100);
+		shared_ptr<uint8_t[]> passVal = make_unique<uint8_t[]>(100);
+		shared_ptr<uint8_t[]> userVal = make_unique<uint8_t[]>(100);
 
-		// flash first key (128 bit) to the device, here we provide explicitly also the value of the key
-		shared_ptr<uint8_t[]> hostVal = make_unique<uint8_t[]>(3);
-		shared_ptr<uint8_t[]> passVal = make_unique<uint8_t[]>(2);
-		shared_ptr<uint8_t[]> userVal = make_unique<uint8_t[]>(2);
+		// Add passwords
+		uint16_t hostSize = fillByteArray("youtube.com", hostVal);
+		uint16_t userSize = fillByteArray("mat@gmail.com", userVal);
+		uint16_t passSize = fillByteArray("pass10sZero", passVal);
 
-		hostVal[0] = 'a';
-		hostVal[1] = 'b';
-		hostVal[2] = 'c';
-		passVal[0] = 'd';
-		passVal[1] = 'e';
-		userVal[0] = 'f';
-		userVal[1] = 'g';
-
-		if(l1->L1SEpass_AddPassword(10, 3, 2, 2, hostVal, userVal, passVal)){
-			printf("OK!\n");
+		if(l1->L1SEAddPassword(1, hostSize, userSize, passSize, hostVal, userVal, passVal)){
+			printf("Added!\n");
 		} else {
-			printf("NOT!\n");
+			printf("Unable to add!\n");
 		}
-		if(l1->L1SEpass_AddPassword(11, 3, 2, 2, hostVal, userVal, passVal)){
-			printf("OK!\n");
+		hostSize = fillByteArray("gmail.com", hostVal);
+		userSize = fillByteArray("mat@gmail.com", userVal);
+		passSize = fillByteArray("qwertyuiop", passVal);
+
+		if(l1->L1SEAddPassword(1, hostSize, userSize, passSize, hostVal, userVal, passVal)){
+			printf("Added!\n");
 		} else {
-			printf("NOT!\n");
+			printf("Unable to add!\n");
 		}
 
+		// List passwords
 		std::vector<se3Pass> passList;
 		l1->L1SEGetAllPasswords(passList);
 		for(se3Pass elem : passList){
-			printf("%d\n", elem.id);
+			printf("Element Id:\t\t%d\n", elem.id);
+			printf("Element Hostname:\t");
+			printArray(elem.host, elem.hostSize);
+			printf("Element Username:\t");
+			printArray(elem.user, elem.userSize);
+			printf("Element Password:\t");
+			printArray(elem.pass, elem.passSize);
+			printf("\n");
 		}
 
-		if(l1->L1SEpass_DeletePassword(10)){
-			printf("OK!\n");
+
+		if(l1->L1SEDeletePassword(1)){
+			printf("Removed!\n");
 		} else {
-			printf("NOT!\n");
+			printf("Unable to remove!\n");
 		}
-	}
+		if(l1->L1SEDeletePassword(2)){
+			printf("Removed!\n");
+		} else {
+			printf("Unable to remove!\n");
+		}
 
+	}
 	return 0;
 }

@@ -33,7 +33,7 @@
 
 using namespace std;
 
-bool L1::L1SEpass_DeletePassword(uint32_t pass_id){
+bool L1::L1SEDeletePassword(uint32_t pass_id){
 	uint16_t data_len = 0;
 	uint16_t resp_len = 0;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_DELETE;
@@ -55,7 +55,7 @@ bool L1::L1SEpass_DeletePassword(uint32_t pass_id){
 	}
 }
 
-bool L1::L1SEpass_AddPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len, std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data){
+bool L1::L1SEAddPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len, std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data){
 	uint16_t data_len = 0;
 	uint16_t resp_len = 0;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_ADD;
@@ -95,12 +95,20 @@ bool L1::L1SEpass_AddPassword(uint32_t pass_id, uint16_t host_len, uint16_t user
 	}
 }
 
+void L1::L1SEGetPassword(se3Pass& password)
+{
+
+}
+
+
+
 void L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList)
 {
 	L1PasswordListException passListExc;
 	passList.clear();
 	uint16_t data_len = 0;
 	uint16_t resp_len = 0;
+	uint8_t* tmp = NULL;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_GETALL;
 	uint16_t offset = L1Request::Offset::DATA;
 	unique_ptr<uint8_t[]> buffer = make_unique<uint8_t[]>(L1Response::Size::MAX_DATA);
@@ -139,11 +147,21 @@ void L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList)
 		if(passid == 0){
 			return; // when the SEcube reaches the end of the flash (all keys returned) it sends 0, so we have our condition to terminate
 		}
+
 		se3Pass pass;
 		pass.id = passid;
 		pass.hostSize = host_len;
 		pass.userSize = user_len;
 		pass.passSize = pass_len;
+		pass.host = (uint8_t*)malloc(host_len*sizeof(uint8_t));
+		memcpy(pass.host,  buffer.get()+offset, host_len);
+		offset+=host_len;
+		pass.user = (uint8_t*)malloc(user_len*sizeof(uint8_t));
+		memcpy(pass.user,  buffer.get()+offset, user_len);
+		offset+=user_len;
+		pass.pass = (uint8_t*)malloc(pass_len*sizeof(uint8_t));
+		memcpy(pass.pass,  buffer.get()+offset, pass_len);
+		offset+=pass_len;
 		passList.push_back(pass); // copy ID in list
 	}
 }
