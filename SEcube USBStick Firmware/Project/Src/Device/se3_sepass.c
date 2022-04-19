@@ -37,7 +37,7 @@
  * 	it has to be implemented. The provided code is just a stub
  */
 
-se3_flash_it pass_iterator = { .addr = NULL }; /**< Global variable required by load_key_ids() */
+se3_flash_it pass_iterator = { .addr = NULL }; /**< Global variable required by get_all_password() */
 
 uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
 	uint32_t pass_id = 0; // id of the key to be stored on the device
@@ -58,13 +58,13 @@ uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
 	}
 
 	// parse request
-	memcpy(&pass_id, req, 4); // key id
-	memcpy(&host_len, req+4, 2); // host length
-	memcpy(&user_len, req+4+2, 2); // username length
-	memcpy(&pass_len, req+4+2+2, 2); // pass length
-	host = (uint8_t*)malloc(host_len); // allocate space for the host content
-	user = (uint8_t*)malloc(user_len); // allocate space for the user content
-	pass = (uint8_t*)malloc(pass_len); // allocate space for the pass content
+	memcpy(&pass_id, req, 4); 			// key id
+	memcpy(&host_len, req+4, 2); 		// host length
+	memcpy(&user_len, req+4+2, 2); 		// username length
+	memcpy(&pass_len, req+4+2+2, 2); 	// pass length
+	host = (uint8_t*)malloc(host_len); 	// allocate space for the host content
+	user = (uint8_t*)malloc(user_len); 	// allocate space for the user content
+	pass = (uint8_t*)malloc(pass_len); 	// allocate space for the pass content
 	if(host == NULL || pass == NULL){
 		return SE3_ERR_MEMORY;
 	} else {
@@ -73,16 +73,16 @@ uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
 		memset(pass, 0, pass_len);
 	}
 
-	if((req_size-2) != (4+2+4+host_len+pass_len+user_len)){ // 4B for key ID, 2B for key data len, 4 bytes for ID of wrapping key
+	if((req_size-2) != (4+2+2+2+host_len+pass_len+user_len)){ // 4B for key ID, 2B for host len, 2B for user len, 2B for pass len
 		if(host != NULL){ free(host);	}
 		if(user != NULL){ free(user);	}
 		if(pass != NULL){ free(pass);	}
 		return SE3_ERR_PARAMS;
 	}
 
-	memcpy(host, req+4+2+2, 		 host_len);
-	memcpy(user, req+4+2+2+host_len, pass_len);
-	memcpy(pass, req+4+2+2+host_len+user_len, pass_len);
+	memcpy(host, req+4+2+2+2, 		 			host_len);
+	memcpy(user, req+4+2+2+2+host_len, 			pass_len);
+	memcpy(pass, req+4+2+2+2+host_len+user_len, pass_len);
 
 	// now everything is ready to store the pass in the SEcube
 	password.id = pass_id;
