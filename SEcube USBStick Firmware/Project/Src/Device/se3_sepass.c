@@ -256,7 +256,56 @@ uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 	return SE3_OK;
 }
 
+uint8_t lowercase[26] = "abcdefghijklmnopqrstuvwxyz";
+uint8_t uppercase[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+uint8_t special_chars[13] = "-_.:;,?&%$!@#";
+
 uint16_t generate_random_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
+	uint16_t pass_len = 0;
+	uint8_t special_char = 0;
+	uint8_t numbers = 0;
+	uint8_t uppercase = 0;
+
+	memcpy(&pass_len, req, 2);
+	memcpy(&special_char, req + 2, 1);
+	memcpy(&numbers, req + 3, 1);
+	memcpy(&uppercase, req + 4, 1);
+
+	uint8_t* all_usable = (uint8_t*)malloc(special_char*13 + uppercase*26 + 26);
+	uint8_t all_usable_count = 26;
+	memcpy(all_usable, lowercase, 26);
+	if(uppercase == 1) {
+		memcpy(all_usable + all_usable_count, uppercase, 26);
+		all_usable_count+=26;
+	}
+	if(special_char == 1) {
+		memcpy(all_usable + all_usable_count, special_chars, 13);
+		all_usable_count+=13;
+	}
+
+	uint8_t *key_data = NULL;
+	key_data = (uint8_t*)malloc(pass_len); // allocate space for the key content
+	if(key_data == NULL){
+		if(all_usable != NULL){ free(all_usable); }
+		return SE3_ERR_MEMORY;
+	} else {
+		memset(key_data, 0, pass_len);
+	}
+
+	if(se3_rand(pass_len, key_data) != pass_len){
+		if(key_data != NULL){ free(key_data);	}
+		if(all_usable != NULL){ free(all_usable); }
+		return SE3_ERR_HW;
+	}
+
+	for (int i = 0; i < pass_len; i++){
+		resp[i] = all_usable[key_data[i] % all_usable_count];
+	}
+
+	*resp_size = pass_len;
+
+	if(key_data != NULL){ free(key_data);	}
+	if(all_usable != NULL){ free(all_usable); }
 
 	return SE3_OK;
 }

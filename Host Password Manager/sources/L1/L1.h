@@ -229,6 +229,8 @@ public:
 
 	bool L1SEDeletePassword(uint32_t pass_id);
 
+	bool L1SEGeneratePassword(uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, std::shared_ptr<uint8_t[]> generated_pass);
+
 	bool L1SEAddPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len,
 			std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data);
 };
