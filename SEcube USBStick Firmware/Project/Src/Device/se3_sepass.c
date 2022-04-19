@@ -65,7 +65,7 @@ uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
 	host = (uint8_t*)malloc(host_len); 	// allocate space for the host content
 	user = (uint8_t*)malloc(user_len); 	// allocate space for the user content
 	pass = (uint8_t*)malloc(pass_len); 	// allocate space for the pass content
-	if(host == NULL || pass == NULL){
+	if(host == NULL || pass == NULL || user == NULL){
 		return SE3_ERR_MEMORY;
 	} else {
 		memset(host, 0, host_len);
@@ -95,7 +95,7 @@ uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
 
 	// Insert the password
 	se3_flash_it_init(&it);
-	if (!se3_key_find(password.id, &it)) { // search in the flash memory if a password with the same ID is already present
+	if (!se3_pass_find(password.id, &it)) { // search in the flash memory if a password with the same ID is already present
 		it.addr = NULL;
 	}
 	if (NULL != it.addr) { // enter if there's another key with same ID
@@ -174,87 +174,37 @@ uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 	return SE3_OK;
 }
 
-uint16_t get_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
-	uint32_t key_id = 0, kid = 0;
-	uint32_t pass_id = 0;
-	uint8_t* tmp = NULL;
-	uint16_t offset = 0, host_len = 0, user_len = 0, pass_len = 0;
-	bool error_ = true;
-	se3_flash_it it = { .addr = NULL };
-	*resp_size = 0;
-	if((req_size - 2) != 4){
-		return SE3_ERR_PARAMS;
-	}
-	memcpy(&kid, req, 4); // retrieve the key id from the input buffer
-	se3_flash_it_init(&it);
-	while (se3_flash_it_next(&it)){
-		if (it.type == SE3_TYPE_PASS){
-			SE3_GET32(it.addr, SE3_FLASH_PASS_OFF_ID, key_id);
-			if(key_id == kid){
-				// Found and return element
-				SE3_GET32(pass_iterator.addr, SE3_FLASH_PASS_OFF_ID, pass_id); // get key ID and copy it to the response buffer
-				SE3_GET16(pass_iterator.addr, SE3_FLASH_PASS_OFF_HOST_LEN, host_len); // get key length
-				SE3_GET16(pass_iterator.addr, SE3_FLASH_PASS_OFF_USER_LEN, user_len); // get key length
-				SE3_GET16(pass_iterator.addr, SE3_FLASH_PASS_OFF_PASS_LEN, pass_len); // get key length
-
-				memcpy(resp + offset, &pass_id, 4);
-				offset += 4;
-				memcpy(resp + offset, &host_len, 2);
-				offset += 2;
-				memcpy(resp + offset, &user_len, 2);
-				offset += 2;
-				memcpy(resp + offset, &pass_len, 2);
-				offset += 2;
-
-				// Hostname
-				if(tmp != NULL){
-					free(tmp);
-					tmp = NULL;
-				}
-				tmp = (uint8_t*)malloc(host_len*sizeof(uint8_t));
-				if(tmp == NULL){ return SE3_ERR_MEMORY;	}
-				memcpy(tmp, pass_iterator.addr + offset, host_len);
-				offset += host_len;
-
-				// Username
-				if(tmp != NULL){
-					free(tmp);
-					tmp = NULL;
-				}
-				tmp = (uint8_t*)malloc(user_len*sizeof(uint8_t));
-				if(tmp == NULL){ return SE3_ERR_MEMORY;	}
-				memcpy(tmp, pass_iterator.addr + offset, user_len);
-				offset += user_len;
-
-				// Pass
-				if(tmp != NULL){
-					free(tmp);
-					tmp = NULL;
-				}
-				tmp = (uint8_t*)malloc(pass_len*sizeof(uint8_t));
-				if(tmp == NULL){ return SE3_ERR_MEMORY;	}
-				memcpy(tmp, pass_iterator.addr + offset, pass_len);
-				offset += pass_len;
-
-				*resp_size = (*resp_size) + offset;
-				error_ = false;
-			}
+int16_t isStringContained(uint8_t* a, uint16_t len_text, uint8_t* b, uint16_t len_search){
+	for (uint16_t i = 0; i < len_text && i < len_search; i++){
+		if(a[i] != b[i]){
+			return -1;
 		}
 	}
-	if(error_){
-		return SE3_ERR_RESOURCE;
-	} else {
-		return SE3_OK;
-	}
+	return 0;
 }
 
 uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
+
+	// Filter mode
+	uint8_t filter_mode = NO_FILTER;
+	uint16_t filter_field_len = 0;
+	uint8_t* filter_field = NULL;
+	memcpy(&filter_mode, req, 2);
+	if(filter_mode != NO_FILTER){
+		memcpy(&filter_field_len, req+2, 2);
+		filter_field = (uint8_t*)malloc(filter_field_len);
+		memcpy(filter_field, req+4, filter_field_len);
+	}
+
 	uint32_t pass_id = 0;
 	uint16_t offset = 0, host_len = 0, user_len = 0, pass_len = 0;
 	*resp_size = 0;
 	do {
 		/* 7536 is the limit of data we can write in requests and responses to/from the SEcube */
-		if(*resp_size >= 7532){ // max is 7536 but we must keep 4 bytes available for ID=0 sent in case we reach the end of the flash (see below at the end of the function)
+		if(offset >= 7532){ // max is 7536 but we must keep 4 bytes available for ID=0 sent in case we reach the end of the flash (see below at the end of the function)
+			if(filter_field != NULL){
+				free(filter_field);
+			}
 			return SE3_OK; // still in the middle of the flash...not all IDs returned (but return here because we can't go past 7536 bytes, next time we will start from next flash sector)
 		}
 		if (pass_iterator.addr != NULL && pass_iterator.type == SE3_TYPE_PASS) {
@@ -279,7 +229,17 @@ uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 			memcpy(resp + offset, pass_iterator.addr + SE3_FLASH_PASS_OFF_DATA + host_len + user_len, pass_len);
 			offset += pass_len;
 
-			*resp_size = (*resp_size) + offset;
+			// Filter the unwanted elements
+			if(filter_mode == HOST_FILTER){
+				if(isStringContained(resp + offset - pass_len - user_len - host_len, host_len, filter_field, filter_field_len) < 0){
+					offset -= (10 + host_len + user_len + pass_len);
+				}
+			} else if (filter_mode == USER_FILTER){
+				if(isStringContained(resp + offset - pass_len - user_len, user_len, filter_field, filter_field_len) < 0){
+					offset -= (10 + host_len + user_len + pass_len);
+				}
+			}
+
 		}
 	} while (se3_flash_it_next(&pass_iterator));
 	/* reset the iterator to the beginning of the flash (required for next call of load_key_ids).
@@ -288,7 +248,11 @@ uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 	 * few lines above. */
 	se3_flash_it_init(&pass_iterator);
 	memset(resp + offset, 0, 10); // put all zeroes as the last id (id = 0 is not valid so the host side will understand that we reached the end of the flash)
-	*resp_size = (*resp_size) + 10;
+	*resp_size = offset + 10;
+
+	if(filter_field != NULL){
+		free(filter_field);
+	}
 	return SE3_OK;
 }
 

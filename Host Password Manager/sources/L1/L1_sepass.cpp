@@ -95,26 +95,42 @@ bool L1::L1SEAddPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len,
 	}
 }
 
-void L1::L1SEGetPassword(se3Pass& password)
+void L1::L1SEGetAllPasswordsByUserName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> username, uint16_t usernameLen)
 {
-
+	L1SEGetAllPasswords(passList, USER_FILTER, username, usernameLen);
 }
 
-
+void L1::L1SEGetAllPasswordsByHostName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> hostname, uint16_t hostnameLen)
+{
+	L1SEGetAllPasswords(passList, HOST_FILTER, hostname, hostnameLen);
+}
 
 void L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList)
+{
+	L1SEGetAllPasswords(passList, NO_FILTER, NULL, 0);
+}
+
+void L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen)
 {
 	L1PasswordListException passListExc;
 	passList.clear();
 	uint16_t data_len = 0;
 	uint16_t resp_len = 0;
-	uint8_t* tmp = NULL;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_GETALL;
 	uint16_t offset = L1Request::Offset::DATA;
 	unique_ptr<uint8_t[]> buffer = make_unique<uint8_t[]>(L1Response::Size::MAX_DATA);
 
 	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
 	offset += 2;
+	if(filterType != NO_FILTER){
+		this->base.FillSessionBuffer((unsigned char*)&filterType, offset, 2);
+		offset += 2;
+		this->base.FillSessionBuffer((unsigned char*)&filterLen, offset, 2);
+		offset += 2;
+		this->base.FillSessionBuffer((unsigned char*)filterField.get(), offset, filterLen);
+		offset += filterLen;
+	}
+
 	data_len = offset - L1Request::Offset::DATA;
 	try{
 		TXRXData(L1Commands::Codes::SEPASS, data_len, 0, &resp_len);

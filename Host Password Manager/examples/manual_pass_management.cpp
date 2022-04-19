@@ -136,15 +136,33 @@ int main(){
 		userSize = fillByteArray("mat@gmail.com", userVal);
 		passSize = fillByteArray("qwertyuiop", passVal);
 
-		if(l1->L1SEAddPassword(1, hostSize, userSize, passSize, hostVal, userVal, passVal)){
+		if(l1->L1SEAddPassword(2, hostSize, userSize, passSize, hostVal, userVal, passVal)){
 			printf("Added!\n");
 		} else {
 			printf("Unable to add!\n");
 		}
 
-		// List passwords
+//		// List passwords
 		std::vector<se3Pass> passList;
 		l1->L1SEGetAllPasswords(passList);
+		for(se3Pass elem : passList){
+			printf("Element Id:\t\t%d\n", elem.id);
+			printf("Element Hostname:\t");
+			printArray(elem.host, elem.hostSize);
+			printf("Element Username:\t");
+			printArray(elem.user, elem.userSize);
+			printf("Element Password:\t");
+			printArray(elem.pass, elem.passSize);
+			printf("\n");
+		}
+
+		// Filter passwords by hostname
+		printf("Filter by hostname search\n");
+		passList.clear();
+		shared_ptr<uint8_t[]> hostFilter = make_unique<uint8_t[]>(100);
+		userSize = fillByteArray("youtube.com", hostFilter);
+		printf("Size %d\n", userSize);
+		l1->L1SEGetAllPasswordsByHostName(passList, hostFilter, userSize);
 		for(se3Pass elem : passList){
 			printf("Element Id:\t\t%d\n", elem.id);
 			printf("Element Hostname:\t");
@@ -167,6 +185,7 @@ int main(){
 		} else {
 			printf("Unable to remove!\n");
 		}
+
 
 	}
 	return 0;

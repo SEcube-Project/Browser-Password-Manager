@@ -34,11 +34,16 @@
 enum{
 	SE3_SEPASS_OP_ADD = 1, /**< Add password */
 	SE3_SEPASS_OP_DELETE = 2, /**< Delete password */
-	SE3_SEPASS_OP_GET = 3, /**< Generate Random Password */
-	SE3_SEPASS_OP_GETALL = 4, /**< Get all password items */
-	SE3_SEPASS_OP_GENERATE_RANDOM = 5, /**< Generate Random Password */
-	SE3_SEPASS_OP_EXPORT = 6, /**< Export Passwords */
-	SE3_SEPASS_OP_IMPORT = 7, /**< Import Passwords */
+	SE3_SEPASS_OP_GETALL = 3, /**< Get all password items */
+	SE3_SEPASS_OP_GENERATE_RANDOM = 4, /**< Generate Random Password */
+	SE3_SEPASS_OP_EXPORT = 5, /**< Export Passwords */
+	SE3_SEPASS_OP_IMPORT = 6, /**< Import Passwords */
+};
+
+enum{
+	NO_FILTER = 0,
+	HOST_FILTER = 1,
+	USER_FILTER = 2
 };
 
 
@@ -60,9 +65,6 @@ uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
  * stored in the flash memory. In case of multiple keys with the same ID, an error is returned. In order to encrypt the key
  * to be returned, another key present in the flash memory has to be specified by the host in the request buffer. */
 uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp);
-
-/** \brief Send the name and the ID of the SEkey user associated to the SEcube to the host computer. */
-uint16_t get_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp);
 
 /** \brief Write the name and the ID of the SEkey user associated to the SEcube into the flash memory.
  * This action is performed only by the SEkey administrator therefore it is not allowed when the active login

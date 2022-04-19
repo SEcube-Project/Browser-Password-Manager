@@ -123,6 +123,12 @@ typedef struct se3Pass_ {
 //	uint8_t name[L1Key::Size::MAX_NAME];
 } se3Pass;
 
+typedef enum se3_list_filter_type_ {
+    NO_FILTER = 0,
+	HOST_FILTER = 1,
+    USER_FILTER = 2
+} se3_list_filter_type;
+
 class L1Base {
 private:
 	std::vector<se3Session> s;

@@ -223,7 +223,9 @@ public:
 	bool L1SEpass_GetKeyEnc(uint32_t key_export_id, uint32_t key_wrapping_key, std::shared_ptr<uint8_t[]>& key_export_data, uint16_t& key_export_len);
 
 	void L1SEGetAllPasswords(std::vector<se3Pass>& passList);
-	void L1SEGetPassword(se3Pass& password);
+	void L1SEGetAllPasswordsByHostName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
+	void L1SEGetAllPasswordsByUserName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
+	void L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
 
 	bool L1SEDeletePassword(uint32_t pass_id);
 
