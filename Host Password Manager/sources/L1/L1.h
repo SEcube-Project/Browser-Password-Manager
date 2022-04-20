@@ -59,6 +59,7 @@ private:
 	void L1Config(uint16_t type, uint16_t op, std::array<uint8_t, L1Parameters::Size::PIN>& value);
 	void KeyList(uint16_t maxKeys, uint16_t skip, se3Key* keyArray, uint16_t* count);
 	void PassList(uint8_t *buffer, uint16_t *buflen);
+	bool L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
 public:
 	L1(); /**< Default constructor. */
 	L1(uint8_t index); /**< Custom constructor used only in a very specific case by the APIs of the SEkey library (L2). Do not use elsewhere. */
@@ -222,17 +223,13 @@ public:
 
 	bool L1SEpass_GetKeyEnc(uint32_t key_export_id, uint32_t key_wrapping_key, std::shared_ptr<uint8_t[]>& key_export_data, uint16_t& key_export_len);
 
-	void L1SEGetAllPasswords(std::vector<se3Pass>& passList);
-	void L1SEGetAllPasswordsByHostName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
-	void L1SEGetAllPasswordsByUserName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
-	void L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
-
+	bool L1SEGetPasswordById(uint32_t id, se3Pass& password);
+	bool L1SEGetAllPasswords(std::vector<se3Pass>& passList);
+	bool L1SEGetAllPasswordsByHostName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
+	bool L1SEGetAllPasswordsByUserName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
 	bool L1SEDeletePassword(uint32_t pass_id);
-
-	bool L1SEGeneratePassword(uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, uint8_t enable_numbers_chars, std::shared_ptr<uint8_t[]> generated_pass);
-
-	bool L1SEAddPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len,
-			std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data);
+	bool L1SEGenerateRandomPassword(uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, uint8_t enable_numbers_chars, std::shared_ptr<uint8_t[]> generated_pass);
+	bool L1SEAddPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len, std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data);
 };
 
 #endif

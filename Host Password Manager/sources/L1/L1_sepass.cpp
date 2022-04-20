@@ -55,7 +55,7 @@ bool L1::L1SEDeletePassword(uint32_t pass_id){
 	}
 }
 
-bool L1::L1SEGeneratePassword(uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, uint8_t enable_numbers_chars, std::shared_ptr<uint8_t[]> generated_pass){
+bool L1::L1SEGenerateRandomPassword(uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, uint8_t enable_numbers_chars, std::shared_ptr<uint8_t[]> generated_pass){
 	uint16_t data_len = 0;
 	uint16_t resp_len = 0;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_GENERATE_RANDOM;
@@ -129,22 +129,75 @@ bool L1::L1SEAddPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len,
 	}
 }
 
-void L1::L1SEGetAllPasswordsByUserName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> username, uint16_t usernameLen)
+bool L1::L1SEGetPasswordById(uint32_t id, se3Pass& pass)
 {
-	L1SEGetAllPasswords(passList, USER_FILTER, username, usernameLen);
+	uint16_t data_len = 0;
+	uint16_t resp_len = 0;
+	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_GET_BY_ID;
+	uint16_t offset = L1Request::Offset::DATA;
+	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
+	offset += 2;
+	this->base.FillSessionBuffer((unsigned char*)&id, offset, 4);
+	offset += 4;
+
+	// Make request for pass id
+	data_len = offset - L1Request::Offset::DATA;
+	try{
+		TXRXData(L1Commands::Codes::SEPASS, data_len, 0, &resp_len);
+	} catch(L1Exception& e){
+		return false;
+	}
+
+	unique_ptr<uint8_t[]> buffer = make_unique<uint8_t[]>(L1Response::Size::MAX_DATA);
+	// copy response to local buffer
+	memset(buffer.get(), 0, L1Response::Size::MAX_DATA);
+	memcpy(buffer.get(), (this->base.GetSessionBuffer()+L1Request::Offset::DATA), resp_len);
+	if(resp_len == 0){ // if the response is empty, the SEcube has returned all the IDs in its flash memory
+		return false;
+	}
+
+	uint32_t passid = 0;
+	uint16_t host_len = 0;
+	uint16_t user_len = 0;
+	uint16_t pass_len = 0;
+	memcpy(&passid, buffer.get(), 4);
+	memcpy(&host_len, buffer.get()+4, 2);
+	memcpy(&user_len, buffer.get()+6, 2);
+	memcpy(&pass_len, buffer.get()+8, 2);
+	if(passid == 0){
+		return false; // when the SEcube reaches the end of the flash (all keys returned) it sends 0, so we have our condition to terminate
+	}
+
+	pass.id = passid;
+	pass.hostSize = host_len;
+	pass.userSize = user_len;
+	pass.passSize = pass_len;
+	pass.host = (uint8_t*)malloc(host_len*sizeof(uint8_t));
+	memcpy(pass.host,  buffer.get()+10, host_len);
+	pass.user = (uint8_t*)malloc(user_len*sizeof(uint8_t));
+	memcpy(pass.user,  buffer.get()+10 + host_len, user_len);
+	pass.pass = (uint8_t*)malloc(pass_len*sizeof(uint8_t));
+	memcpy(pass.pass,  buffer.get()+10+host_len+user_len, pass_len);
+
+	return true;
 }
 
-void L1::L1SEGetAllPasswordsByHostName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> hostname, uint16_t hostnameLen)
+bool L1::L1SEGetAllPasswordsByUserName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> username, uint16_t usernameLen)
 {
-	L1SEGetAllPasswords(passList, HOST_FILTER, hostname, hostnameLen);
+	return L1SEGetAllPasswords(passList, USER_FILTER, username, usernameLen);
 }
 
-void L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList)
+bool L1::L1SEGetAllPasswordsByHostName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> hostname, uint16_t hostnameLen)
 {
-	L1SEGetAllPasswords(passList, NO_FILTER, NULL, 0);
+	return L1SEGetAllPasswords(passList, HOST_FILTER, hostname, hostnameLen);
 }
 
-void L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen)
+bool L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList)
+{
+	return L1SEGetAllPasswords(passList, NO_FILTER, NULL, 0);
+}
+
+bool L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen)
 {
 	L1PasswordListException passListExc;
 	passList.clear();
@@ -170,13 +223,13 @@ void L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType,
 		TXRXData(L1Commands::Codes::SEPASS, data_len, 0, &resp_len);
 	} catch(L1Exception& e){
 		passList.clear();
-		throw passListExc;
+		return false;
 	}
 	// copy response to local buffer
 	memset(buffer.get(), 0, L1Response::Size::MAX_DATA);
 	memcpy(buffer.get(), (this->base.GetSessionBuffer()+L1Request::Offset::DATA), resp_len);
 	if(resp_len == 0){ // if the response is empty, the SEcube has returned all the IDs in its flash memory
-		return;
+		return false;
 	}
 	// iterate over buffer reading the IDs and key length
 	offset = 0;
@@ -195,7 +248,7 @@ void L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType,
 		memcpy(&pass_len, buffer.get()+offset, 2);
 		offset+=2;
 		if(passid == 0){
-			return; // when the SEcube reaches the end of the flash (all keys returned) it sends 0, so we have our condition to terminate
+			return false; // when the SEcube reaches the end of the flash (all keys returned) it sends 0, so we have our condition to terminate
 		}
 
 		se3Pass pass;
@@ -214,6 +267,7 @@ void L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType,
 		offset+=pass_len;
 		passList.push_back(pass); // copy ID in list
 	}
+	return true;
 }
 
 bool L1::L1SEpass_Info(string& id, string& name, uint8_t mode)

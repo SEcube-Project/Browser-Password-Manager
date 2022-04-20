@@ -118,20 +118,35 @@ int main(){
 		array<uint8_t, 32> pin = {'t','e','s','t'}; // customize this PIN according to the PIN that you set on your SEcube device
 		l1->L1Login(pin, SE3_ACCESS_USER, true); // login to the SEcube
 
-//		shared_ptr<uint8_t[]> hostVal = make_unique<uint8_t[]>(100);
-//		shared_ptr<uint8_t[]> passVal = make_unique<uint8_t[]>(100);
-//		shared_ptr<uint8_t[]> userVal = make_unique<uint8_t[]>(100);
-//
-//		// Add passwords
-//		uint16_t hostSize = fillByteArray("youtube.com", hostVal);
-//		uint16_t userSize = fillByteArray("mat@gmail.com", userVal);
-//		uint16_t passSize = fillByteArray("pass10sZero", passVal);
-//
-//		if(l1->L1SEAddPassword(1, hostSize, userSize, passSize, hostVal, userVal, passVal)){
-//			printf("Added!\n");
-//		} else {
-//			printf("Unable to add!\n");
-//		}
+		shared_ptr<uint8_t[]> hostVal = make_unique<uint8_t[]>(100);
+		shared_ptr<uint8_t[]> passVal = make_unique<uint8_t[]>(100);
+		shared_ptr<uint8_t[]> userVal = make_unique<uint8_t[]>(100);
+
+		// Add passwords
+		uint16_t hostSize = fillByteArray("youtube.com", hostVal);
+		uint16_t userSize = fillByteArray("mat@gmail.com", userVal);
+		uint16_t passSize = fillByteArray("pass10sZero", passVal);
+
+		if(l1->L1SEAddPassword(1, hostSize, userSize, passSize, hostVal, userVal, passVal)){
+			printf("Added!\n");
+		} else {
+			printf("Unable to add!\n");
+		}
+
+		se3Pass searchedById;
+		if(l1->L1SEGetPasswordById(1, searchedById)){
+			printf("Found pass with id 1\n");
+			printf("Element Id:\t\t%d\n", searchedById.id);
+			printf("Element Hostname:\t");
+			printArray(searchedById.host, searchedById.hostSize);
+			printf("Element Username:\t");
+			printArray(searchedById.user, searchedById.userSize);
+			printf("Element Password:\t");
+			printArray(searchedById.pass, searchedById.passSize);
+			printf("\n");
+		} else {
+			printf("Unable to find pass by id\n");
+		}
 //		hostSize = fillByteArray("gmail.com", hostVal);
 //		userSize = fillByteArray("mat@gmail.com", userVal);
 //		passSize = fillByteArray("qwertyuiop", passVal);
@@ -186,7 +201,7 @@ int main(){
 //		}
 
 		shared_ptr<uint8_t[]> pass = make_unique<uint8_t[]>(100);
-		l1->L1SEGeneratePassword(100, true, true, true, pass);
+		l1->L1SEGenerateRandomPassword(100, true, true, true, pass);
 
 		printf("New generated password: ");
 		printArray(pass.get(),  100);

@@ -445,10 +445,11 @@ namespace L1Commands {
 		enum{
 			SE3_SEPASS_OP_ADD = 1, /**< Add password */
 			SE3_SEPASS_OP_DELETE = 2, /**< Delete password */
-			SE3_SEPASS_OP_GETALL = 3, /**< Get all password items */
-			SE3_SEPASS_OP_GENERATE_RANDOM = 4, /**< Generate Random Password */
-			SE3_SEPASS_OP_EXPORT = 5, /**< Export Passwords */
-			SE3_SEPASS_OP_IMPORT = 6 /**< Import Passwords */
+			SE3_SEPASS_OP_GET_BY_ID = 3, /**< Get all password items */
+			SE3_SEPASS_OP_GETALL = 4, /**< Get all password items */
+			SE3_SEPASS_OP_GENERATE_RANDOM = 5, /**< Generate Random Password */
+			SE3_SEPASS_OP_EXPORT = 6, /**< Export Passwords */
+			SE3_SEPASS_OP_IMPORT = 7 /**< Import Passwords */
 		};
 	};
 

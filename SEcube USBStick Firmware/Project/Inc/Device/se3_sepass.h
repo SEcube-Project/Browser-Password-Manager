@@ -34,10 +34,11 @@
 enum{
 	SE3_SEPASS_OP_ADD = 1, /**< Add password */
 	SE3_SEPASS_OP_DELETE = 2, /**< Delete password */
-	SE3_SEPASS_OP_GETALL = 3, /**< Get all password items */
-	SE3_SEPASS_OP_GENERATE_RANDOM = 4, /**< Generate Random Password */
-	SE3_SEPASS_OP_EXPORT = 5, /**< Export Passwords */
-	SE3_SEPASS_OP_IMPORT = 6, /**< Import Passwords */
+	SE3_SEPASS_OP_GET_BY_ID = 3, /**< Get all password items */
+	SE3_SEPASS_OP_GETALL = 4, /**< Get all password items */
+	SE3_SEPASS_OP_GENERATE_RANDOM = 5, /**< Generate Random Password */
+	SE3_SEPASS_OP_EXPORT = 6, /**< Export Passwords */
+	SE3_SEPASS_OP_IMPORT = 7, /**< Import Passwords */
 };
 
 enum{
@@ -70,6 +71,8 @@ uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
  * This action is performed only by the SEkey administrator therefore it is not allowed when the active login
  * is in user mode. */
 uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp);
+
+uint16_t get_password_by_id(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp);
 
 /** \brief Delete all the keys stored in the flash memory of the SEcube.
  * The host can specify a list of IDs, inside the request buffer, not to be deleted in order to

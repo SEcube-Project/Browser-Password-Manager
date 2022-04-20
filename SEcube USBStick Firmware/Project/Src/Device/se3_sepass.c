@@ -183,6 +183,48 @@ int16_t isStringContained(uint8_t* a, uint16_t len_text, uint8_t* b, uint16_t le
 	return 0;
 }
 
+
+uint16_t get_password_by_id(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
+	uint16_t host_len = 0, user_len = 0, pass_len = 0;
+	uint32_t key_id = 0, kid = 0;
+	se3_flash_it it = { .addr = NULL };
+	*resp_size = 0;
+	if((req_size - 2) != 4){
+		return SE3_ERR_PARAMS;
+	}
+
+	memcpy(&kid, req, 4); // retrieve the key id from the input buffer
+	se3_flash_it_init(&it);
+	while (se3_flash_it_next(&it)){
+		if (it.type == SE3_TYPE_PASS){
+			SE3_GET32(it.addr, SE3_FLASH_PASS_OFF_ID, key_id);
+			if(key_id == kid){
+				// Read from
+				SE3_GET32(it.addr, SE3_FLASH_PASS_OFF_ID, key_id);
+				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_HOST_LEN, host_len);
+				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_PASS_LEN, user_len);
+				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_USER_LEN, pass_len);
+				memcpy(resp, &key_id, 4);
+				memcpy(resp + 4, &host_len, 2);
+				memcpy(resp + 6, &user_len, 2);
+				memcpy(resp + 8, &pass_len, 2);
+				memcpy(resp + 10, it.addr + SE3_FLASH_PASS_OFF_DATA, host_len);
+				memcpy(resp + 10 + host_len, it.addr + SE3_FLASH_PASS_OFF_DATA + host_len, user_len);
+				memcpy(resp + 10 + host_len + user_len, it.addr + SE3_FLASH_PASS_OFF_DATA + host_len + user_len, pass_len);
+				*resp_size = 10 + host_len + user_len + pass_len;
+				break;
+			}
+		}
+	}
+	se3_flash_it_init(&pass_iterator);
+
+	memset(resp + (*resp_size), 0, 10); // put all zeroes as the last id (id = 0 is not valid so the host side will understand that we reached the end of the flash)
+	*resp_size = (*resp_size) + 10;
+
+	return SE3_OK;
+}
+
+
 uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
 
 	// Filter mode
