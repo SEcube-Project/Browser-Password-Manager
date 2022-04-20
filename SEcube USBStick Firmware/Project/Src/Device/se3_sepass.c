@@ -37,6 +37,11 @@
  * 	it has to be implemented. The provided code is just a stub
  */
 
+const uint8_t lowercase_chars[26] = "abcdefghijklmnopqrstuvwxyz";
+const uint8_t uppercase_chars[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const uint8_t numbers_chars[10] = "1234567890";
+const uint8_t special_chars[13] = "-_.:;,?&%$!@#";
+
 se3_flash_it pass_iterator = { .addr = NULL }; /**< Global variable required by get_all_password() */
 
 uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
@@ -116,19 +121,17 @@ uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
 		}
 	}
 	it.addr = NULL;
-	if (!equal) { // if not equal create new key
-		if (!se3_pass_new(&it, &password)) {
-			if(host != NULL){
-				free(host);
-			}
-			if(pass != NULL){
-				free(pass);
-			}
-			if(user != NULL){
-				free(user);
-			}
-			return SE3_ERR_MEMORY;
+	if (!se3_pass_new(&it, &password)) {
+		if(host != NULL){
+			free(host);
 		}
+		if(pass != NULL){
+			free(pass);
+		}
+		if(user != NULL){
+			free(user);
+		}
+		return SE3_ERR_MEMORY;
 	}
 	if(host != NULL){
 		free(host);
@@ -174,7 +177,7 @@ uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 	return SE3_OK;
 }
 
-int16_t isStringContained(uint8_t* a, uint16_t len_text, uint8_t* b, uint16_t len_search){
+int16_t is_string_contained(uint8_t* a, uint16_t len_text, uint8_t* b, uint16_t len_search){
 	for (uint16_t i = 0; i < len_text && i < len_search; i++){
 		if(a[i] != b[i]){
 			return -1;
@@ -273,11 +276,11 @@ uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 
 			// Filter the unwanted elements
 			if(filter_mode == HOST_FILTER){
-				if(isStringContained(resp + offset - pass_len - user_len - host_len, host_len, filter_field, filter_field_len) < 0){
+				if(is_string_contained(resp + offset - pass_len - user_len - host_len, host_len, filter_field, filter_field_len) < 0){
 					offset -= (10 + host_len + user_len + pass_len);
 				}
 			} else if (filter_mode == USER_FILTER){
-				if(isStringContained(resp + offset - pass_len - user_len, user_len, filter_field, filter_field_len) < 0){
+				if(is_string_contained(resp + offset - pass_len - user_len, user_len, filter_field, filter_field_len) < 0){
 					offset -= (10 + host_len + user_len + pass_len);
 				}
 			}
@@ -297,11 +300,6 @@ uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 	}
 	return SE3_OK;
 }
-
-uint8_t lowercase_chars[26] = "abcdefghijklmnopqrstuvwxyz";
-uint8_t uppercase_chars[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-uint8_t numbers_chars[10] = "1234567890";
-uint8_t special_chars[13] = "-_.:;,?&%$!@#";
 
 uint16_t generate_random_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
 	uint16_t pass_len = 0;

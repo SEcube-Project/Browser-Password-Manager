@@ -85,5 +85,4 @@ uint16_t export_passwords(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 /** \brief Simply delete a key from the flash memory. The ID of the key to be deleted is passed in the request buffer. */
 uint16_t import_passwords(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp);
 
-
 #endif
