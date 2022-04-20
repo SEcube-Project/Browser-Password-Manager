@@ -128,11 +128,14 @@ int main(){
 
 		// ############## PASS CREATION ##############
 		// Pass 1
+		uint32_t id1 = 0;
+		uint32_t id2 = 0;
+		uint32_t id3 = 0;
 		uint16_t hostSize = fillByteArray("youtube.com", hostVal);
 		uint16_t userSize = fillByteArray("mat@gmail.com", userVal);
 		uint16_t passSize = fillByteArray("pass10sZero", passVal);
-		if(l1->L1SEAddPassword(1, hostSize, userSize, passSize, hostVal, userVal, passVal)){
-			printf("Added 1!\n");
+		if(l1->L1SEAddPassword(hostSize, userSize, passSize, hostVal, userVal, passVal, id1)){
+			printf("Added new pass with id %d!\n", id1);
 		} else {
 			printf("Unable to add!\n");
 		}
@@ -141,8 +144,8 @@ int main(){
 		hostSize = fillByteArray("gmail.com", hostVal);
 		userSize = fillByteArray("mat@gmail.com", userVal);
 		passSize = fillByteArray("qwertyuiop", passVal);
-		if(l1->L1SEAddPassword(2, hostSize, userSize, passSize, hostVal, userVal, passVal)){
-			printf("Added 2!\n");
+		if(l1->L1SEAddPassword(hostSize, userSize, passSize, hostVal, userVal, passVal, id2)){
+			printf("Added new pass with id %d!\n", id2);
 		} else {
 			printf("Unable to add!\n");
 		}
@@ -151,8 +154,8 @@ int main(){
 		hostSize = fillByteArray("youporn.com", hostVal);
 		userSize = fillByteArray("xxx@gmail.com", userVal);
 		passSize = fillByteArray("xxXxxa33dss", passVal);
-		if(l1->L1SEAddPassword(3, hostSize, userSize, passSize, hostVal, userVal, passVal)){
-			printf("Added 3!\n");
+		if(l1->L1SEAddPassword(hostSize, userSize, passSize, hostVal, userVal, passVal, id3)){
+			printf("Added new pass with id %d!\n", id3);
 		} else {
 			printf("Unable to add!\n");
 		}
@@ -160,8 +163,8 @@ int main(){
 
 		// ############## SEARCH BY ID ##############
 		se3Pass searchedById;
-		if(l1->L1SEGetPasswordById(2, searchedById)){
-			printf("\n\nFound pass with id 2\n");
+		if(l1->L1SEGetPasswordById(id2, searchedById)){
+			printf("\n\nFound pass with id %d\n", id2);
 			printf("Element Id:\t\t%d\n", searchedById.id);
 			printf("Element Hostname:\t");
 			printArray(searchedById.host, searchedById.hostSize);
@@ -209,15 +212,13 @@ int main(){
 
 
 		// ############## DELETE ALL PASSWORD ##############
-		if(l1->L1SEDeletePassword(1)){
-			printf("Removed 1!\n");
-		} else {
-			printf("Unable to remove!\n");
-		}
-		if(l1->L1SEDeletePassword(2)){
-			printf("Removed 2!\n");
-		} else {
-			printf("Unable to remove!\n");
+		l1->L1SEGetAllPasswords(passList);
+		for(se3Pass elem : passList){
+			if(l1->L1SEDeletePassword(elem.id)){
+				printf("Deleted pass %d: \n", elem.id);
+			} else {
+				printf("Unable to delete pass %d: \n", elem.id);
+			}
 		}
 
 

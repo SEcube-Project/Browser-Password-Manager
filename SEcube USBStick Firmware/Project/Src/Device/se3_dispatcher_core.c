@@ -45,16 +45,19 @@ uint16_t sepassword_manager_utilities(uint16_t req_size, const uint8_t* req, uin
     it.addr = NULL;
     switch (operation) {
         case SE3_SEPASS_OP_ADD:
-            return add_password(req_size, req+2, resp_size, resp);
+            return add_new_password(req_size, req+2, resp_size, resp);
             break;
         case SE3_SEPASS_OP_DELETE:
             return delete_password(req_size, req+2, resp_size, resp);
+            break;
+        case SE3_SEPASS_OP_MODIFY:
+            return modify_password(req_size, req+2, resp_size, resp);
             break;
         case SE3_SEPASS_OP_GET_BY_ID:
         	return get_password_by_id(req_size, req+2, resp_size, resp);
         	break;
         case SE3_SEPASS_OP_GETALL:
-        	return get_all_password(req_size, req+2, resp_size, resp);
+        	return get_all_passwords(req_size, req+2, resp_size, resp);
         	break;
         case SE3_SEPASS_OP_GENERATE_RANDOM:
         	return generate_random_password(req_size, req+2, resp_size, resp);

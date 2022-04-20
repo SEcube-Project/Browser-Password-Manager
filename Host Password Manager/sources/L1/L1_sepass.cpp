@@ -89,10 +89,49 @@ bool L1::L1SEGenerateRandomPassword(uint16_t pass_len, uint8_t enable_upper_case
 	return true;
 }
 
-bool L1::L1SEAddPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len, std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data){
+bool L1::L1SEAddPassword(uint16_t host_len, uint16_t user_len, uint16_t pass_len, std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data, uint32_t &id){
 	uint16_t data_len = 0;
 	uint16_t resp_len = 0;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_ADD;
+	uint16_t offset = L1Request::Offset::DATA;
+	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
+	offset += 2;
+	this->base.FillSessionBuffer((unsigned char*)&host_len, offset, 2);
+	offset += 2;
+	this->base.FillSessionBuffer((unsigned char*)&user_len, offset, 2);
+	offset += 2;
+	this->base.FillSessionBuffer((unsigned char*)&pass_len, offset, 2);
+	offset += 2;
+	if(host_data != nullptr && user_data != nullptr && pass_data != nullptr){ // this is in case the host wants to explicitly send the key content to the SEcube
+		this->base.FillSessionBuffer((unsigned char*)host_data.get(), offset, host_len);
+		offset += host_len;
+		this->base.FillSessionBuffer((unsigned char*)user_data.get(), offset, user_len);
+		offset += user_len;
+		this->base.FillSessionBuffer((unsigned char*)pass_data.get(), offset, pass_len);
+		offset += pass_len;
+	}
+	data_len = offset - L1Request::Offset::DATA;
+	try{
+		TXRXData(L1Commands::Codes::SEPASS, data_len, 0, &resp_len);
+	} catch(L1Exception& e){
+		return false;
+	}
+	if(resp_len != 4){
+		return false;
+	}
+	unique_ptr<uint8_t[]> buffer = make_unique<uint8_t[]>(L1Response::Size::MAX_DATA);
+	// copy response to local buffer
+	memset(buffer.get(), 0, L1Response::Size::MAX_DATA);
+	memcpy(buffer.get(), (this->base.GetSessionBuffer()+L1Request::Offset::DATA), resp_len);
+
+	memcpy(&id,  buffer.get(), 4);
+	return id != 0;
+}
+
+bool L1::L1SEModifyPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len, std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data){
+	uint16_t data_len = 0;
+	uint16_t resp_len = 0;
+	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_MODIFY;
 	uint16_t offset = L1Request::Offset::DATA;
 	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
 	offset += 2;

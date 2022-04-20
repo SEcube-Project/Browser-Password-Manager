@@ -44,7 +44,30 @@ const uint8_t special_chars[13] = "-_.:;,?&%$!@#";
 
 se3_flash_it pass_iterator = { .addr = NULL }; /**< Global variable required by get_all_password() */
 
-uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
+int16_t is_string_contained(uint8_t* a, uint16_t len_text, uint8_t* b, uint16_t len_search){
+	for (uint16_t i = 0; i < len_text && i < len_search; i++){
+		if(a[i] != b[i]){
+			return -1;
+		}
+	}
+	return 0;
+}
+
+uint16_t get_next_id(){
+	uint16_t key_id = 0, kid = 0;
+	se3_flash_it it = { .addr = NULL };
+	while (se3_flash_it_next(&it)){
+		if (it.type == SE3_TYPE_PASS){
+			SE3_GET32(it.addr, SE3_FLASH_PASS_OFF_ID, key_id);
+			if(key_id > kid){
+				kid = key_id;
+			}
+		}
+	}
+	return kid + 1;
+}
+
+uint16_t modify_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
 	uint32_t pass_id = 0; // id of the key to be stored on the device
 	uint16_t host_len = 0; // length of the host provided by the caller (this may be encrypted)
 	uint8_t *host = NULL;
@@ -100,22 +123,88 @@ uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
 
 	// Insert the password
 	se3_flash_it_init(&it);
-	if (!se3_pass_find(password.id, &it)) { // search in the flash memory if a password with the same ID is already present
+	if (se3_pass_find(password.id, &it)) { // search in the flash memory if a password with the same ID is already present
 		it.addr = NULL;
-	}
-	if (NULL != it.addr) { // enter if there's another key with same ID
-		equal = se3_pass_id_equal(&it, &password);  // do not replace if equal
 		if (equal) { // if not equal delete current key
 			if (!se3_flash_it_delete(&it)) {
 				if(host != NULL){free(host);}
 				if(pass != NULL){free(pass);}
 				if(user != NULL){free(user);}
 				return SE3_ERR_HW;
+			} else {
+				// Delete correctly and create with new information
+				if (!se3_pass_new(&it, &password)) {
+					if(host != NULL){free(host);}
+					if(pass != NULL){free(pass);}
+					if(user != NULL){free(user);}
+					return SE3_ERR_MEMORY;
+				}
 			}
 		}
 	}
+	if(host != NULL){free(host);}
+	if(pass != NULL){free(pass);}
+	if(user != NULL){free(user);}
 
-	it.addr = NULL;
+	*resp_size = 2;
+	memcpy(resp, "OK", 2);
+	return SE3_OK;
+}
+
+
+uint16_t add_new_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
+	uint16_t host_len = 0; // length of the host provided by the caller (this may be encrypted)
+	uint8_t *host = NULL;
+	uint16_t user_len = 0; // length of the user provided by the caller (this may be encrypted)
+	uint8_t *user = NULL;
+	uint16_t pass_len = 0; // length of the password provided by the caller (this may be encrypted)
+	uint8_t *pass = NULL;
+	se3_flash_it it = { .addr = NULL };
+
+	se3_flash_pass password;
+
+	// preliminary check
+	if((req_size-2) < 6){ // minimum size check
+		return SE3_ERR_PARAMS;
+	}
+
+	// parse request
+	memcpy(&host_len, req, 2); 		// host length
+	memcpy(&user_len, req+2, 2); 		// username length
+	memcpy(&pass_len, req+2+2, 2); 	// pass length
+	host = (uint8_t*)malloc(host_len); 	// allocate space for the host content
+	user = (uint8_t*)malloc(user_len); 	// allocate space for the user content
+	pass = (uint8_t*)malloc(pass_len); 	// allocate space for the pass content
+	if(host == NULL || pass == NULL || user == NULL){
+		return SE3_ERR_MEMORY;
+	} else {
+		memset(host, 0, host_len);
+		memset(user, 0, user_len);
+		memset(pass, 0, pass_len);
+	}
+
+	if((req_size-2) != (2+2+2+host_len+pass_len+user_len)){ // 4B for key ID, 2B for host len, 2B for user len, 2B for pass len
+		if(host != NULL){ free(host);	}
+		if(user != NULL){ free(user);	}
+		if(pass != NULL){ free(pass);	}
+		return SE3_ERR_PARAMS;
+	}
+
+	memcpy(host, req+2+2+2, 		 			host_len);
+	memcpy(user, req+2+2+2+host_len, 			user_len);
+	memcpy(pass, req+2+2+2+host_len+user_len, pass_len);
+
+	// now everything is ready to store the pass in the SEcube
+	password.id = get_next_id();
+	password.host_size = host_len;
+	password.pass_size = pass_len;
+	password.user_size = user_len;
+	password.host = host;
+	password.user = user;
+	password.pass = pass;
+
+	// Insert the password
+	se3_flash_it_init(&it);
 	if (!se3_pass_new(&it, &password)) {
 		if(host != NULL){free(host);}
 		if(pass != NULL){free(pass);}
@@ -126,8 +215,8 @@ uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
 	if(pass != NULL){free(pass);}
 	if(user != NULL){free(user);}
 
-	*resp_size = 2;
-	memcpy(resp, "OK", 2);
+	memcpy(resp, &password.id, 4);
+	*resp_size = 4;
 	return SE3_OK;
 }
 
@@ -161,16 +250,6 @@ uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 	return SE3_OK;
 }
 
-int16_t is_string_contained(uint8_t* a, uint16_t len_text, uint8_t* b, uint16_t len_search){
-	for (uint16_t i = 0; i < len_text && i < len_search; i++){
-		if(a[i] != b[i]){
-			return -1;
-		}
-	}
-	return 0;
-}
-
-
 uint16_t get_password_by_id(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
 	uint16_t host_len = 0, user_len = 0, pass_len = 0;
 	uint32_t key_id = 0, kid = 0;
@@ -189,8 +268,8 @@ uint16_t get_password_by_id(uint16_t req_size, const uint8_t* req, uint16_t* res
 				// Read from
 				SE3_GET32(it.addr, SE3_FLASH_PASS_OFF_ID, key_id);
 				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_HOST_LEN, host_len);
-				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_PASS_LEN, user_len);
-				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_USER_LEN, pass_len);
+				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_USER_LEN, user_len);
+				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_PASS_LEN, pass_len);
 				memcpy(resp, &key_id, 4);
 				memcpy(resp + 4, &host_len, 2);
 				memcpy(resp + 6, &user_len, 2);
@@ -212,7 +291,7 @@ uint16_t get_password_by_id(uint16_t req_size, const uint8_t* req, uint16_t* res
 }
 
 
-uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
+uint16_t get_all_passwords(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
 
 	// Filter mode
 	uint8_t filter_mode = NO_FILTER;
