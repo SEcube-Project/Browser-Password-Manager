@@ -107,41 +107,25 @@ uint16_t add_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size
 		equal = se3_pass_id_equal(&it, &password);  // do not replace if equal
 		if (equal) { // if not equal delete current key
 			if (!se3_flash_it_delete(&it)) {
-				if(host != NULL){
-					free(host);
-				}
-				if(pass != NULL){
-					free(pass);
-				}
-				if(user != NULL){
-					free(user);
-				}
+				if(host != NULL){free(host);}
+				if(pass != NULL){free(pass);}
+				if(user != NULL){free(user);}
 				return SE3_ERR_HW;
 			}
 		}
 	}
+
 	it.addr = NULL;
 	if (!se3_pass_new(&it, &password)) {
-		if(host != NULL){
-			free(host);
-		}
-		if(pass != NULL){
-			free(pass);
-		}
-		if(user != NULL){
-			free(user);
-		}
+		if(host != NULL){free(host);}
+		if(pass != NULL){free(pass);}
+		if(user != NULL){free(user);}
 		return SE3_ERR_MEMORY;
 	}
-	if(host != NULL){
-		free(host);
-	}
-	if(pass != NULL){
-		free(pass);
-	}
-	if(user != NULL){
-		free(user);
-	}
+	if(host != NULL){free(host);}
+	if(pass != NULL){free(pass);}
+	if(user != NULL){free(user);}
+
 	*resp_size = 2;
 	memcpy(resp, "OK", 2);
 	return SE3_OK;
