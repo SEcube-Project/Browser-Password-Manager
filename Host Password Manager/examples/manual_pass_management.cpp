@@ -186,8 +186,10 @@ int main(){
 //		}
 
 		shared_ptr<uint8_t[]> pass = make_unique<uint8_t[]>(100);
-		l1->L1SEGeneratePassword(10, true, true, pass);
-		int a = 0;
+		l1->L1SEGeneratePassword(100, true, true, true, pass);
+
+		printf("New generated password: ");
+		printArray(pass.get(),  100);
 
 	}
 	return 0;

@@ -55,7 +55,7 @@ bool L1::L1SEDeletePassword(uint32_t pass_id){
 	}
 }
 
-bool L1::L1SEGeneratePassword(uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, std::shared_ptr<uint8_t[]> generated_pass){
+bool L1::L1SEGeneratePassword(uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, uint8_t enable_numbers_chars, std::shared_ptr<uint8_t[]> generated_pass){
 	uint16_t data_len = 0;
 	uint16_t resp_len = 0;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_GENERATE_RANDOM;
@@ -64,6 +64,15 @@ bool L1::L1SEGeneratePassword(uint16_t pass_len, uint8_t enable_upper_case, uint
 	offset += 2;
 	this->base.FillSessionBuffer((unsigned char*)&pass_len, offset, 2);
 	offset += 2;
+
+	this->base.FillSessionBuffer((unsigned char*)&enable_upper_case, offset, 1);
+	offset += 1;
+
+	this->base.FillSessionBuffer((unsigned char*)&enable_numbers_chars, offset, 1);
+	offset += 1;
+
+	this->base.FillSessionBuffer((unsigned char*)&enable_special_chars, offset, 1);
+	offset += 1;
 
 	data_len = offset - L1Request::Offset::DATA;
 	try{

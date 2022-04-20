@@ -256,8 +256,9 @@ uint16_t get_all_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 	return SE3_OK;
 }
 
-uint8_t lowercase[26] = "abcdefghijklmnopqrstuvwxyz";
-uint8_t uppercase[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+uint8_t lowercase_chars[26] = "abcdefghijklmnopqrstuvwxyz";
+uint8_t uppercase_chars[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+uint8_t numbers_chars[10] = "1234567890";
 uint8_t special_chars[13] = "-_.:;,?&%$!@#";
 
 uint16_t generate_random_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
@@ -267,16 +268,21 @@ uint16_t generate_random_password(uint16_t req_size, const uint8_t* req, uint16_
 	uint8_t uppercase = 0;
 
 	memcpy(&pass_len, req, 2);
-	memcpy(&special_char, req + 2, 1);
+	memcpy(&uppercase, req + 2, 1);
 	memcpy(&numbers, req + 3, 1);
-	memcpy(&uppercase, req + 4, 1);
+	memcpy(&special_char, req + 4, 1);
 
-	uint8_t* all_usable = (uint8_t*)malloc(special_char*13 + uppercase*26 + 26);
+	uint8_t* all_usable = (uint8_t*)malloc(numbers*10 + special_char*13 + uppercase*26 + 26);
 	uint8_t all_usable_count = 26;
-	memcpy(all_usable, lowercase, 26);
+
+	memcpy(all_usable, lowercase_chars, 26);
 	if(uppercase == 1) {
-		memcpy(all_usable + all_usable_count, uppercase, 26);
+		memcpy(all_usable + all_usable_count, uppercase_chars, 26);
 		all_usable_count+=26;
+	}
+	if(numbers == 1) {
+		memcpy(all_usable + all_usable_count, numbers_chars, 10);
+		all_usable_count+=10;
 	}
 	if(special_char == 1) {
 		memcpy(all_usable + all_usable_count, special_chars, 13);
@@ -299,7 +305,7 @@ uint16_t generate_random_password(uint16_t req_size, const uint8_t* req, uint16_
 	}
 
 	for (int i = 0; i < pass_len; i++){
-		resp[i] = all_usable[key_data[i] % all_usable_count];
+		resp[i] = all_usable[((uint8_t)key_data[i]) % all_usable_count];
 	}
 
 	*resp_size = pass_len;
