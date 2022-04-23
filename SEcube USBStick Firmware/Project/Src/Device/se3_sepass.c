@@ -67,7 +67,6 @@ uint16_t modify_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 	uint8_t *user = NULL;
 	uint16_t pass_len = 0; // length of the password provided by the caller (this may be encrypted)
 	uint8_t *pass = NULL;
-    bool equal = false;
 	se3_flash_it it = { .addr = NULL };
 
 	se3_flash_pass password;
@@ -115,23 +114,25 @@ uint16_t modify_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 
 	// Insert the password
 	if (se3_pass_find(password.id, &it)) { // search in the flash memory if a password with the same ID is already present
-		it.addr = NULL;
-		if (equal) { // if not equal delete current key
-			if (!se3_flash_it_delete(&it)) {
+		if (!se3_flash_it_delete(&it)) {
+			if(host != NULL){free(host);}
+			if(pass != NULL){free(pass);}
+			if(user != NULL){free(user);}
+			return SE3_ERR_HW;
+		} else {
+			// Recreate the item with same id
+			se3_flash_it_init(&it);
+			if (!se3_pass_new(&it, &password)) {
 				if(host != NULL){free(host);}
 				if(pass != NULL){free(pass);}
 				if(user != NULL){free(user);}
-				return SE3_ERR_HW;
-			} else {
-				// Delete correctly and create with new information
-				if (!se3_pass_new(&it, &password)) {
-					if(host != NULL){free(host);}
-					if(pass != NULL){free(pass);}
-					if(user != NULL){free(user);}
-					return SE3_ERR_MEMORY;
-				}
+				return SE3_ERR_MEMORY;
 			}
 		}
+	} else {
+		// ID not found
+		SE3_TRACE(("[se3_sepass.modify_password] password id not found\n"));
+		return SE3_ERR_RESOURCE;
 	}
 	if(host != NULL){free(host);}
 	if(pass != NULL){free(pass);}

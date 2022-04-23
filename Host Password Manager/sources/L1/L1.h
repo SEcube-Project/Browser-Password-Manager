@@ -224,7 +224,7 @@ public:
 	bool L1SEpass_GetKeyEnc(uint32_t key_export_id, uint32_t key_wrapping_key, std::shared_ptr<uint8_t[]>& key_export_data, uint16_t& key_export_len);
 
 	bool L1SEGetPasswordById(uint32_t id, se3Pass& password);
-	bool L1SEModifyPassword(uint32_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len, std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data);
+	bool L1SEModifyPassword(uint32_t pass_id, se3Pass& password);
 	bool L1SEGetAllPasswords(std::vector<se3Pass>& passList);
 	bool L1SEGetAllPasswordsByHostName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
 	bool L1SEGetAllPasswordsByUserName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);

@@ -115,7 +115,7 @@ bool se3_pass_new(se3_flash_it* it, se3_flash_pass* key)
         return false;
     }
 	if (!se3_flash_it_new(it, SE3_TYPE_PASS, size)) {
-		SE3_TRACE(("E pass_new cannot allocate flash block\n"));
+		SE3_TRACE(("[se3_pass_new] pass_new cannot allocate flash block\n"));
 		return false;
 	}
 	return se3_pass_write(it, key);

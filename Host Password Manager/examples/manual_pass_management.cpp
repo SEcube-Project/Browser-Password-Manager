@@ -177,20 +177,29 @@ int main(){
 			printf("Unable to find pass by id\n");
 		}
 
-		// ############## SEARCH BY ID ##############
-		if(l1->L1SEGetPasswordById(id3, searchedById)){
-			printf("\n\nFound pass with aid %d\n", searchedById.id);
-			printf("Element Id:\t\t%d\n", searchedById.id);
-			printf("Element Hostname:\t");
-			printArray(searchedById.host, searchedById.hostSize);
-			printf("Element Username:\t");
-			printArray(searchedById.user, searchedById.userSize);
-			printf("Element Password:\t");
-			printArray(searchedById.pass, searchedById.passSize);
-			printf("\n");
+		// ############## MODIFY ##############
+		searchedById.passSize = fillByteArray("PASSNEW", userVal);
+		searchedById.pass = userVal.get();
+		if(l1->L1SEModifyPassword(searchedById.id, searchedById)){
+			if(l1->L1SEGetPasswordById(searchedById.id, searchedById)){
+				printf("\n\nFound modified pass with id %d\n", searchedById.id);
+				printf("Element Id:\t\t%d\n", searchedById.id);
+				printf("Element Hostname:\t");
+				printArray(searchedById.host, searchedById.hostSize);
+				printf("Element Username:\t");
+				printArray(searchedById.user, searchedById.userSize);
+				printf("Element Password:\t");
+				printArray(searchedById.pass, searchedById.passSize);
+				printf("\n");
+			} else {
+				printf("Unable to find pass by id\n");
+			}
 		} else {
-			printf("Unable to find pass by id\n");
+			printf("Unable to modify pass by id\n");
 		}
+
+		// ############## SEARCH BY ID ##############
+
 
 
 		// ############## LIST ALL ##############
