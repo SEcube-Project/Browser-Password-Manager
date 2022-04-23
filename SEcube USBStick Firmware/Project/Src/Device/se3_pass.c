@@ -24,6 +24,19 @@
 
 #include "se3_pass.h"
 
+uint16_t get_pass_next_id(se3_flash_it* it){
+	uint16_t key_id = 0, kid = 0;
+	while (se3_flash_it_next(&it)){
+		if (it->type == SE3_TYPE_PASS){
+			SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, key_id);
+			if(key_id > kid){
+				kid = key_id;
+			}
+		}
+	}
+	return kid + 1;
+}
+
 
 bool se3_pass_find(uint32_t id, se3_flash_it* it)
 {
@@ -51,6 +64,7 @@ bool se3_pass_id_equal(se3_flash_it* it, se3_flash_pass* key)
 	if (u32tmp != key->id){	return false; }
 	return true;
 }
+
 
 bool se3_pass_write(se3_flash_it* it, se3_flash_pass* key)
 {
@@ -92,6 +106,7 @@ bool se3_pass_write(se3_flash_it* it, se3_flash_pass* key)
 	return success;
 }
 
+
 bool se3_pass_new(se3_flash_it* it, se3_flash_pass* key)
 {
 	uint16_t size = (SE3_FLASH_PASS_SIZE_HEADER + key->host_size + key->pass_size + key->user_size);
@@ -105,12 +120,18 @@ bool se3_pass_new(se3_flash_it* it, se3_flash_pass* key)
 	return se3_pass_write(it, key);
 }
 
+
 void se3_pass_read(se3_flash_it* it, se3_flash_pass* key)
 {
     SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, key->id);
     SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_HOST_LEN, key->host_size);
     SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_PASS_LEN, key->pass_size);
     SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_USER_LEN, key->user_size);
+
+	key->host = (uint8_t*)malloc(key->host_size); 	// allocate space for the host content
+	key->user = (uint8_t*)malloc(key->user_size); 	// allocate space for the user content
+	key->pass = (uint8_t*)malloc(key->pass_size); 	// allocate space for the pass content
+
 	if (key->host) {
 		memcpy(key->host, it->addr + SE3_FLASH_PASS_OFF_DATA, key->host_size);
 	}
@@ -121,6 +142,7 @@ void se3_pass_read(se3_flash_it* it, se3_flash_pass* key)
 		memcpy(key->pass, it->addr + SE3_FLASH_PASS_OFF_DATA + key->host_size + key->user_size, key->pass_size);
 	}
 }
+
 
 void se3_pass_fingerprint(se3_flash_pass* key, const uint8_t* salt, uint8_t* fingerprint)
 {

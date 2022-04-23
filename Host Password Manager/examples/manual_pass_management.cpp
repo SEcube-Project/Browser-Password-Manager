@@ -164,7 +164,22 @@ int main(){
 		// ############## SEARCH BY ID ##############
 		se3Pass searchedById;
 		if(l1->L1SEGetPasswordById(id2, searchedById)){
-			printf("\n\nFound pass with id %d\n", id2);
+			printf("\n\nFound pass with id %d\n", searchedById.id);
+			printf("Element Id:\t\t%d\n", searchedById.id);
+			printf("Element Hostname:\t");
+			printArray(searchedById.host, searchedById.hostSize);
+			printf("Element Username:\t");
+			printArray(searchedById.user, searchedById.userSize);
+			printf("Element Password:\t");
+			printArray(searchedById.pass, searchedById.passSize);
+			printf("\n");
+		} else {
+			printf("Unable to find pass by id\n");
+		}
+
+		// ############## SEARCH BY ID ##############
+		if(l1->L1SEGetPasswordById(id3, searchedById)){
+			printf("\n\nFound pass with aid %d\n", searchedById.id);
 			printf("Element Id:\t\t%d\n", searchedById.id);
 			printf("Element Hostname:\t");
 			printArray(searchedById.host, searchedById.hostSize);

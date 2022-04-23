@@ -24,7 +24,7 @@
 
 /**
  *  \file se3_sekey.c
- *  \date 22/06/2020
+ *  \date 22/04/20222
  *  \version SEcube SDK 1.5.1
  *  \brief Firmware functionalities to support the KMS.
  */
@@ -37,12 +37,18 @@
  * 	it has to be implemented. The provided code is just a stub
  */
 
+se3_flash_it pass_iterator = { .addr = NULL }; /**< Global variable required by get_all_password() */
+
 const uint8_t lowercase_chars[26] = "abcdefghijklmnopqrstuvwxyz";
 const uint8_t uppercase_chars[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const uint8_t numbers_chars[10] = "1234567890";
 const uint8_t special_chars[13] = "-_.:;,?&%$!@#";
 
-se3_flash_it pass_iterator = { .addr = NULL }; /**< Global variable required by get_all_password() */
+void deallocate_user_struct(se3_flash_pass *password){
+	if(password->host) { free(password->host); }
+	if(password->user) { free(password->user); }
+	if(password->pass) { free(password->pass); }
+}
 
 int16_t is_string_contained(uint8_t* a, uint16_t len_text, uint8_t* b, uint16_t len_search){
 	for (uint16_t i = 0; i < len_text && i < len_search; i++){
@@ -51,20 +57,6 @@ int16_t is_string_contained(uint8_t* a, uint16_t len_text, uint8_t* b, uint16_t 
 		}
 	}
 	return 0;
-}
-
-uint16_t get_next_id(){
-	uint16_t key_id = 0, kid = 0;
-	se3_flash_it it = { .addr = NULL };
-	while (se3_flash_it_next(&it)){
-		if (it.type == SE3_TYPE_PASS){
-			SE3_GET32(it.addr, SE3_FLASH_PASS_OFF_ID, key_id);
-			if(key_id > kid){
-				kid = key_id;
-			}
-		}
-	}
-	return kid + 1;
 }
 
 uint16_t modify_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
@@ -195,7 +187,7 @@ uint16_t add_new_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 	memcpy(pass, req+2+2+2+host_len+user_len, pass_len);
 
 	// now everything is ready to store the pass in the SEcube
-	password.id = get_next_id();
+	password.id = get_pass_next_id(&it);
 	password.host_size = host_len;
 	password.pass_size = pass_len;
 	password.user_size = user_len;
@@ -251,9 +243,11 @@ uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 }
 
 uint16_t get_password_by_id(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
-	uint16_t host_len = 0, user_len = 0, pass_len = 0;
 	uint32_t key_id = 0, kid = 0;
 	se3_flash_it it = { .addr = NULL };
+	se3_flash_pass password;
+
+
 	*resp_size = 0;
 	if((req_size - 2) != 4){
 		return SE3_ERR_PARAMS;
@@ -265,24 +259,24 @@ uint16_t get_password_by_id(uint16_t req_size, const uint8_t* req, uint16_t* res
 		if (it.type == SE3_TYPE_PASS){
 			SE3_GET32(it.addr, SE3_FLASH_PASS_OFF_ID, key_id);
 			if(key_id == kid){
-				// Read from
-				SE3_GET32(it.addr, SE3_FLASH_PASS_OFF_ID, key_id);
-				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_HOST_LEN, host_len);
-				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_USER_LEN, user_len);
-				SE3_GET16(it.addr, SE3_FLASH_PASS_OFF_PASS_LEN, pass_len);
-				memcpy(resp, &key_id, 4);
-				memcpy(resp + 4, &host_len, 2);
-				memcpy(resp + 6, &user_len, 2);
-				memcpy(resp + 8, &pass_len, 2);
-				memcpy(resp + 10, it.addr + SE3_FLASH_PASS_OFF_DATA, host_len);
-				memcpy(resp + 10 + host_len, it.addr + SE3_FLASH_PASS_OFF_DATA + host_len, user_len);
-				memcpy(resp + 10 + host_len + user_len, it.addr + SE3_FLASH_PASS_OFF_DATA + host_len + user_len, pass_len);
-				*resp_size = 10 + host_len + user_len + pass_len;
+				// Read password record
+				se3_pass_read(&it, &password);
+
+				memcpy(resp, &password.id, 4);
+				memcpy(resp + 4, &password.host_size, 2);
+				memcpy(resp + 6, &password.user_size, 2);
+				memcpy(resp + 8, &password.pass_size, 2);
+				memcpy(resp + 10, password.host, password.host_size);
+				memcpy(resp + 10 + password.host_size, password.user, password.user_size);
+				memcpy(resp + 10 + password.host_size + password.user_size, password.pass, password.pass_size);
+
+				*resp_size = 10 + password.host_size + password.user_size + password.pass_size;
+
+				deallocate_user_struct(&password);
 				break;
 			}
 		}
 	}
-	se3_flash_it_init(&pass_iterator);
 
 	memset(resp + (*resp_size), 0, 10); // put all zeroes as the last id (id = 0 is not valid so the host side will understand that we reached the end of the flash)
 	*resp_size = (*resp_size) + 10;
@@ -304,50 +298,47 @@ uint16_t get_all_passwords(uint16_t req_size, const uint8_t* req, uint16_t* resp
 		memcpy(filter_field, req+4, filter_field_len);
 	}
 
-	uint32_t pass_id = 0;
-	uint16_t offset = 0, host_len = 0, user_len = 0, pass_len = 0;
+	uint16_t offset = 0;
+	se3_flash_pass password;
 	*resp_size = 0;
 	do {
 		/* 7536 is the limit of data we can write in requests and responses to/from the SEcube */
 		if(offset >= 7532){ // max is 7536 but we must keep 4 bytes available for ID=0 sent in case we reach the end of the flash (see below at the end of the function)
-			if(filter_field != NULL){
-				free(filter_field);
-			}
+			if(filter_field != NULL){ free(filter_field); }
 			return SE3_OK; // still in the middle of the flash...not all IDs returned (but return here because we can't go past 7536 bytes, next time we will start from next flash sector)
 		}
 		if (pass_iterator.addr != NULL && pass_iterator.type == SE3_TYPE_PASS) {
-			SE3_GET32(pass_iterator.addr, SE3_FLASH_PASS_OFF_ID, pass_id); // get key ID and copy it to the response buffer
-			SE3_GET16(pass_iterator.addr, SE3_FLASH_PASS_OFF_HOST_LEN, host_len); // get key length
-			SE3_GET16(pass_iterator.addr, SE3_FLASH_PASS_OFF_USER_LEN, user_len); // get key length
-			SE3_GET16(pass_iterator.addr, SE3_FLASH_PASS_OFF_PASS_LEN, pass_len); // get key length
+			se3_pass_read(&pass_iterator, &password);
 
-			memcpy(resp + offset, &pass_id, 4);
+			memcpy(resp + offset, &password.id, 4);
 			offset += 4;
-			memcpy(resp + offset, &host_len, 2);
+			memcpy(resp + offset, &password.host_size, 2);
 			offset += 2;
-			memcpy(resp + offset, &user_len, 2);
+			memcpy(resp + offset, &password.user_size, 2);
 			offset += 2;
-			memcpy(resp + offset, &pass_len, 2);
+			memcpy(resp + offset, &password.pass_size, 2);
 			offset += 2;
 
-			memcpy(resp + offset, pass_iterator.addr + SE3_FLASH_PASS_OFF_DATA, host_len);
-			offset += host_len;
-			memcpy(resp + offset, pass_iterator.addr + SE3_FLASH_PASS_OFF_DATA + host_len, user_len);
-			offset += user_len;
-			memcpy(resp + offset, pass_iterator.addr + SE3_FLASH_PASS_OFF_DATA + host_len + user_len, pass_len);
-			offset += pass_len;
+			memcpy(resp + offset, password.host, password.host_size);
+			offset += password.host_size;
+			memcpy(resp + offset, password.user, password.user_size);
+			offset += password.user_size;
+			memcpy(resp + offset, password.pass, password.pass_size);
+			offset += password.pass_size;
+
 
 			// Filter the unwanted elements
 			if(filter_mode == HOST_FILTER){
-				if(is_string_contained(resp + offset - pass_len - user_len - host_len, host_len, filter_field, filter_field_len) < 0){
-					offset -= (10 + host_len + user_len + pass_len);
+				if(is_string_contained(password.host, password.host_size, filter_field, filter_field_len) < 0){
+					offset -= (10 + password.host_size + password.user_size + password.pass_size);
 				}
 			} else if (filter_mode == USER_FILTER){
-				if(is_string_contained(resp + offset - pass_len - user_len, user_len, filter_field, filter_field_len) < 0){
-					offset -= (10 + host_len + user_len + pass_len);
+				if(is_string_contained(password.user, password.user_size, filter_field, filter_field_len) < 0){
+					offset -= (10 + password.host_size + password.user_size + password.pass_size);
 				}
 			}
 
+			deallocate_user_struct(&password);
 		}
 	} while (se3_flash_it_next(&pass_iterator));
 	/* reset the iterator to the beginning of the flash (required for next call of load_key_ids).
@@ -358,9 +349,8 @@ uint16_t get_all_passwords(uint16_t req_size, const uint8_t* req, uint16_t* resp
 	memset(resp + offset, 0, 10); // put all zeroes as the last id (id = 0 is not valid so the host side will understand that we reached the end of the flash)
 	*resp_size = offset + 10;
 
-	if(filter_field != NULL){
-		free(filter_field);
-	}
+	if(filter_field != NULL){ free(filter_field); }
+
 	return SE3_OK;
 }
 
