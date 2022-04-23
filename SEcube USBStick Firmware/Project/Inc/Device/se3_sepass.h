@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * File Name          : se3_sekey.h
+  * File Name          : se3_sepass.h
   * Description        : Firmware functionalities to support the KMS
   ******************************************************************************
   *

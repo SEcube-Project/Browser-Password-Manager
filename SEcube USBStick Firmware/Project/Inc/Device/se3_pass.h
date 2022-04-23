@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * File Name          : se3_passs.h
-  * Description        : Low-level key management
+  * File Name          : se3_pass.h
+  * Description        : Low-level password management
   ******************************************************************************
   *
   * Copyright(c) 2016-present Blu5 Group <https://www.blu5group.com>
@@ -31,13 +31,16 @@
 #include "pbkdf2.h"
 #define SE3_TYPE_PASS 100
 
-/** \brief Flash key structure
+/** \brief Flash password structure
  *
  *  Disposition of the fields within the flash node:
- *  0:3     id
- *  4:5     host_size
- *  6:7     pass_size
- *  8:(6+data_size-1) data
+ *  0:3     												id
+ *  4:5     												host_size
+ *  6:7     												user_size
+ *  8:9     												pass_size
+ *  10:(10+host_size-1) 									hostname
+ *  (10+host_size):(10+host_size+user_size-1) 				username
+ *  (10+host_size+pass_size):(10+host_size+user_size-1) 	password
  */
 typedef struct se3_flash_pass_ {
 	uint32_t id;
@@ -49,7 +52,7 @@ typedef struct se3_flash_pass_ {
 	uint8_t* pass;
 } se3_flash_pass;
 
-/** Flash key fields */
+/** Flash password fields */
 enum {
     SE3_FLASH_PASS_OFF_ID = 0,
     SE3_FLASH_PASS_OFF_HOST_LEN = 4,
@@ -60,57 +63,57 @@ enum {
 };
 
 
-/** \brief Find a key
+/** \brief Find a password
  *
- *  Find a key in the flash memory
- *  \param id identifier of the key
- *  \param it a flash iterator that will be set to the key's position
+ *  Find a password in the flash memory
+ *  \param id identifier of the password
+ *  \param it a flash iterator that will be set to the password's position
  *  \return true on success
  */
 bool se3_pass_find(uint32_t id, se3_flash_it* it);
 
-/** \brief Add a new key
+/** \brief Add a new password
  *  
- *  Create a new node with the necessary amount of space for the key,
- *  then write the key.
+ *  Create a new node with the necessary amount of space for the passsword,
+ *  then write the passsword.
  *  \remark if a flash operation fails, the hwerror flag (se3c0.hwerror) is set.
  *  \param it a flash iterator which will receive the position of the new node
- *  \param key a flash key structure containing the key information
+ *  \param password a flash password structure containing the password information
  *      The data and name fields must point to a valid memory region,
  *      unless their size (data_size, name_size) is zero.
  *  \return true on success, else false
  */
-bool se3_pass_new(se3_flash_it* it, se3_flash_pass* key);
+bool se3_pass_new(se3_flash_it* it, se3_flash_pass* password);
 
-bool se3_pass_id_equal(se3_flash_it* it, se3_flash_pass* key);
+bool se3_pass_id_equal(se3_flash_it* it, se3_flash_pass* password);
 
-/** \brief Read a key
+/** \brief Read a password
  *  
- *  Read a key from a flash node
- *  \param it a flash iterator pointing to the key
- *  \param key a flash key structure which will receive the key's information. 
+ *  Read a password from a flash node
+ *  \param it a flash iterator pointing to the password
+ *  \param password a flash password structure which will receive the password's information.
  *      The data and name fields will be filled only if not NULL.
  */
-void se3_pass_read(se3_flash_it* it, se3_flash_pass* key);
+void se3_pass_read(se3_flash_it* it, se3_flash_pass* password);
 
-/** \brief Write key data
+/** \brief Write password data
  *  
- *  Write key data to a flash node
+ *  Write password data to a flash node
  *  \remark if a flash operation fails, the hwerror flag (se3c0.hwerror) is set.
- *  \param it a flash iterator pointing to a newly created flash node of key type
- *  \param key a flash key structure containing the key information
+ *  \param it a flash iterator pointing to a newly created flash node of password type
+ *  \param password a flash password structure containing the password information
  *      The data and name fields must point to a valid memory region,
  *      unless their size (data_size, name_size) is zero.
  *  \return true on success, else false
  */
-bool se3_pass_write(se3_flash_it* it, se3_flash_pass* key);
+bool se3_pass_write(se3_flash_it* it, se3_flash_pass* password);
 
-/** \brief Produce salted key fingerprint
+/** \brief Produce salted password fingerprint
  *  
- *  \param key a flash key structure containing the key information
+ *  \param password a flash password structure containing the password information
  *  \param salt a 32-byte salt
- *  \param fingerprint output 32-byte fingerprint of the key data
+ *  \param fingerprint output 32-byte fingerprint of the password data
  */
-void se3_pass_fingerprint(se3_flash_pass* key, const uint8_t* salt, uint8_t* fingerprint);
+void se3_pass_fingerprint(se3_flash_pass* password, const uint8_t* salt, uint8_t* fingerprint);
 
 #endif

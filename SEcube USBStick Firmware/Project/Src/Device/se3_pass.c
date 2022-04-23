@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * File Name          : se3_passs.c
-  * Description        : Low-level key management
+  * File Name          : se3_pass.c
+  * Description        : Low-level password management
   ******************************************************************************
   *
   * Copyright(c) 2016-present Blu5 Group <https://www.blu5group.com>
@@ -26,12 +26,12 @@
 
 bool se3_pass_find(uint32_t id, se3_flash_it* it)
 {
-    uint32_t key_id = 0;
+    uint32_t password_id = 0;
 	se3_flash_it_init(it);
 	while (se3_flash_it_next(it)) {
 		if (it->type == SE3_TYPE_PASS) {
-            SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, key_id);
-			if (key_id == id) {
+            SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, password_id);
+			if (password_id == id) {
 				return true;
 			}
 		}
@@ -40,46 +40,46 @@ bool se3_pass_find(uint32_t id, se3_flash_it* it)
 }
 
 
-bool se3_pass_id_equal(se3_flash_it* it, se3_flash_pass* key)
+bool se3_pass_id_equal(se3_flash_it* it, se3_flash_pass* password)
 {
 	uint32_t u32tmp = 0;
-	if (key->host == NULL || key->pass == NULL){
+	if (password->host == NULL || password->pass == NULL){
 		return false;
 	}
 	SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, u32tmp);
-	if (u32tmp != key->id){	return false; }
+	if (u32tmp != password->id){	return false; }
 	return true;
 }
 
 
-bool se3_pass_write(se3_flash_it* it, se3_flash_pass* key)
+bool se3_pass_write(se3_flash_it* it, se3_flash_pass* password)
 {
 	bool success = false;
 	do {
-		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_ID, (uint8_t*)&(key->id), 4)) { // id is uint32_t
+		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_ID, (uint8_t*)&(password->id), 4)) { // id is uint32_t
 			break;
 		}
-		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_HOST_LEN, (uint8_t*)&(key->host_size), 2)) { // datalen is uint16_t
+		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_HOST_LEN, (uint8_t*)&(password->host_size), 2)) { // datalen is uint16_t
 			break;
 		}
-		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_USER_LEN, (uint8_t*)&(key->user_size), 2)) { // datalen is uint16_t
+		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_USER_LEN, (uint8_t*)&(password->user_size), 2)) { // datalen is uint16_t
 			break;
 		}
-		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_PASS_LEN, (uint8_t*)&(key->pass_size), 2)) { // datalen is uint16_t
+		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_PASS_LEN, (uint8_t*)&(password->pass_size), 2)) { // datalen is uint16_t
 			break;
 		}
-		if (key->host_size) {
-			if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_DATA, key->host, key->host_size)) {
+		if (password->host_size) {
+			if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_DATA, password->host, password->host_size)) {
 				break;
 			}
 		}
-		if (key->user_size) {
-			if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_DATA + key->host_size, key->user, key->user_size)) {
+		if (password->user_size) {
+			if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_DATA + password->host_size, password->user, password->user_size)) {
 				break;
 			}
 		}
-		if (key->pass_size) {
-			if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_DATA + key->host_size + key->user_size, key->pass, key->pass_size)) {
+		if (password->pass_size) {
+			if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_DATA + password->host_size + password->user_size, password->pass, password->pass_size)) {
 				break;
 			}
 		}
@@ -93,9 +93,9 @@ bool se3_pass_write(se3_flash_it* it, se3_flash_pass* key)
 }
 
 
-bool se3_pass_new(se3_flash_it* it, se3_flash_pass* key)
+bool se3_pass_new(se3_flash_it* it, se3_flash_pass* password)
 {
-	uint16_t size = (SE3_FLASH_PASS_SIZE_HEADER + key->host_size + key->pass_size + key->user_size);
+	uint16_t size = (SE3_FLASH_PASS_SIZE_HEADER + password->host_size + password->pass_size + password->user_size);
     if (size > SE3_FLASH_NODE_DATA_MAX) {
         return false;
     }
@@ -103,34 +103,34 @@ bool se3_pass_new(se3_flash_it* it, se3_flash_pass* key)
 		SE3_TRACE(("[se3_pass_new] pass_new cannot allocate flash block\n"));
 		return false;
 	}
-	return se3_pass_write(it, key);
+	return se3_pass_write(it, password);
 }
 
 
-void se3_pass_read(se3_flash_it* it, se3_flash_pass* key)
+void se3_pass_read(se3_flash_it* it, se3_flash_pass* password)
 {
-    SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, key->id);
-    SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_HOST_LEN, key->host_size);
-    SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_PASS_LEN, key->pass_size);
-    SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_USER_LEN, key->user_size);
+    SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, password->id);
+    SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_HOST_LEN, password->host_size);
+    SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_PASS_LEN, password->pass_size);
+    SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_USER_LEN, password->user_size);
 
-	key->host = (uint8_t*)malloc(key->host_size); 	// allocate space for the host content
-	key->user = (uint8_t*)malloc(key->user_size); 	// allocate space for the user content
-	key->pass = (uint8_t*)malloc(key->pass_size); 	// allocate space for the pass content
+	password->host = (uint8_t*)malloc(password->host_size); 	// allocate space for the host content
+	password->user = (uint8_t*)malloc(password->user_size); 	// allocate space for the user content
+	password->pass = (uint8_t*)malloc(password->pass_size); 	// allocate space for the pass content
 
-	if (key->host) {
-		memcpy(key->host, it->addr + SE3_FLASH_PASS_OFF_DATA, key->host_size);
+	if (password->host) {
+		memcpy(password->host, it->addr + SE3_FLASH_PASS_OFF_DATA, password->host_size);
 	}
-	if (key->user) {
-		memcpy(key->user, it->addr + SE3_FLASH_PASS_OFF_DATA + key->host_size, key->user_size);
+	if (password->user) {
+		memcpy(password->user, it->addr + SE3_FLASH_PASS_OFF_DATA + password->host_size, password->user_size);
 	}
-	if (key->pass) {
-		memcpy(key->pass, it->addr + SE3_FLASH_PASS_OFF_DATA + key->host_size + key->user_size, key->pass_size);
+	if (password->pass) {
+		memcpy(password->pass, it->addr + SE3_FLASH_PASS_OFF_DATA + password->host_size + password->user_size, password->pass_size);
 	}
 }
 
 
-void se3_pass_fingerprint(se3_flash_pass* key, const uint8_t* salt, uint8_t* fingerprint)
+void se3_pass_fingerprint(se3_flash_pass* password, const uint8_t* salt, uint8_t* fingerprint)
 {
-	PBKDF2HmacSha256(key->pass, key->pass_size, salt, SE3_KEY_SALT_SIZE, 1, fingerprint, SE3_KEY_FINGERPRINT_SIZE);
+	PBKDF2HmacSha256(password->pass, password->pass_size, salt, SE3_PASS_SALT_SIZE, 1, fingerprint, SE3_PASS_FINGERPRINT_SIZE);
 }
