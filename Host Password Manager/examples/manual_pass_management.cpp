@@ -134,7 +134,8 @@ int main(){
 		uint16_t hostSize = fillByteArray("youtube.com", hostVal);
 		uint16_t userSize = fillByteArray("mat@gmail.com", userVal);
 		uint16_t passSize = fillByteArray("pass10sZero", passVal);
-		if(l1->L1SEAddPassword(hostSize, userSize, passSize, hostVal, userVal, passVal, id1)){
+
+		if(l1->L1SEAddPassword(1, hostSize, userSize, passSize, hostVal, userVal, passVal)){
 			printf("Added new pass with id %d!\n", id1);
 		} else {
 			printf("Unable to add!\n");
@@ -144,7 +145,7 @@ int main(){
 		hostSize = fillByteArray("gmail.com", hostVal);
 		userSize = fillByteArray("mat@gmail.com", userVal);
 		passSize = fillByteArray("qwertyuiop", passVal);
-		if(l1->L1SEAddPassword(hostSize, userSize, passSize, hostVal, userVal, passVal, id2)){
+		if(l1->L1SEAddPassword(2, hostSize, userSize, passSize, hostVal, userVal, passVal)){
 			printf("Added new pass with id %d!\n", id2);
 		} else {
 			printf("Unable to add!\n");
@@ -154,7 +155,7 @@ int main(){
 		hostSize = fillByteArray("youporn.com", hostVal);
 		userSize = fillByteArray("xxx@gmail.com", userVal);
 		passSize = fillByteArray("xxXxxa33dss", passVal);
-		if(l1->L1SEAddPassword(hostSize, userSize, passSize, hostVal, userVal, passVal, id3)){
+		if(l1->L1SEAddPassword(3, hostSize, userSize, passSize, hostVal, userVal, passVal)){
 			printf("Added new pass with id %d!\n", id3);
 		} else {
 			printf("Unable to add!\n");
@@ -163,7 +164,7 @@ int main(){
 
 		// ############## SEARCH BY ID ##############
 		se3Pass searchedById;
-		if(l1->L1SEGetPasswordById(id2, searchedById)){
+		if(l1->L1SEGetPasswordById(2, searchedById)){
 			printf("\n\nFound pass with id %d\n", searchedById.id);
 			printf("Element Id:\t\t%d\n", searchedById.id);
 			printf("Element Hostname:\t");

@@ -24,21 +24,6 @@
 
 #include "se3_pass.h"
 
-uint16_t get_pass_next_id(se3_flash_it* it){
-	uint16_t key_id = 0, kid = 0;
-	se3_flash_it_init(it);
-	while (se3_flash_it_next(it)) {
-		if (it->type == SE3_TYPE_PASS){
-			SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, key_id);
-			if(key_id > kid){
-				kid = key_id;
-			}
-		}
-	}
-	return kid + 1;
-}
-
-
 bool se3_pass_find(uint32_t id, se3_flash_it* it)
 {
     uint32_t key_id = 0;

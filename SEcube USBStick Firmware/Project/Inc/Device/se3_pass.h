@@ -60,8 +60,6 @@ enum {
 };
 
 
-uint16_t get_pass_next_id(se3_flash_it* it);
-
 /** \brief Find a key
  *
  *  Find a key in the flash memory
