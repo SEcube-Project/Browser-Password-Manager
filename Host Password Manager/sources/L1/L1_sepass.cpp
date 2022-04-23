@@ -89,7 +89,7 @@ bool L1::L1SEGenerateRandomPassword(uint16_t pass_len, uint8_t enable_upper_case
 	return true;
 }
 
-bool L1::L1SEAddPassword(uint16_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len, std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data){
+bool L1::L1SEAddPassword(uint16_t pass_id, std::shared_ptr<uint8_t[]> host_data, uint16_t host_len, std::shared_ptr<uint8_t[]> user_data, uint16_t user_len, std::shared_ptr<uint8_t[]> pass_data, uint16_t pass_len){
 	se3Pass pass;
 	pass.id = pass_id;
 	pass.hostSize = host_len;
@@ -142,7 +142,7 @@ bool L1::L1SEModifyPassword(uint32_t pass_id, se3Pass& password){
 	}
 }
 
-bool L1::L1SEGetPasswordById(uint32_t id, se3Pass& pass)
+bool L1::L1SEGetPasswordById(uint32_t pass_id, se3Pass& pass)
 {
 	uint16_t data_len = 0;
 	uint16_t resp_len = 0;
@@ -150,7 +150,7 @@ bool L1::L1SEGetPasswordById(uint32_t id, se3Pass& pass)
 	uint16_t offset = L1Request::Offset::DATA;
 	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
 	offset += 2;
-	this->base.FillSessionBuffer((unsigned char*)&id, offset, 4);
+	this->base.FillSessionBuffer((unsigned char*)&pass_id, offset, 4);
 	offset += 4;
 
 	// Make request for pass id
@@ -195,22 +195,22 @@ bool L1::L1SEGetPasswordById(uint32_t id, se3Pass& pass)
 	return true;
 }
 
-bool L1::L1SEGetAllPasswordsByUserName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> username, uint16_t usernameLen)
+bool L1::L1SEGetAllPasswordsByUserName(std::shared_ptr<uint8_t[]> username, uint16_t usernameLen, std::vector<se3Pass>& passList)
 {
-	return L1SEGetAllPasswords(passList, USER_FILTER, username, usernameLen);
+	return L1SEGetAllPasswords(USER_FILTER, username, usernameLen, passList);
 }
 
-bool L1::L1SEGetAllPasswordsByHostName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> hostname, uint16_t hostnameLen)
+bool L1::L1SEGetAllPasswordsByHostName(std::shared_ptr<uint8_t[]> hostname, uint16_t hostnameLen, std::vector<se3Pass>& passList)
 {
-	return L1SEGetAllPasswords(passList, HOST_FILTER, hostname, hostnameLen);
+	return L1SEGetAllPasswords(HOST_FILTER, hostname, hostnameLen, passList);
 }
 
 bool L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList)
 {
-	return L1SEGetAllPasswords(passList, NO_FILTER, NULL, 0);
+	return L1SEGetAllPasswords(NO_FILTER, NULL, 0, passList);
 }
 
-bool L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen)
+bool L1::L1SEGetAllPasswords(uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen, std::vector<se3Pass>& passList)
 {
 	L1PasswordListException passListExc;
 	passList.clear();
@@ -282,15 +282,3 @@ bool L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType,
 	}
 	return true;
 }
-
-bool L1::L1SEpass_Info(string& id, string& name, uint8_t mode)
-{
-
-	return true;
-}
-
-bool L1::L1SEpass_GetKeyEnc(uint32_t key_export_id, uint32_t key_wrapping_key, std::shared_ptr<uint8_t[]>& key_export_data, uint16_t& key_export_len){
-
-	return true;
-}
-

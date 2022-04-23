@@ -59,7 +59,7 @@ private:
 	void L1Config(uint16_t type, uint16_t op, std::array<uint8_t, L1Parameters::Size::PIN>& value);
 	void KeyList(uint16_t maxKeys, uint16_t skip, se3Key* keyArray, uint16_t* count);
 	void PassList(uint8_t *buffer, uint16_t *buflen);
-	bool L1SEGetAllPasswords(std::vector<se3Pass>& passList, uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
+	bool L1SEGetAllPasswords(uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen, std::vector<se3Pass>& passList);
 public:
 	L1(); /**< Default constructor. */
 	L1(uint8_t index); /**< Custom constructor used only in a very specific case by the APIs of the SEkey library (L2). Do not use elsewhere. */
@@ -218,19 +218,62 @@ public:
 	bool L1SEkey_InsertKey(uint32_t key_id, uint16_t key_len, uint32_t dec_id, std::shared_ptr<uint8_t[]> key_data);
 
 
+	/** @brief Insert a password record into the SEcube flash memory.
+	 * @param [in] pass_id The ID of the password to be exported.
+	 * @param [in] host_len lenght of the hostname.
+	 * @param [in] user_len lenght of the username.
+	 * @param [in] pass_len lenght of the password.
+	 * @param [in] host_data plain host string.
+	 * @param [in] user_data plain username string.
+	 * @param [in] pass_data plain password string.
+	 * @return True on success, false otherwise. */
+	bool L1SEAddPassword(uint16_t pass_id, std::shared_ptr<uint8_t[]> host_data, uint16_t host_len, std::shared_ptr<uint8_t[]> user_data, uint16_t user_len, std::shared_ptr<uint8_t[]> pass_data, uint16_t pass_len);
 
-	bool L1SEpass_Info(std::string& id, std::string& name, uint8_t mode);
+	/** @brief Export a password in plain text from the SEcube flash memory.
+	 * @param [in] pass_id The ID of the password to be exported.
+	 * @param [out] password retrieved password.
+	 * @return True on success, false otherwise. */
+	bool L1SEGetPasswordById(uint32_t pass_id, se3Pass& password);
 
-	bool L1SEpass_GetKeyEnc(uint32_t key_export_id, uint32_t key_wrapping_key, std::shared_ptr<uint8_t[]>& key_export_data, uint16_t& key_export_len);
-
-	bool L1SEGetPasswordById(uint32_t id, se3Pass& password);
+	/** @brief Modify a password
+	 * @param [in] pass_id The ID of the password to be modified.
+	 * @param [in] password information to be modified.
+	 * @return True on success, false otherwise. */
 	bool L1SEModifyPassword(uint32_t pass_id, se3Pass& password);
+
+	/** @brief Export the list of all passwords in plain text from the SEcube flash memory.
+	 * @param [out] passList vector of all the retrieved passwords.
+	 * @return True on success, false otherwise. */
 	bool L1SEGetAllPasswords(std::vector<se3Pass>& passList);
-	bool L1SEGetAllPasswordsByHostName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
-	bool L1SEGetAllPasswordsByUserName(std::vector<se3Pass>& passList, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen);
+
+	/** @brief Export the list of all passwords in plain text from the SEcube flash memory filtered by hostname.
+	 * @param [in] hostname of the password to search.
+	 * @param [in] filterLen lenght of the input.
+	 * @param [out] passList vector of all the retrieved passwords.
+	 * @return True on success, false otherwise. */
+	bool L1SEGetAllPasswordsByHostName(std::shared_ptr<uint8_t[]> hostname, uint16_t filterLen, std::vector<se3Pass>& passList);
+
+	/** @brief Export the list of all passwords in plain text from the SEcube flash memory filtered by username.
+	 * @param [in] username of the password to search.
+	 * @param [in] filterLen lenght of the input.
+	 * @param [out] passList vector of all the retrieved passwords.
+	 * @return True on success, false otherwise. */
+	bool L1SEGetAllPasswordsByUserName(std::shared_ptr<uint8_t[]> username, uint16_t filterLen, std::vector<se3Pass>& passList);
+
+	/** @brief Delete a password from the SEcube flash memory.
+	 * @param [in] pass_id The ID of the password to be exported.
+	 * @return True on success, false otherwise. */
 	bool L1SEDeletePassword(uint32_t pass_id);
+
+	/** @brief Generate a random password with the defined length and with the possibility to include
+	 * uppercase and special characters and numbers.
+	 * @param [in] pass_len password length.
+	 * @param [in] enable_upper_case if 1 enable the uppercase characters.
+	 * @param [in] enable_special_chars if 1 enable the special characters.
+	 * @param [in] enable_numbers_chars if 1 enable the numbers.
+	 * @param [out] generated_pass generated password from the TRNG.
+	 * @return True on success, false otherwise. */
 	bool L1SEGenerateRandomPassword(uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, uint8_t enable_numbers_chars, std::shared_ptr<uint8_t[]> generated_pass);
-	bool L1SEAddPassword(uint16_t pass_id, uint16_t host_len, uint16_t user_len, uint16_t pass_len, std::shared_ptr<uint8_t[]> host_data, std::shared_ptr<uint8_t[]> user_data, std::shared_ptr<uint8_t[]> pass_data);
 };
 
 #endif

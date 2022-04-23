@@ -124,19 +124,14 @@ int main(){
 
 
 
-
-
 		// ############## PASS CREATION ##############
 		// Pass 1
-		uint32_t id1 = 0;
-		uint32_t id2 = 0;
-		uint32_t id3 = 0;
 		uint16_t hostSize = fillByteArray("youtube.com", hostVal);
 		uint16_t userSize = fillByteArray("mat@gmail.com", userVal);
 		uint16_t passSize = fillByteArray("pass10sZero", passVal);
 
-		if(l1->L1SEAddPassword(1, hostSize, userSize, passSize, hostVal, userVal, passVal)){
-			printf("Added new pass with id %d!\n", id1);
+		if(l1->L1SEAddPassword(1, hostVal, hostSize, userVal, userSize, passVal, passSize)){
+			printf("Added new pass with id %d!\n", 1);
 		} else {
 			printf("Unable to add!\n");
 		}
@@ -145,8 +140,8 @@ int main(){
 		hostSize = fillByteArray("gmail.com", hostVal);
 		userSize = fillByteArray("mat@gmail.com", userVal);
 		passSize = fillByteArray("qwertyuiop", passVal);
-		if(l1->L1SEAddPassword(2, hostSize, userSize, passSize, hostVal, userVal, passVal)){
-			printf("Added new pass with id %d!\n", id2);
+		if(l1->L1SEAddPassword(2, hostVal, hostSize, userVal, userSize, passVal, passSize)){
+			printf("Added new pass with id %d!\n", 2);
 		} else {
 			printf("Unable to add!\n");
 		}
@@ -155,8 +150,8 @@ int main(){
 		hostSize = fillByteArray("youporn.com", hostVal);
 		userSize = fillByteArray("xxx@gmail.com", userVal);
 		passSize = fillByteArray("xxXxxa33dss", passVal);
-		if(l1->L1SEAddPassword(3, hostSize, userSize, passSize, hostVal, userVal, passVal)){
-			printf("Added new pass with id %d!\n", id3);
+		if(l1->L1SEAddPassword(3, hostVal, hostSize, userVal, userSize, passVal, passSize)){
+			printf("Added new pass with id %d!\n", 3);
 		} else {
 			printf("Unable to add!\n");
 		}
@@ -223,7 +218,7 @@ int main(){
 		passList.clear();
 		shared_ptr<uint8_t[]> hostFilter = make_unique<uint8_t[]>(100);
 		userSize = fillByteArray("youtube.co", hostFilter);
-		l1->L1SEGetAllPasswordsByHostName(passList, hostFilter, userSize);
+		l1->L1SEGetAllPasswordsByHostName(hostFilter, userSize, passList);
 		for(se3Pass elem : passList){
 			printf("Element Id:\t\t%d\n", elem.id);
 			printf("Element Hostname:\t");
