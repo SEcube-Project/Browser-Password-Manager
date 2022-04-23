@@ -114,7 +114,6 @@ uint16_t modify_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 	password.pass = pass;
 
 	// Insert the password
-	se3_flash_it_init(&it);
 	if (se3_pass_find(password.id, &it)) { // search in the flash memory if a password with the same ID is already present
 		it.addr = NULL;
 		if (equal) { // if not equal delete current key

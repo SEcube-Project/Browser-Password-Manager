@@ -209,10 +209,10 @@ int main(){
 		}
 
 		// ############## FILTER BY HOSTNAME ##############
-		printf("\n\nPasswords with youtube.com as hostname\n");
+		printf("\n\nPasswords with youtube.co as hostname\n");
 		passList.clear();
 		shared_ptr<uint8_t[]> hostFilter = make_unique<uint8_t[]>(100);
-		userSize = fillByteArray("youtube.com", hostFilter);
+		userSize = fillByteArray("youtube.co", hostFilter);
 		l1->L1SEGetAllPasswordsByHostName(passList, hostFilter, userSize);
 		for(se3Pass elem : passList){
 			printf("Element Id:\t\t%d\n", elem.id);
