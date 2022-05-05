@@ -17,7 +17,7 @@ body {
 
 /* Column divider */
 .column-divider {
-    border-left: 2px solid rgb(230, 233, 230);
+    border-left: 2px solid rgb(170, 170, 170);
     height: 430px;
     position: absolute;
     left: 50%;
