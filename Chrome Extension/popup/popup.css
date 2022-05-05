@@ -1,0 +1,43 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    width: 450px;
+    height: 450px;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+    float: left;
+    width: 48%;
+    padding: 10px;
+    height: 100%; /* Should be removed. Only for demonstration */
+}
+
+.column-divider {
+    background-color: #aaa;
+    float: left;
+    width: 0.4%;
+    height: 100%; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.center {
+    text-align: center;
+}
+
+.pass-item-list {
+    border: 1px solid rgb(199, 199, 199);
+    position: relative;
+    margin: 0;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}

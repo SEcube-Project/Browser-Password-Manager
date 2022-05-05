@@ -9,5 +9,6 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
-  }
+  },
+  "typeAcquisition": {"include": ["chrome"]}
 }

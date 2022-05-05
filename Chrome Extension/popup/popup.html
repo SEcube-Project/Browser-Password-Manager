@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Manager</title>
+
+    <!-- Add popup.css style -->
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+    <div class="row">
+        <h1 class="center">SECube Password Manager</h1>
+        <div class="column">
+            <h2>List of passwords</h2>
+            <div>
+                <!-- List of password element -->
+                <div class="pass-item-list">
+                    <img src="https://www.facebook.com/images/fb_icon_325x325.png" alt="Girl in a jacket" width="30"
+                        height="30">
+                    Facebook.com
+                </div>
+            </div>
+
+        </div>
+        <div class="column-divider">
+        </div>
+        <div class="column center">
+            <h2>Generate a new secure password</h2>
+            <form>
+                <label for="passcharnumber">Number of characters:</label><br>
+                <input type="text" id="passcharnumber" name="passcharnumber" placeholder="10"><br>
+
+                <input type="submit" value="Generate">
+
+                <br><br><br>
+                <label for="passcharnumber">Generated password:</label><br>
+                <input type="text" id="generatedpassword" name="generatedpassword" value="" readonly><br><br>
+            </form>
+        </div>
+    </div>
+</body>
+<!-- Add popup.js -->
+<script src="popup.js"></script>
+
+</html>
