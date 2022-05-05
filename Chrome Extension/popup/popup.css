@@ -17,13 +17,13 @@ body {
 
 /* Column divider */
 .column-divider {
-    border-left: 2px solid green;
-    height: 400px;
+    border-left: 2px solid rgb(230, 233, 230);
+    height: 430px;
     position: absolute;
     left: 50%;
     top: 0;
-    margin-top: 50px;
-    margin-left: -5px;
+    margin-top: 60px;
+    margin-left: -10px;
     top: 0;
 }
 
