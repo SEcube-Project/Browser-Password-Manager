@@ -1,34 +1,32 @@
 {
-  "manifest_version": 2,
-  "name": "Password Manager",
-  "description": "Password Manager",
-  "version": "0.0.1",
-  "author": "Matteo Battilana",
-  "icons": {
-    "16": "icons/active-16.png",
-    "32": "icons/active-32.png",
-    "48": "icons/active-48.png",
-    "128": "icons/active-128.png"
-  },
-  "browser_action": {
-    "default_title": "Password Manager",
-	"default_popup" : "popup.html",
-    "default_icon": {
-      "16": "icons/inactive-16.png",
-      "32": "icons/inactive-32.png",
-      "48": "icons/inactive-48.png",
-      "128": "icons/inactive-128.png"
+    "manifest_version": 3,
+    "name": "Password Manager",
+    "description": "Password Manager",
+    "version": "0.0.1",
+    "author": "Matteo Battilana, Giovanni Pollo, Salvatore Gabriele La Greca",
+    "icons": {
+        "16": "icons/active-16.png",
+        "32": "icons/active-32.png",
+        "48": "icons/active-48.png",
+        "128": "icons/active-128.png"
+    },
+    "action": {
+        "default_title": "Password Manager",
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icons/inactive-16.png",
+            "32": "icons/inactive-32.png",
+            "48": "icons/inactive-48.png",
+            "128": "icons/inactive-128.png"
+        }
+    },
+    "permissions": [
+        "activeTab",
+        "storage",
+        "tabs",
+        "notifications"
+    ],
+    "background": {
+        "service_worker": "lib/background.js"
     }
-  },
-  "permissions": [
-    "activeTab",
-    "tabs",
-    "notifications",
-    "http://*/",
-    "https://*/"
-],
-  "background": {
-    "scripts": ["lib/background.js"],
-    "persistent": false
-  }
 }
