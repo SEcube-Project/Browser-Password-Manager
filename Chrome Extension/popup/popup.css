@@ -15,11 +15,16 @@ body {
     height: 100%; /* Should be removed. Only for demonstration */
 }
 
+/* Column divider */
 .column-divider {
-    background-color: #aaa;
-    float: left;
-    width: 0.4%;
-    height: 100%; /* Should be removed. Only for demonstration */
+    border-left: 2px solid green;
+    height: 400px;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    margin-top: 50px;
+    margin-left: -5px;
+    top: 0;
 }
 
 /* Clear floats after the columns */
