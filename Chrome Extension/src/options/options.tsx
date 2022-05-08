@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { fetchApi } from '../utils/api'
 import './options.css'
 
 const App: React.FC<{}> = () => {
