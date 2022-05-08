@@ -1,0 +1,1 @@
+{"version":3,"file":"background.js","mappings":";;;;;AAAA;AACA;AACA;AACA","sources":["webpack://react-chrome-extension/./src/background/background.ts"],"sourcesContent":["// TODO: background script\nchrome.runtime.onInstalled.addListener(() => {\n    // TODO: on installed function\n});\n"],"names":[],"sourceRoot":""}
