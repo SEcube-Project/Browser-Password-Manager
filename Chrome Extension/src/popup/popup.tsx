@@ -6,6 +6,15 @@ import "./popup.css";
 const DEBUG=true;
 
 const App: React.FC<{}> = () => {
+  useEffect(() => {
+    fetchApi(DEBUG)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return <div> Hello world from extension</div>;
 };
 

@@ -1,9 +1,7 @@
-import password_debug from '../static/password_debug.json';
-import {readFileSync} from 'fs';
-
-
+import password_debug from "../static/password_debug.json";
 
 export type fetchType = "GET" | "POST" | "PUT" | "DELETE";
+
 
 export interface PasswordData  {
     url: string;
@@ -17,7 +15,7 @@ export interface PasswordData  {
  * @param type The type of request. Can be GET, POST, PUT, DELETE
  * @param url The url to send the request to
  */
-export async function fetchApi(debug: boolean, requestType:fetchType, url?: string): Promise<PasswordData> {
+export async function fetchApi(debug: boolean, requestType?:fetchType, url?: string): Promise<PasswordData> {
     if (!debug) {
         const res = await fetch(url, {
             method: requestType,
@@ -31,7 +29,7 @@ export async function fetchApi(debug: boolean, requestType:fetchType, url?: stri
         return data;
     } else {
         // Read the file and pase it to the PasswordData type
-        const data: PasswordData = JSON.parse(readFileSync('../static/password_debug.json', 'utf8'));
+        const data: PasswordData = JSON.parse(JSON.stringify(password_debug));
         return data;
     }
 }
