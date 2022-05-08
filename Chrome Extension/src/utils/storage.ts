@@ -3,8 +3,8 @@ export interface LocalStorage {
 }
 
 export interface LocalStorageOptions {
-  autocomplete?: boolean;
-  lock_after_minutes?: number;
+  autocomplete: boolean;
+  lock_after_minutes: number;
 }
 
 export type LocalStorageKeys = keyof LocalStorage;
@@ -14,7 +14,7 @@ export function setStoredOptions(options: LocalStorageOptions): Promise<void> {
     options,
   };
   return new Promise((resolve, reject) => {
-    chrome.storage.local.set(options, () => {
+    chrome.storage.local.set(values, () => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
       } else {
