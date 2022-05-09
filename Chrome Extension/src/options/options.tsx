@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./options.css";
+
 import {
   Grid,
   Box,
@@ -11,7 +11,12 @@ import {
   Switch,
   Stack,
   Button,
+  Snackbar,
+  SnackbarOrigin,
 } from "@mui/material";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+
+import "./options.css";
 import * as ui_component from "./static_ui_component";
 import {
   getStoredOptions,
@@ -30,23 +35,61 @@ const App: React.FC<{}> = () => {
     });
   }, []);
 
-  // Handle function
+  /**
+   * Handler of the text field for the Lock After Timeout
+   * @param value - the input string
+   */
   const handleLockValueChange = (value: string) => {
     console.log(value);
 
     // If value contains NaN, set to 0
     if (isNaN(Number(value))) {
-      setOptions({ 
-        ...options, 
-        lock_after_minutes: 0 
+      setOptions({
+        ...options,
+        lock_after_minutes: 0,
       });
     } else {
-      setOptions({ 
-        ...options, 
-        lock_after_minutes: Number(value) 
+      setOptions({
+        ...options,
+        lock_after_minutes: Number(value),
       });
     }
   };
+
+  /**
+   * Function to manage the click of the save button
+   * @returns 
+   */
+  function MyApp() {
+    const { enqueueSnackbar } = useSnackbar();
+  
+    const handleClickVariant = (variant: VariantType) => () => {
+      // variant could be success, error, warning, info, or default
+      setStoredOptions(options);
+      enqueueSnackbar("Options saved correctly", { variant });
+    };
+  
+    return (
+      <React.Fragment>
+        <Button variant="contained" onClick={handleClickVariant("success")}>
+          Save
+        </Button>
+      </React.Fragment>
+    );
+  }
+
+  /**
+   * Function to manage the render of the success snackbar
+   * @returns 
+   */
+  function IntegrationNotistack() {
+    return (
+      <SnackbarProvider maxSnack={3}>
+        <MyApp />
+      </SnackbarProvider>
+    );
+  }
+  
 
   return (
     <div>
@@ -82,7 +125,7 @@ const App: React.FC<{}> = () => {
           <Grid item>
             {" "}
             <Stack spacing={2} direction="row">
-              <Button variant="contained">Save</Button>
+              {IntegrationNotistack()}
             </Stack>
           </Grid>
         </Grid>
