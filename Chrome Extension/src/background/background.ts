@@ -2,7 +2,7 @@ import {getStoredOptions, LocalStorageOptions, setStoredOptions } from "../utils
 
 chrome.runtime.onInstalled.addListener(() => {
   const values: LocalStorageOptions = {
-    autocomplete: true,
+    is_autocomplete_enabled: true,
     lock_after_minutes: 5,
   };
   setStoredOptions(values);

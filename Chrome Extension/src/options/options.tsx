@@ -58,17 +58,17 @@ const App: React.FC<{}> = () => {
 
   /**
    * Function to manage the click of the save button
-   * @returns 
+   * @returns
    */
   function MyApp() {
     const { enqueueSnackbar } = useSnackbar();
-  
+
     const handleClickVariant = (variant: VariantType) => () => {
       // variant could be success, error, warning, info, or default
       setStoredOptions(options);
       enqueueSnackbar("Options saved correctly", { variant });
     };
-  
+
     return (
       <React.Fragment>
         <Button variant="contained" onClick={handleClickVariant("success")}>
@@ -80,7 +80,7 @@ const App: React.FC<{}> = () => {
 
   /**
    * Function to manage the render of the success snackbar
-   * @returns 
+   * @returns
    */
   function IntegrationNotistack() {
     return (
@@ -89,7 +89,13 @@ const App: React.FC<{}> = () => {
       </SnackbarProvider>
     );
   }
-  
+
+  function handleAutocompleteChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setOptions({
+      ...options,
+      is_autocomplete_enabled: event.target.checked,
+    });
+  }
 
   return (
     <div>
@@ -97,16 +103,14 @@ const App: React.FC<{}> = () => {
         <Grid container spacing={2} direction="column">
           <Grid item>{ui_component.OptionsPageHeader()}</Grid>
           <Grid item>
-            {" "}
             <FormGroup>
               <FormControlLabel
-                control={<Switch defaultChecked />}
+                control={<Switch checked={options?.is_autocomplete_enabled ?? false} onChange={handleAutocompleteChange} />}
                 label="Autocomplete"
               />
             </FormGroup>
           </Grid>
           <Grid item>
-            {" "}
             <TextField
               label="Lock After"
               id="outlined-start-adornment"
@@ -123,7 +127,6 @@ const App: React.FC<{}> = () => {
             />
           </Grid>
           <Grid item>
-            {" "}
             <Stack spacing={2} direction="row">
               {IntegrationNotistack()}
             </Stack>

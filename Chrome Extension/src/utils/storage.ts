@@ -3,7 +3,7 @@ export interface LocalStorage {
 }
 
 export interface LocalStorageOptions {
-  autocomplete: boolean;
+  is_autocomplete_enabled: boolean;
   lock_after_minutes: number;
 }
 
