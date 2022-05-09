@@ -31,10 +31,10 @@
 #define L1_H_
 
 #include "../L0/L0.h"
-#include "L1 Base/L1_base.h"
-#include "Login-Logout API/login_logout_api.h"
-#include "Security API/security_api.h"
-#include "Utility API/utility_api.h"
+#include "L1_Base/L1_base.h"
+#include "Login-Logout_API/login_logout_api.h"
+#include "Security_API/security_api.h"
+#include "Utility_API/utility_api.h"
 
 /** This class defines the attributes and the methods of a L1 object. L1 is built upon L0, therefore it uses a higher
  *  level of abstraction. L0 is focused on very basic actions (such as low level USB communication with the SEcube),

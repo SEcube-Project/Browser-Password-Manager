@@ -1,0 +1,4 @@
+HostMiddleware/__pycache__/**
+*.o
+*.d
+*.so
