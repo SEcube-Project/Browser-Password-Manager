@@ -1,5 +1,6 @@
 
 TARGETS+=host_lib.so
+override SRSC+=sources
 
 build: $(TARGETS)
 
@@ -25,8 +26,8 @@ CPPFLAGS+=-fPIC
 
 LDFLAGS+=-shared
 
-override ALL_CPP_FILES+=$(shell find sources -name '*.cpp' | sort | uniq | sed 's/ /\\\\ /g')
-ALL_C_FILES+=$(shell find sources -name '*.c' | sort | uniq | sed 's/ /\\\\ /g')
+override ALL_CPP_FILES+=$(shell find $(SRSC) -name '*.cpp' | sort | uniq | sed 's/ /\\\\ /g')
+ALL_C_FILES+=$(shell find $(SRSC) -name '*.c' | sort | uniq | sed 's/ /\\\\ /g')
 ALL_OBJ_FILES=$(patsubst %.cpp,%.o,$(ALL_CPP_FILES))
 ALL_OBJ_FILES+=$(patsubst %.c,%.o,$(ALL_C_FILES))
 

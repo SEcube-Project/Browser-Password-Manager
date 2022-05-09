@@ -21,10 +21,10 @@ OBJECTS := $(addprefix $(BUILDDIR)/,$(OBJECTS))
 
 all: lib.so
 
-../Host\ Password\ Manager/host_lib.so: Makefile ../Host\ Password\ Manager/Makefile
-	@$(MAKE) -C ../Host\ Password\ Manager ALL_CPP_FILES=$(addprefix $(CURDIR)/,$(SOURCESCPP))
+../Host\ Password\ Manager/host_lib.so: Makefile ../Host\ Password\ Manager/Makefile $(SOURCES) $(SOURCESCPP)
+	@$(MAKE) -C ../Host\ Password\ Manager SRSC=$(CURDIR)
 
-lib.so: ../Host\ Password\ Manager/host_lib.so Makefile
+lib.so: ../Host\ Password\ Manager/host_lib.so Makefile 
 	@echo " [R] ../Host\ Password\ Manager/host_lib.so -> lib.so"
 	@cp ../Host\ Password\ Manager/host_lib.so lib.so
 
