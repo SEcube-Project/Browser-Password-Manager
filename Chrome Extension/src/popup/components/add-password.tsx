@@ -9,6 +9,7 @@ import {
   IconButton,
   Button,
   Stack,
+  Snackbar,
 } from "@mui/material";
 import { VariantType, useSnackbar, SnackbarProvider } from "notistack";
 import React, { useState } from "react";
@@ -88,7 +89,7 @@ export default function AddPasswordElement() {
         <InputLabel htmlFor="outlined-adornment-password">URL</InputLabel>
         <OutlinedInput
           id="outlined-adornment-url"
-          value={username}
+          value={url}
           onChange={handleUrlChange}
           label="URL"
         />
@@ -119,7 +120,7 @@ function MyApp() {
 
 function IntegrationNotistack() {
   return (
-    <SnackbarProvider maxSnack={3}>
+    <SnackbarProvider maxSnack={1}>
       <MyApp />
     </SnackbarProvider>
   );
