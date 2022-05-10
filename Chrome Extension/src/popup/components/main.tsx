@@ -1,21 +1,27 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
-import LockIcon from "@mui/icons-material/Lock";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import SyncLockIcon from "@mui/icons-material/SyncLock";
 import FolderIcon from "@mui/icons-material/Folder";
 import TabIcon from "@mui/icons-material/Tab";
 import Paper from "@mui/material/Paper";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemText from "@mui/material/ListItemText";
-import Avatar from "@mui/material/Avatar";
 import { fetchApi, PasswordElement } from "../../utils/api";
 import { useEffect, useState } from "react";
+import {
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
+
+import ListPasswordElements from "./current-tab";
+import AddPasswordElement from "./add-password";
+import GeneratePasswordElement from "./generate-password";
 
 const DEBUG = true;
 
@@ -35,9 +41,11 @@ export default function FixedBottomNavigation() {
   }, []);
 
   return (
-    <Box sx={{ pb: 7, width: 500, height: 500 }}>
-      <CssBaseline />
-      <ListPasswordElements passwordData={passwordData} state={state} />
+    <Box sx={{ width: 400, height: 400 }}>
+      {state === 0 && <ListPasswordElements passwordData={passwordData} />}
+      {state === 1 && <ListPasswordElements passwordData={passwordData} />}
+      {state === 2 && <GeneratePasswordElement />}
+      {state === 3 && <AddPasswordElement />}
       <Paper
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
         elevation={3}
@@ -57,21 +65,4 @@ export default function FixedBottomNavigation() {
       </Paper>
     </Box>
   );
-}
-
-function ListPasswordElements(props) {
-  if (props.state === 0) {
-    return (
-      <List>
-        {props.passwordData?.map(({ username, password, url }, index) => (
-          <ListItem button key={index + url}>
-            <ListItemText primary={username} />
-            <ListItemText primary={password} />
-            <ListItemText primary={url} />
-          </ListItem>
-        ))}
-      </List>
-    );
-  }
-  return(null);
 }
