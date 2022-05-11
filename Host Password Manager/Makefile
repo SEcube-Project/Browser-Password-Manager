@@ -24,7 +24,7 @@ CPPFLAGS+=-fPIC
 # CPPFLAGS+=-Wall -Wextra 
 #CPPFLAGS+=-Werror
 
-LDFLAGS+=-shared
+LDFLAGS+=
 
 override ALL_CPP_FILES+=$(shell find $(SRSC) -name '*.cpp' | sort | uniq | sed 's/ /\\\\ /g')
 ALL_C_FILES+=$(shell find $(SRSC) -name '*.c' | sort | uniq | sed 's/ /\\\\ /g')
@@ -39,10 +39,19 @@ ALL_OBJ_FILES+=$(patsubst %.c,%.o,$(ALL_C_FILES))
 %.o: %.c Makefile
 	@echo " [C] $<"
 	@$(CC) -c $(CPPFLAGS) $< -o $@
+
+examples/device_init.o: examples/device_init.cpp Makefile
+	@echo " [C] $<"
+	@$(CXX) -c $(CPPFLAGS) $< -o $@
+
 ##############################
 
 # tool targets
 host_lib.so: $(ALL_OBJ_FILES)
+	@echo " [L] $@"
+	@$(CXX) $^ -shared $(LDFLAGS) -o $@
+
+init: $(ALL_OBJ_FILES) examples/device_init.o
 	@echo " [L] $@"
 	@$(CXX) $^ $(LDFLAGS) -o $@
 

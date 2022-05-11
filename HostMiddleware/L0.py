@@ -19,7 +19,7 @@ class L0:
         plen = size * self._c_lib.L0_get_DevicePathSize(self._l0inst)
         ylen = size * self._c_lib.HOST_get_SerialSize()
         p = (ctypes.c_char*plen)()
-        y = (ctypes.c_char*100)()
+        y = (ctypes.c_char*ylen)()
         self._c_lib.L0_getDeviceList(self._l0inst, p, y, size)
 
         lp = ''.join([x.decode('utf-8') for x in list(p)])
