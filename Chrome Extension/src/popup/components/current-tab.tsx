@@ -1,16 +1,12 @@
 import * as React from "react";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import ListSubheader from "@mui/material/ListSubheader";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import Password from "@mui/icons-material/Password";
-import Link from "@mui/icons-material/Link";
 import Box from "@mui/material/Box";
 import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import Divider from "@mui/material/Divider";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
@@ -22,11 +18,13 @@ import People from "@mui/icons-material/People";
 import PermMedia from "@mui/icons-material/PermMedia";
 import Dns from "@mui/icons-material/Dns";
 import Public from "@mui/icons-material/Public";
+import { ListSubheader } from "@mui/material";
 
 const data = [
-  { icon: <AccountCircle />, label: "Username" },
-  { icon: <Password />, label: "Password" },
-  { icon: <Link />, label: "URL" },
+  { icon: <People />, label: "Authentication" },
+  { icon: <Dns />, label: "Database" },
+  { icon: <PermMedia />, label: "Storage" },
+  { icon: <Public />, label: "Hosting" },
 ];
 
 const FireNav = styled(List)<{ component?: React.ElementType }>({
@@ -43,7 +41,7 @@ const FireNav = styled(List)<{ component?: React.ElementType }>({
   },
 });
 
-export default function PinnedSubheaderList() {
+export default function CustomizedList() {
   const [open, setOpen] = React.useState([false]);
 
   const handleClick = (index: number) => {
@@ -55,95 +53,132 @@ export default function PinnedSubheaderList() {
   };
 
   return (
-    <List
-      sx={{
-        width: "100%",
-        maxWidth: 400,
-        bgcolor: "background.paper",
-        position: "relative",
-        overflow: "auto",
-        maxHeight: 280,
-        "& ul": { padding: 0 },
-      }}
-      subheader={<li />}
-    >
-      {["A", "B", "C", "D", "E"].map((sectionId) => (
-        <li key={`section-${sectionId}`}>
-          <ul>
-            <ListSubheader>{`${sectionId}`}</ListSubheader>
+    <Box sx={{ display: "block" }}>
+      <ThemeProvider
+        theme={createTheme({
+          components: {
+            MuiListItemButton: {
+              defaultProps: {
+                disableTouchRipple: true,
+              },
+            },
+          },
+          palette: {
+            mode: "dark",
+            primary: { main: "rgb(102, 157, 246)" },
+            background: { paper: "rgb(5, 30, 52)" },
+          },
+        })}
+      >
+        <Paper elevation={0} sx={{ maxWidth: 400 }}>
+          <FireNav component="nav" disablePadding>
+            <List
+              sx={{
+                width: "100%",
+                maxWidth: 400,
+                bgcolor: "background.paper",
+                position: "relative",
+                overflow: "auto",
+                maxHeight: 280,
+                display: "block",
+                "& ul": { padding: 0 },
+              }}
+              subheader={<li />}
+            >
+              {["A", "B", "C", "D", "E"].map((sectionId) => (
+                <li key={`section-${sectionId}`}>
+                  <ul>
+                    <ListSubheader>{`${sectionId}`}</ListSubheader>
 
-            {[0, 1, 2].map((item) => (
-              <ListItem key={`item-${sectionId}-${item}`}>
-                {/* <Box
-                  sx={{
-                    bgcolor: open ? "rgba(239, 15, 15, 0.86)" : null,
-                    pb: open ? 2 : 2,
-                  }}
-                > */}
-                  <ListItemButton
-                    alignItems="flex-start"
-                    onClick={() => handleClick(item)}
-                    sx={{
-                      px: 3,
-                      pt: 2.5,
-                      pb: open ? 0 : 2.5,
-                      "&:hover, &:focus": {
-                        "& svg": { opacity: open ? 1 : 1 },
-                      },
-                    }}
-                  >
-                    <ListItemText
-                      primary="Build"
-                      primaryTypographyProps={{
-                        fontSize: 15,
-                        fontWeight: "medium",
-                        lineHeight: "20px",
-                        mb: "2px",
-                      }}
-                      secondary="Authentication, Firestore Database, Realtime Database, Storage, Hosting, Functions, and Machine Learning"
-                      secondaryTypographyProps={{
-                        noWrap: true,
-                        fontSize: 12,
-                        lineHeight: "16px",
-                        color: open
-                          ? "rgba(239, 15, 15, 0.86)"
-                          : "rgba(239, 15, 15, 0.86)",
-                      }}
-                      sx={{ my: 0 }}
-                    />
-                    <KeyboardArrowDown
-                      sx={{
-                        mr: -1,
-                        opacity: 0,
-                        transform: open ? "rotate(-180deg)" : "rotate(0)",
-                        transition: "0.2s",
-                      }}
-                    />
-                  </ListItemButton>
-                  {open[item] &&
-                    data.map((item) => (
-                      <ListItemButton
-                        key={item.label}
-                        sx={{ py: 0, minHeight: 32, color: "rgba(0, 0, 0, 1)" }}
-                      >
-                        <ListItemIcon sx={{ color: "inherit" }}>
-                          {item.icon}
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={item.label}
-                          primaryTypographyProps={{
-                            fontSize: 14,
-                            fontWeight: "medium",
+                    {[0, 1, 2].map((item) => (
+                      <ListItem key={`item-${sectionId}-${item}`}>
+                        <Box
+                          sx={{
+                            bgcolor: open[item]
+                              ? "rgba(239, 15, 15, 0.86)"
+                              : null,
+                            pb: open[item] ? 2 : 2,
+                            width: "360px",
                           }}
-                        />
-                      </ListItemButton>
+                        >
+                          <ListItemButton
+                            alignItems="flex-start"
+                            onClick={() => handleClick(item)}
+                            sx={{
+                              px: 3,
+                              pt: 2.5,
+                              pb: open[item] ? 0 : 2.5,
+                              "&:hover, &:focus": {
+                                "& svg": { opacity: open[item] ? 1 : 1 },
+                              },
+                            }}
+                          >
+                            <ListItemText
+                              primary="shdfbdshfbjhsdfbshbsdbhcbshcbsdschjdsbcjhscbjshcbjshdbcsjbcsjhdbcsjdhbhjcsjcbsjcbsjcbshcsjcsjcbjcbsjcbscbsjc"
+                              primaryTypographyProps={{
+                                noWrap: true,
+                                fontSize: 15,
+                                fontWeight: "medium",
+                                lineHeight: "20px",
+                                mb: "2px",
+                              }}
+                              secondary="Username, Password, URL, shdfbdshfbjhsdfbshbsdbhcbshcbsdschjdsbcjhscbjshcbjshdbcsjbcsjhdbcsjdhbhjcsjcbsjcbsjcbshcsjcsjcbjcbsjcbscbsjc"
+                              secondaryTypographyProps={{
+                                noWrap: true,
+                                fontSize: 12,
+                                lineHeight: "16px",
+                                color: open[item]
+                                  ? "rgba(239, 15, 15, 0.86)"
+                                  : "rgba(239, 15, 15, 0.86)",
+                              }}
+                              sx={{ my: 0 }}
+                            />
+                            <KeyboardArrowDown
+                              sx={{
+                                mr: -1,
+                                opacity: 0,
+                                transform: open[item]
+                                  ? "rotate(-180deg)"
+                                  : "rotate(0)",
+                                transition: "0.2s",
+                              }}
+                            />
+                          </ListItemButton>
+                          {open[item] &&
+                            data.map((item) => (
+                              <ListItemButton
+                                key={item.label}
+                                sx={{
+                                  py: 0,
+                                  minHeight: 32,
+                                  color: "rgba(0, 0, 0, 1)",
+                                  "&.css-1p823my-MuiListItem-root ": {
+                                    display: "block",
+                                  },
+                                }}
+                              >
+                                <ListItemIcon sx={{ color: "inherit" }}>
+                                  {item.icon}
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={item.label}
+                                  primaryTypographyProps={{
+                                    fontSize: 14,
+                                    fontWeight: "medium",
+                                  }}
+                                />
+                              </ListItemButton>
+                            ))}
+                        </Box>
+                      </ListItem>
                     ))}
-                {/* </Box> */}
-              </ListItem>
-            ))}
-          </ul>
-        </li>
-      ))}
-    </List>
+                  </ul>
+                </li>
+              ))}
+            </List>
+          </FireNav>
+        </Paper>
+      </ThemeProvider>
+    </Box>
   );
 }
