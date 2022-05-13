@@ -23,7 +23,7 @@ import {
   Stack,
 } from "@mui/material";
 
-import ListPasswordElements from "./current-tab";
+import PinnedSubheaderList from "./current-tab";
 import AddPasswordElement from "./add-password";
 import GeneratePasswordElement from "./generate-password";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -75,8 +75,8 @@ export default function FixedBottomNavigation() {
 
   return (
     <Box sx={{ width: 400, height: 400 }}>
-      {state === 0 && <ListPasswordElements passwordData={passwordData} />}
-      {state === 1 && <ListPasswordElements passwordData={passwordData} />}
+      {state === 0 && <PinnedSubheaderList />}
+      {state === 1 && <PinnedSubheaderList />}
       {state === 2 && <GeneratePasswordElement />}
       {state === 3 && <AddPasswordElement />}
       {[0, 1, 2, 3].includes(state) && (
