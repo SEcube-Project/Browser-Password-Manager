@@ -120,7 +120,7 @@ function MyApp() {
 
 function IntegrationNotistack() {
   return (
-    <SnackbarProvider maxSnack={1}>
+    <SnackbarProvider maxSnack={1} autoHideDuration={1300}>
       <MyApp />
     </SnackbarProvider>
   );
