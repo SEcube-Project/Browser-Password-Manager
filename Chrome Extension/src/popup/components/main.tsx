@@ -74,7 +74,7 @@ export default function FixedBottomNavigation() {
   }
 
   return (
-    <Box sx={{ width: 400, height: 400 }}>
+    <Box sx={{ width: 400, height: 500 }}>
       {state === 0 && <PinnedSubheaderList />}
       {state === 1 && <PinnedSubheaderList />}
       {state === 2 && <GeneratePasswordElement />}
