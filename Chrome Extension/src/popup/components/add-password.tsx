@@ -52,7 +52,7 @@ export default function AddPasswordElement() {
       sx={{ display: "flex", flexWrap: "wrap", maxWidth: "100%" , maxHeight: "100%" }}
     >
       <FormControl
-        sx={{ m: 1, width: "55ch", maxWidth: 400, maxHeight: 400 }}
+        sx={{ m: 1, width: "55ch", maxWidth: "100%", maxHeight: "100%" }}
         variant="outlined"
       >
         <InputLabel htmlFor="outlined-adornment-password">Username</InputLabel>

@@ -5,7 +5,7 @@ import FixedBottomNavigation from "./components/main";
 const App: React.FC<{}> = () => {
   return (
     <div>
-      <Box sx={{maxWidth: 400, maxHeight: 400}}>
+      <Box sx={{maxWidth: "100%", maxHeight: "100%"}}>
         <FixedBottomNavigation />
       </Box>
     </div>
