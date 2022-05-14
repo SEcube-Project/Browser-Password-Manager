@@ -8,11 +8,25 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
-import { ListSubheader } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  ListSubheader,
+  Tooltip,
+} from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Password from "@mui/icons-material/Password";
 import Link from "@mui/icons-material/Link";
-import { color } from "@mui/system";
+import Edit from "@mui/icons-material/Edit";
+import ContentCopy from "@mui/icons-material/ContentCopy";
+import AlertDialog from "./delete-dialog";
+import Delete from "@mui/icons-material/Delete";
 
 var data = [
   { icon: <AccountCircle />, label: "Username" },
@@ -22,8 +36,8 @@ var data = [
 
 const FireNav = styled(List)<{ component?: React.ElementType }>({
   "& .MuiListItemButton-root": {
-    paddingLeft: 24,
-    paddingRight: 24,
+    paddingLeft: 10,
+    paddingRight: 5,
   },
   "& .MuiListItemIcon-root": {
     minWidth: 0,
@@ -36,14 +50,61 @@ const FireNav = styled(List)<{ component?: React.ElementType }>({
 
 export default function CustomizedList() {
   const [open, setOpen] = React.useState([false]);
+  const [popup, setPopup] = React.useState(false);
 
-  const handleClick = (index: number) => {
+  const handleClickOpen = () => {
+    setPopup(true);
+  };
+
+  const handleClose = () => {
+    setPopup(false);
+  };
+
+  const handleClick = (index: number, item, section) => {
+    console.log("index", index, "item", item, "section", section);
     setOpen((prevOpen) => {
       const newOpen = [...prevOpen];
       newOpen[index] = !newOpen[index];
+      console.log("newOpen", newOpen);
       return newOpen;
     });
   };
+
+  var letters = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    // "f",
+    // "g",
+    // "h",
+    // "i",
+    // "j",
+    // "k",
+    // "l",
+    // "m",
+    // "n",
+    // "o",
+    // "p",
+    // "q",
+    // "r",
+    // "s",
+    // "t",
+    // "u",
+    // "v",
+    // "w",
+    // "x",
+    // "y",
+    // "z",
+  ];
+
+  var numbers = [
+    0, 1,
+    // 2,
+    // 3,
+    // 4,
+  ];
 
   return (
     <Box>
@@ -75,13 +136,16 @@ export default function CustomizedList() {
               }}
               subheader={<li />}
             >
-              {["A", "B", "C", "D", "E"].map((sectionId) => (
+              {letters.map((sectionId) => (
                 <li key={`section-${sectionId}`}>
                   <ul>
-                    <ListSubheader sx={{ bgcolor: 
-                      "rgba(10, 50, 105, 1)", color: "white"}}>{`${sectionId}`}</ListSubheader>
+                    <ListSubheader
+                      sx={{ bgcolor: "rgba(10, 50, 105, 1)", color: "white" }}
+                    >
+                      {sectionId.toUpperCase()}
+                    </ListSubheader>
 
-                    {[0, 1, 2].map((item) => (
+                    {numbers.map((item) => (
                       <ListItem key={`item-${sectionId}-${item}`}>
                         <Box
                           sx={{
@@ -91,20 +155,18 @@ export default function CustomizedList() {
                             width: "360px",
                           }}
                         >
+                          {console.log("item", item)}
+                          {console.log("sectionId", sectionId)}
+                          {console.log("index", item + convertToIndex(sectionId) * numbers.length)}
                           <ListItemButton
-                            alignItems="flex-start"
-                            onClick={() => handleClick(item)}
-                            sx={{
-                              px: 3,
-                              pt: 2.5,
-                              pb: open[item] ? 0 : 2.5,
-                              "&:hover, &:focus": {
-                                "& svg": { opacity: open[item] ? 1 : 1 },
-                              },
-                            }}
+                            onClick={() =>
+                              handleClick(
+                                item + convertToIndex(sectionId) * numbers.length, item, sectionId
+                              )
+                            }
                           >
                             <ListItemText
-                              primary="shdfbdshfbjhsdfbshbsdbhcbshcbsdschjdsbcjhscbjshcbjshdbcsjbcsjhdbcsjdhbhjcsjcbsjcbsjcbshcsjcsjcbjcbsjcbscbsjc"
+                              primary="Hostname"
                               primaryTypographyProps={{
                                 noWrap: true,
                                 fontSize: 15,
@@ -112,7 +174,7 @@ export default function CustomizedList() {
                                 lineHeight: "20px",
                                 mb: "2px",
                               }}
-                              secondary="Username, Password, URL, shdfbdshfbjhsdfbshbsdbhcbshcbsdschjdsbcjhscbjshcbjshdbcsjbcsjhdbcsjdhbhjcsjcbsjcbsjcbshcsjcsjcbjcbsjcbscbsjc"
+                              secondary="Username, Password, URL"
                               secondaryTypographyProps={{
                                 noWrap: true,
                                 fontSize: 12,
@@ -123,18 +185,54 @@ export default function CustomizedList() {
                               }}
                               sx={{ my: 0 }}
                             />
-                            <KeyboardArrowDown
-                              sx={{
-                                mr: -1,
-                                opacity: 0,
-                                transform: open[item]
-                                  ? "rotate(-180deg)"
-                                  : "rotate(0)",
-                                transition: "0.2s",
-                              }}
-                            />
+                            <Tooltip title="Delete">
+                              <IconButton
+                                color="error"
+                                onClick={handleClickOpen}
+                              >
+                                <Delete />
+                                <Dialog
+                                  open={popup}
+                                  onClose={handleClose}
+                                  aria-labelledby="alert-dialog-title"
+                                  aria-describedby="alert-dialog-description"
+                                >
+                                  <DialogTitle id="alert-dialog-title">
+                                    {"Delete password?"}
+                                  </DialogTitle>
+                                  <DialogContent>
+                                    <DialogContentText id="alert-dialog-description">
+                                      Are you sure you want to delete this
+                                      password?
+                                    </DialogContentText>
+                                  </DialogContent>
+                                  <DialogActions>
+                                    <Button
+                                      variant="contained"
+                                      color="success"
+                                      onClick={handleClose}
+                                    >
+                                      Keep
+                                    </Button>
+                                    <Button
+                                      variant="contained"
+                                      color="error"
+                                      onClick={handleClose}
+                                      autoFocus
+                                    >
+                                      Delete
+                                    </Button>
+                                  </DialogActions>
+                                </Dialog>
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Expand">
+                              <IconButton size="small">
+                                <KeyboardArrowDown />
+                              </IconButton>
+                            </Tooltip>
                           </ListItemButton>
-                          {open[item] &&
+                          {open[item + convertToIndex(sectionId) * numbers.length] &&
                             data.map((item) => (
                               <ListItemButton
                                 key={item.label}
@@ -154,6 +252,16 @@ export default function CustomizedList() {
                                     fontWeight: "medium",
                                   }}
                                 />
+                                <Tooltip title="Edit">
+                                  <IconButton size="small">
+                                    <Edit />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Copy">
+                                  <IconButton size="small">
+                                    <ContentCopy />
+                                  </IconButton>
+                                </Tooltip>
                               </ListItemButton>
                             ))}
                         </Box>
@@ -169,3 +277,12 @@ export default function CustomizedList() {
     </Box>
   );
 }
+
+/**
+ * Convert A => 0, B => 1, C => 2, D => 3, E => 4 etc..
+ * @param char The letter to convert
+ * @returns The number of the letter
+ */
+const convertToIndex = (char: string) => {
+  return (char.toUpperCase()).charCodeAt(0) - 65;
+};
