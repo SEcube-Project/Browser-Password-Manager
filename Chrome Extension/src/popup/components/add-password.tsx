@@ -49,7 +49,7 @@ export default function AddPasswordElement() {
 
   return (
     <Box
-      sx={{ display: "flex", flexWrap: "wrap", maxWidth: 400, maxHeight: 400 }}
+      sx={{ display: "flex", flexWrap: "wrap", maxWidth: "100%" , maxHeight: "100%" }}
     >
       <FormControl
         sx={{ m: 1, width: "55ch", maxWidth: 400, maxHeight: 400 }}
@@ -120,7 +120,7 @@ function MyApp() {
 
 function IntegrationNotistack() {
   return (
-    <SnackbarProvider maxSnack={1}>
+    <SnackbarProvider maxSnack={1} autoHideDuration={1300}>
       <MyApp />
     </SnackbarProvider>
   );
