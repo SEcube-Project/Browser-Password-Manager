@@ -7,6 +7,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
+import { PasswordElement } from "../../utils/api";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import {
   Alert,
@@ -26,11 +27,12 @@ import Link from "@mui/icons-material/Link";
 import Edit from "@mui/icons-material/Edit";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import Delete from "@mui/icons-material/Delete";
+import Lock from "@mui/icons-material/Lock";
 
-var data = [
-  { icon: <AccountCircle />, label: "Username" },
-  { icon: <Password />, label: "Password" },
-  { icon: <Link />, label: "URL" },
+var icons = [
+  { icon: <AccountCircle /> },
+  { icon: <Password /> },
+  { icon: <Link /> },
 ];
 
 const FireNav = styled(List)<{ component?: React.ElementType }>({
@@ -47,26 +49,31 @@ const FireNav = styled(List)<{ component?: React.ElementType }>({
   },
 });
 
-export default function CustomizedList() {
+export default function CustomizedList(props) {
   const [open, setOpen] = React.useState([false]);
   const [popup, setPopup] = React.useState(false);
+  console.log(props.password);
+  const [PasswordData, setPasswordData] = React.useState(null);
+
+  React.useEffect(() => {
+    setPasswordData(props.password);
+  }, [props.password]);
 
   const handleClickOpen = () => {
     setPopup(true);
-    console.log("popup", popup);
+    // console.log("popup", popup);
   };
 
-  const handleClose = () => {
+  function handleClose(key) {
+    // console.log(key)
     setPopup(false);
-    console.log("popup", popup);
-  };
+    // console.log("popup", popup);
+  }
 
-  const handleClick = (index: number, item, section) => {
-    console.log("index", index, "item", item, "section", section);
+  const handleClick = (index: number) => {
     setOpen((prevOpen) => {
       const newOpen = [...prevOpen];
       newOpen[index] = !newOpen[index];
-      console.log("newOpen", newOpen);
       return newOpen;
     });
   };
@@ -77,27 +84,27 @@ export default function CustomizedList() {
     "c",
     "d",
     "e",
-    // "f",
-    // "g",
-    // "h",
-    // "i",
-    // "j",
-    // "k",
-    // "l",
-    // "m",
-    // "n",
-    // "o",
-    // "p",
-    // "q",
-    // "r",
-    // "s",
-    // "t",
-    // "u",
-    // "v",
-    // "w",
-    // "x",
-    // "y",
-    // "z",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
   ];
 
   var numbers = [
@@ -124,6 +131,7 @@ export default function CustomizedList() {
           },
         })}
       >
+        {console.log("PasswordData", PasswordData)}
         <Paper elevation={0} sx={{ maxWidth: "100%" }}>
           <FireNav component="nav" disablePadding>
             <List
@@ -139,170 +147,213 @@ export default function CustomizedList() {
             >
               {letters.map((sectionId) => (
                 <li key={`section-${sectionId}`}>
-                  <ul>
-                    <ListSubheader
-                      sx={{ bgcolor: "rgba(10, 50, 105, 1)", color: "white" }}
-                    >
-                      {sectionId.toUpperCase()}
-                    </ListSubheader>
+                  <ListSubheader
+                    sx={{ bgcolor: "rgba(10, 50, 105, 1)", color: "white" }}
+                  >
+                    {sectionId.toUpperCase()}
+                  </ListSubheader>
 
-                    {numbers.map((item) => (
-                      <ListItem key={`item-${sectionId}-${item}`}>
-                        <Box
-                          sx={{
-                            bgcolor: open[
-                              item + convertToIndex(sectionId) * numbers.length
-                            ]
-                              ? "rgba(25, 118, 210, 0.7)"
-                              : "rgba(25, 118, 210, 0.7)",
-                            width: "360px",
-                          }}
-                        >
-                          {console.log("item", item)}
+                  {PasswordData?.map((item) => (
+                    <ListItem key={`item-${sectionId}-${item.id}`}>
+                      <Box
+                        sx={{
+                          bgcolor: open[item.id]
+                            ? "rgba(25, 118, 210, 0.7)"
+                            : "rgba(25, 118, 210, 0.7)",
+                          width: "360px",
+                        }}
+                      >
+                        {/* {console.log("item", item)}
                           {console.log("sectionId", sectionId)}
                           {console.log(
                             "index",
                             item + convertToIndex(sectionId) * numbers.length
-                          )}
-                          <ListItem>
-                            <ListItemText
-                              primary="Hostname"
-                              primaryTypographyProps={{
-                                noWrap: true,
-                                fontSize: 15,
-                                fontWeight: "medium",
-                                lineHeight: "20px",
-                                mb: "2px",
-                              }}
-                              secondary="Username, Password, URL"
-                              secondaryTypographyProps={{
-                                noWrap: true,
-                                fontSize: 12,
-                                lineHeight: "16px",
-                                color: open[
-                                  item +
-                                    convertToIndex(sectionId) * numbers.length
-                                ]
-                                  ? "rgba(0, 0, 0, 1)"
-                                  : "rgba(0, 0, 0, 1)",
-                              }}
-                              sx={{ my: 0 }}
-                            />
-                            <IconButton
-                              aria-label="delete"
-                              onClick={handleClickOpen}
-                            >
-                              <Delete />
-                            </IconButton>
-                            <Dialog
-                              open={popup}
-                              onClose={handleClose}
-                              aria-labelledby="alert-dialog-title"
-                              aria-describedby="alert-dialog-description"
-                            >
-                              <DialogTitle id="alert-dialog-title">
-                                {"Delete Password"}
-                              </DialogTitle>
-                              <DialogContent>
-                                <DialogContentText id="alert-dialog-description">
-                                  Are you sure you want to delete this password?
-                                </DialogContentText>
-                              </DialogContent>
-                              <DialogActions>
-                                <Button
-                                  variant="contained"
-                                  onClick={handleClose}
-                                  color="success"
-                                >
-                                  Keep
-                                </Button>
-                                <Button
-                                  variant="contained"
-                                  onClick={handleClose}
-                                  autoFocus
-                                  color="error"
-                                >
-                                  Delete
-                                </Button>
-                              </DialogActions>
-                            </Dialog>
-                            <Tooltip
-                              title={
-                                open[
-                                  item +
-                                    convertToIndex(sectionId) * numbers.length
-                                ]
-                                  ? "Collapse"
-                                  : "Expand"
-                              }
-                            >
-                              <IconButton size="small">
-                                <KeyboardArrowDown
-                                  sx={{
-                                    transform: open[
-                                      item +
-                                        convertToIndex(sectionId) *
-                                          numbers.length
-                                    ]
-                                      ? "rotate(-180deg)"
-                                      : "rotate(0)",
-                                    transition: "0.2s",
-                                  }}
-                                  onClick={() =>
-                                    handleClick(
-                                      item +
-                                        convertToIndex(sectionId) *
-                                          numbers.length,
-                                      item,
-                                      sectionId
-                                    )
-                                  }
-                                />
-                              </IconButton>
-                            </Tooltip>
-                          </ListItem>
-                          {isPopupOpenAndExpand(
-                            item,
-                            sectionId,
-                            popup,
-                            open,
-                            numbers
-                          ) &&
-                            data.map((item) => (
-                              <ListItemButton
-                                key={item.label}
-                                sx={{
-                                  py: 0,
-                                  minHeight: 32,
-                                  color: "rgba(0, 0, 0, 1)",
-                                }}
+                          )} */}
+                        <ListItem>
+                          <ListItemText
+                            primary={item.hostname}
+                            primaryTypographyProps={{
+                              noWrap: true,
+                              fontSize: 15,
+                              fontWeight: "medium",
+                              lineHeight: "20px",
+                              mb: "2px",
+                            }}
+                            // secondary="Username, Password, URL"
+                            // secondaryTypographyProps={{
+                            //   noWrap: true,
+                            //   fontSize: 12,
+                            //   lineHeight: "16px",
+                            //   color: open[item.id]
+                            //     ? "rgba(0, 0, 0, 1)"
+                            //     : "rgba(0, 0, 0, 1)",
+                            // }}
+                            sx={{ my: 0 }}
+                          />
+                          <IconButton
+                            aria-label="delete"
+                            onClick={handleClickOpen}
+                          >
+                            <Delete />
+                          </IconButton>
+                          <Dialog
+                            open={popup}
+                            onClose={() =>
+                              handleClose(`item-${sectionId}-${item.id}`)
+                            }
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {"Delete Password"}
+                            </DialogTitle>
+                            <DialogContent>
+                              <DialogContentText id="alert-dialog-description">
+                                Are you sure you want to delete this password?
+                              </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                              {/* {console.log("item", item)}
+                                {console.log("sectionId", sectionId)} */}
+                              <Button
+                                variant="contained"
+                                onClick={() =>
+                                  handleClose(`item-${sectionId}-${item.id}`)
+                                }
+                                color="success"
                               >
-                                <ListItemIcon sx={{ color: "inherit" }}>
-                                  {item.icon}
-                                </ListItemIcon>
-                                <ListItemText
-                                  primary={item.label}
-                                  primaryTypographyProps={{
-                                    fontSize: 14,
-                                    fontWeight: "medium",
-                                  }}
-                                />
-                                <Tooltip title="Edit">
-                                  <IconButton size="small">
-                                    <Edit />
-                                  </IconButton>
-                                </Tooltip>
-                                <Tooltip title="Copy">
-                                  <IconButton size="small">
-                                    <ContentCopy />
-                                  </IconButton>
-                                </Tooltip>
-                              </ListItemButton>
-                            ))}
-                        </Box>
-                      </ListItem>
-                    ))}
-                  </ul>
+                                Keep
+                              </Button>
+                              <Button
+                                variant="contained"
+                                onClick={() =>
+                                  handleClose(`item-${sectionId}-${item.id}`)
+                                }
+                                autoFocus
+                                color="error"
+                              >
+                                Delete
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
+                          <Tooltip
+                            title={open[item.id] ? "Collapse" : "Expand"}
+                          >
+                            <IconButton
+                              size="small"
+                              onClick={() => handleClick(item.id)}
+                            >
+                              <KeyboardArrowDown
+                                sx={{
+                                  transform: open[item.id]
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "0.2s",
+                                }}
+                              />
+                            </IconButton>
+                          </Tooltip>
+                        </ListItem>
+                        {open[item.id] && (
+                          <>
+                            <ListItemButton
+                              // key={item.label}
+                              sx={{
+                                py: 0,
+                                minHeight: 32,
+                                color: "rgba(0, 0, 0, 1)",
+                              }}
+                            >
+                              <ListItemIcon sx={{ color: "inherit" }}>
+                                <AccountCircle />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={item.username}
+                                primaryTypographyProps={{
+                                  fontSize: 14,
+                                  fontWeight: "medium",
+                                }}
+                              />
+                              <Tooltip title="Edit">
+                                <IconButton size="small">
+                                  <Edit />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Copy">
+                                <IconButton size="small">
+                                  <ContentCopy />
+                                </IconButton>
+                              </Tooltip>
+                            </ListItemButton>
+
+                            {/* divider */}
+
+                            <ListItemButton
+                              // key={item.label}
+                              sx={{
+                                py: 0,
+                                minHeight: 32,
+                                color: "rgba(0, 0, 0, 1)",
+                              }}
+                            >
+                              <ListItemIcon sx={{ color: "inherit" }}>
+                                <Lock />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={item.password}
+                                primaryTypographyProps={{
+                                  fontSize: 14,
+                                  fontWeight: "medium",
+                                }}
+                              />
+                              <Tooltip title="Edit">
+                                <IconButton size="small">
+                                  <Edit />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Copy">
+                                <IconButton size="small">
+                                  <ContentCopy />
+                                </IconButton>
+                              </Tooltip>
+                            </ListItemButton>
+
+                            {/* divider */}
+                            
+                            <ListItemButton
+                              // key={item.label}
+                              sx={{
+                                py: 0,
+                                minHeight: 32,
+                                color: "rgba(0, 0, 0, 1)",
+                              }}
+                            >
+                              <ListItemIcon sx={{ color: "inherit" }}>
+                                <Link />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={item.hostname}
+                                primaryTypographyProps={{
+                                  fontSize: 14,
+                                  fontWeight: "medium",
+                                }}
+                              />
+                              <Tooltip title="Edit">
+                                <IconButton size="small">
+                                  <Edit />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Copy">
+                                <IconButton size="small">
+                                  <ContentCopy />
+                                </IconButton>
+                              </Tooltip>
+                            </ListItemButton>
+                          </>
+                        )}
+                      </Box>
+                    </ListItem>
+                  ))}
                 </li>
               ))}
             </List>

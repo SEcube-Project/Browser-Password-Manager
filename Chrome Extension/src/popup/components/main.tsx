@@ -23,7 +23,7 @@ import {
   Stack,
 } from "@mui/material";
 
-import PinnedSubheaderList from "./current-tab";
+import CustomizedList from "./current-tab";
 import AddPasswordElement from "./add-password";
 import GeneratePasswordElement from "./generate-password";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -41,8 +41,7 @@ export default function FixedBottomNavigation() {
   useEffect(() => {
     fetchApi(DEBUG)
       .then((res) => {
-        console.log(res);
-        setPasswordData(res);
+        setPasswordData(res.passwords);
       })
       .catch((err) => {
         console.log(err);
@@ -109,8 +108,9 @@ export default function FixedBottomNavigation() {
 
   return (
     <Box sx={{ width: 400, height: 500 }}>
-      {state === 0 && <PinnedSubheaderList />}
-      {state === 1 && <PinnedSubheaderList />}
+      {console.log("PasswordData", passwordData)}
+      {state === 0 && <CustomizedList password={passwordData}/>}
+      {state === 1 && <CustomizedList />}
       {state === 2 && <GeneratePasswordElement />}
       {state === 3 && <AddPasswordElement />}
       {[0, 1, 2, 3].includes(state) && (
