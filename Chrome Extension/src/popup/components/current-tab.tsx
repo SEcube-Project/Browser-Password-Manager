@@ -25,7 +25,6 @@ import Password from "@mui/icons-material/Password";
 import Link from "@mui/icons-material/Link";
 import Edit from "@mui/icons-material/Edit";
 import ContentCopy from "@mui/icons-material/ContentCopy";
-import AlertDialog from "./delete-dialog";
 import Delete from "@mui/icons-material/Delete";
 
 var data = [
@@ -54,10 +53,12 @@ export default function CustomizedList() {
 
   const handleClickOpen = () => {
     setPopup(true);
+    console.log("popup", popup);
   };
 
   const handleClose = () => {
     setPopup(false);
+    console.log("popup", popup);
   };
 
   const handleClick = (index: number, item, section) => {
@@ -163,16 +164,7 @@ export default function CustomizedList() {
                             "index",
                             item + convertToIndex(sectionId) * numbers.length
                           )}
-                          <ListItemButton
-                            onClick={() =>
-                              handleClick(
-                                item +
-                                  convertToIndex(sectionId) * numbers.length,
-                                item,
-                                sectionId
-                              )
-                            }
-                          >
+                          <ListItem>
                             <ListItemText
                               primary="Hostname"
                               primaryTypographyProps={{
@@ -196,47 +188,44 @@ export default function CustomizedList() {
                               }}
                               sx={{ my: 0 }}
                             />
-                            <Tooltip title="Delete">
-                              <IconButton
-                                color="error"
-                                onClick={handleClickOpen}
-                              >
-                                <Delete />
-                                <Dialog
-                                  open={popup}
-                                  onClose={handleClose}
-                                  aria-labelledby="alert-dialog-title"
-                                  aria-describedby="alert-dialog-description"
+                            <IconButton
+                              aria-label="delete"
+                              onClick={handleClickOpen}
+                            >
+                              <Delete />
+                            </IconButton>
+                            <Dialog
+                              open={popup}
+                              onClose={handleClose}
+                              aria-labelledby="alert-dialog-title"
+                              aria-describedby="alert-dialog-description"
+                            >
+                              <DialogTitle id="alert-dialog-title">
+                                {"Delete Password"}
+                              </DialogTitle>
+                              <DialogContent>
+                                <DialogContentText id="alert-dialog-description">
+                                  Are you sure you want to delete this password?
+                                </DialogContentText>
+                              </DialogContent>
+                              <DialogActions>
+                                <Button
+                                  variant="contained"
+                                  onClick={handleClose}
+                                  color="success"
                                 >
-                                  <DialogTitle id="alert-dialog-title">
-                                    {"Delete password?"}
-                                  </DialogTitle>
-                                  <DialogContent>
-                                    <DialogContentText id="alert-dialog-description">
-                                      Are you sure you want to delete this
-                                      password?
-                                    </DialogContentText>
-                                  </DialogContent>
-                                  <DialogActions>
-                                    <Button
-                                      variant="contained"
-                                      color="success"
-                                      onClick={handleClose}
-                                    >
-                                      Keep
-                                    </Button>
-                                    <Button
-                                      variant="contained"
-                                      color="error"
-                                      onClick={handleClose}
-                                      autoFocus
-                                    >
-                                      Delete
-                                    </Button>
-                                  </DialogActions>
-                                </Dialog>
-                              </IconButton>
-                            </Tooltip>
+                                  Keep
+                                </Button>
+                                <Button
+                                  variant="contained"
+                                  onClick={handleClose}
+                                  autoFocus
+                                  color="error"
+                                >
+                                  Delete
+                                </Button>
+                              </DialogActions>
+                            </Dialog>
                             <Tooltip
                               title={
                                 open[
@@ -259,13 +248,26 @@ export default function CustomizedList() {
                                       : "rotate(0)",
                                     transition: "0.2s",
                                   }}
+                                  onClick={() =>
+                                    handleClick(
+                                      item +
+                                        convertToIndex(sectionId) *
+                                          numbers.length,
+                                      item,
+                                      sectionId
+                                    )
+                                  }
                                 />
                               </IconButton>
                             </Tooltip>
-                          </ListItemButton>
-                          {open[
-                            item + convertToIndex(sectionId) * numbers.length
-                          ] &&
+                          </ListItem>
+                          {isPopupOpenAndExpand(
+                            item,
+                            sectionId,
+                            popup,
+                            open,
+                            numbers
+                          ) &&
                             data.map((item) => (
                               <ListItemButton
                                 key={item.label}
@@ -319,3 +321,16 @@ export default function CustomizedList() {
 const convertToIndex = (char: string) => {
   return char.toUpperCase().charCodeAt(0) - 65;
 };
+
+function isPopupOpenAndExpand(
+  item: number,
+  sectionId: string,
+  popup: boolean,
+  open: boolean[],
+  numbers: number[]
+) {
+  if (open[item + convertToIndex(sectionId) * numbers.length] && !popup) {
+    return true;
+  }
+  return false;
+}

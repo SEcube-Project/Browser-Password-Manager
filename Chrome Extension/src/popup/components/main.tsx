@@ -33,7 +33,7 @@ import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 const DEBUG = true;
 
 export default function FixedBottomNavigation() {
-  const [state, setState] = useState(4);
+  const [state, setState] = useState(0);
   const [passwordData, setPasswordData] = useState<PasswordElement[]>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
