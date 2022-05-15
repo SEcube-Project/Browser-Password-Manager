@@ -1,4 +1,5 @@
 import ctypes
+from html import entities
 import pathlib
 
 class L1:
@@ -20,8 +21,62 @@ class L1:
     def Logout(self):
         return self._c_lib.L1_Logout(self._l1inst)
 
-    def GetAllPasswords(self, hostname: str = None, len: int = None):
-        return []
+    def GetAllPasswords(self, hostname: str = None, llen: int = -1):
+
+        lh = len(hostname) if isinstance(hostname, str) else 0
+        ph = (ctypes.c_char*lh)(*[ord(c) for c in hostname]) if lh > 0 else 0x0
+        
+        hostsize = (ctypes.c_uint16)()
+        usersize = (ctypes.c_uint16)()
+        passsize = (ctypes.c_uint16)()
+        totallen = (ctypes.c_uint16)()
+        self._c_lib.L1_GetPasswords_Sizes(self._l1inst, ctypes.byref(hostsize), ctypes.byref(usersize), ctypes.byref(passsize), ctypes.byref(totallen), ph, lh)
+
+        hostsize = hostsize.value
+        usersize = usersize.value
+        passsize = passsize.value
+        totallen = totallen.value
+
+        if llen != -1 and totallen > llen:
+            totallen = llen
+
+        ids = (ctypes.c_uint32*totallen)()
+        hostsizes = (ctypes.c_uint16*totallen)()
+        usersizes = (ctypes.c_uint16*totallen)()
+        passsizes = (ctypes.c_uint16*totallen)()
+
+        hh = hostsize*totallen
+        uu = usersize*totallen
+        pp = passsize*totallen
+        rhosts = (ctypes.c_char*hh)()
+        rusers = (ctypes.c_char*uu)()
+        rpasss = (ctypes.c_char*pp)()
+
+        print(f"type: {type(hostname)}, value: {hostname}")
+        self._c_lib.L1_GetPasswords(self._l1inst, ids, hostsizes, usersizes, passsizes, rhosts, rusers, rpasss, ph, lh)
+        # entries = [ (id, str(rhosts[i*hostsize:i*hostsize+h].decode('utf-8')), str(rusers[i*usersize:i*usersize+u].decode('utf-8')), str(rpasss[i*passsize:i*passsize+p].decode('utf-8'))) for i, (id, h, u, p) in enumerate(zip(ids, hostsizes, usersizes, passsizes)) ]
+
+        entries = []
+        hidx = uidx = pidx = 0
+        for i, (id, h, u, p) in enumerate(zip(ids, hostsizes, usersizes, passsizes)):
+            # print(f"i: {i:5d}, h: {h:5d}, hidx: {hidx:5d}, start: {hidx:5d}, end: {hidx+h-1:5d}, len: {h:5d}")
+            entries.append((id, rhosts[hidx:hidx+h].decode('utf-8'), rusers[uidx:uidx+u].decode('utf-8'), rpasss[pidx:pidx+p].decode('utf-8')))
+            hidx += h
+            uidx += u
+            pidx += p
+
+        return entries[:totallen]
+
+    def AddPassword(self, hostname:str , username:str , password:str):
+
+        ln = len(hostname)
+        lu = len(username)
+        lp = len(password)
+        ph = (ctypes.c_char*ln)(*[ord(c) for c in hostname])
+        pu = (ctypes.c_char*lu)(*[ord(c) for c in username])
+        pp = (ctypes.c_char*lp)(*[ord(c) for c in password])
+
+        self._c_lib.L1_AddPassword(self._l1inst, ph, ln, pu, lu, pp, lp)
 
     def _bool2uint8(self, b: bool):
         return ctypes.c_uint8(1 if b else 0)

@@ -2,6 +2,7 @@ import sys
 import logging
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
+from werkzeug.exceptions import BadRequest
 
 from L0 import L0
 from L1 import L1
@@ -68,16 +69,56 @@ class API_Device_Passwords(API_DeviceBase):
 
     def get(self, indx: int):
 
+        parser = self._parser.copy()
+        parser.add_argument('hostname', type=str, required=False, help='Hostname argument required. Must be a string', location='args')
+
+        args = parser.parse_args()
+        if not self._setdev_login(indx, args["pin"], True, True):
+            return {'error': 'Could not login: wrong pin or device not found'}, 400
+
+        try:
+            l = self._l1.GetAllPasswords(hostname=args["hostname"])
+        except BadRequest as e:
+            raise
+        except Exception as e:
+            self._logger.error(f"Could not get passwords: {e}")
+            return {'error': f'Could not get passwords {e}'}, 400
+        finally:
+            self._l1.Logout()
+
+        return {
+            "count": len(l),
+            "passwords": [{
+                "id": x[0],
+                "hostname": x[1],
+                "username": x[2],
+                "password": x[3]
+            } for x in l]
+        }
+
+    def put(self, indx: int):
+
         args = self._parser.parse_args()
         if not self._setdev_login(indx, args["pin"], True, True):
             return {'error': 'Could not login: wrong pin or device not found'}, 400
 
-        l = self._l1.GetAllPasswords()
-        self._l1.Logout()
-        return {
-            "count": len(l),
-            "passwords": l
-        }
+        try:
+            bodyargs_template = reqparse.RequestParser()
+            bodyargs_template.add_argument('hostname', type=str, required=True, help='Hostname argument required. Must be a string', location='json')
+            bodyargs_template.add_argument('username', type=str, required=True, help='Username argument required. Must be a string', location='json')
+            bodyargs_template.add_argument('password', type=str, required=True, help='Password argument required. Must be a string', location='json')
+            bodyargs = bodyargs_template.parse_args()
+
+            self._l1.AddPassword(bodyargs["hostname"], bodyargs["username"], bodyargs["password"])
+        except BadRequest as e:
+            raise
+        except Exception as e:
+            self._logger.error(f"Could not add password: {e}")
+            return {'error': f'Could not add password: {e}'}, 400
+        finally:
+            self._l1.Logout()
+
+        return {'success': True}
 
 if __name__ == "__main__":
     
@@ -99,9 +140,6 @@ if __name__ == "__main__":
         logger.warning("No devices found!")
     else:
         logger.info(f"Found {device_cnt} devices")
-
-    # logger.info("Selecting device 0")
-    # l1.SelectSECube(0)
 
     api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0])
     api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1])
