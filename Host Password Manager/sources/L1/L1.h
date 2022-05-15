@@ -60,6 +60,7 @@ private:
 	void KeyList(uint16_t maxKeys, uint16_t skip, se3Key* keyArray, uint16_t* count);
 	void PassList(uint8_t *buffer, uint16_t *buflen);
 	bool L1SEGetAllPasswords(uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen, std::vector<se3Pass>& passList);
+	bool L1SEModifyPassword(uint32_t pass_id, se3Pass& password, bool isModify);
 public:
 	L1(); /**< Default constructor. */
 	L1(uint8_t index); /**< Custom constructor used only in a very specific case by the APIs of the SEkey library (L2). Do not use elsewhere. */
