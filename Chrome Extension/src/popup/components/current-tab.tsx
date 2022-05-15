@@ -149,7 +149,9 @@ export default function CustomizedList() {
                       <ListItem key={`item-${sectionId}-${item}`}>
                         <Box
                           sx={{
-                            bgcolor: open[item]
+                            bgcolor: open[
+                              item + convertToIndex(sectionId) * numbers.length
+                            ]
                               ? "rgba(25, 118, 210, 0.7)"
                               : "rgba(25, 118, 210, 0.7)",
                             width: "360px",
@@ -157,11 +159,17 @@ export default function CustomizedList() {
                         >
                           {console.log("item", item)}
                           {console.log("sectionId", sectionId)}
-                          {console.log("index", item + convertToIndex(sectionId) * numbers.length)}
+                          {console.log(
+                            "index",
+                            item + convertToIndex(sectionId) * numbers.length
+                          )}
                           <ListItemButton
                             onClick={() =>
                               handleClick(
-                                item + convertToIndex(sectionId) * numbers.length, item, sectionId
+                                item +
+                                  convertToIndex(sectionId) * numbers.length,
+                                item,
+                                sectionId
                               )
                             }
                           >
@@ -179,7 +187,10 @@ export default function CustomizedList() {
                                 noWrap: true,
                                 fontSize: 12,
                                 lineHeight: "16px",
-                                color: open[item]
+                                color: open[
+                                  item +
+                                    convertToIndex(sectionId) * numbers.length
+                                ]
                                   ? "rgba(0, 0, 0, 1)"
                                   : "rgba(0, 0, 0, 1)",
                               }}
@@ -226,13 +237,35 @@ export default function CustomizedList() {
                                 </Dialog>
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Expand">
+                            <Tooltip
+                              title={
+                                open[
+                                  item +
+                                    convertToIndex(sectionId) * numbers.length
+                                ]
+                                  ? "Collapse"
+                                  : "Expand"
+                              }
+                            >
                               <IconButton size="small">
-                                <KeyboardArrowDown />
+                                <KeyboardArrowDown
+                                  sx={{
+                                    transform: open[
+                                      item +
+                                        convertToIndex(sectionId) *
+                                          numbers.length
+                                    ]
+                                      ? "rotate(-180deg)"
+                                      : "rotate(0)",
+                                    transition: "0.2s",
+                                  }}
+                                />
                               </IconButton>
                             </Tooltip>
                           </ListItemButton>
-                          {open[item + convertToIndex(sectionId) * numbers.length] &&
+                          {open[
+                            item + convertToIndex(sectionId) * numbers.length
+                          ] &&
                             data.map((item) => (
                               <ListItemButton
                                 key={item.label}
@@ -284,5 +317,5 @@ export default function CustomizedList() {
  * @returns The number of the letter
  */
 const convertToIndex = (char: string) => {
-  return (char.toUpperCase()).charCodeAt(0) - 65;
+  return char.toUpperCase().charCodeAt(0) - 65;
 };

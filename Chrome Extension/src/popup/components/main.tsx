@@ -28,11 +28,12 @@ import AddPasswordElement from "./add-password";
 import GeneratePasswordElement from "./generate-password";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
 const DEBUG = true;
 
 export default function FixedBottomNavigation() {
-  const [state, setState] = useState(0);
+  const [state, setState] = useState(4);
   const [passwordData, setPasswordData] = useState<PasswordElement[]>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
@@ -64,13 +65,46 @@ export default function FixedBottomNavigation() {
 
   function handleOnClickLogin(event: Event, newPassword: string) {
     if (DEBUG) {
-      if (newPassword == "login") setState(0);
+      if (newPassword == "login") {
+        setState(0);
+        return true;
+      }
     }
     // TODO: make a call to gabriel's API to check if the password is correct
   }
 
   function handleOnClickLock(event: Event) {
     setState(4);
+  }
+
+  function MyApp() {
+    const { enqueueSnackbar } = useSnackbar();
+
+    function handleClickVariant(newPassword: string) {
+      // variant could be success, error, warning, info, or default
+      if (DEBUG) {
+        if (newPassword == "login") {
+          setState(0);
+          return true;
+        } else {
+          enqueueSnackbar("Wrong Password", { variant: "error" });
+        }
+      }
+    }
+
+    return (
+      <React.Fragment>
+        <Button variant="contained" onClick={() => handleClickVariant(password)} endIcon={<LockOpenIcon />}>Login</Button>
+      </React.Fragment>
+    );
+  }
+
+  function IntegrationNotistack() {
+    return (
+      <SnackbarProvider maxSnack={1} autoHideDuration={3000}>
+        <MyApp />
+      </SnackbarProvider>
+    );
   }
 
   return (
@@ -133,15 +167,8 @@ export default function FixedBottomNavigation() {
               label="Master Password"
             />
           </FormControl>
-
           <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
-            <Button
-              onClick={() => handleOnClickLogin(event, password)}
-              variant="contained"
-              startIcon={<LockOpenIcon />}
-            >
-              Login
-            </Button>
+            <IntegrationNotistack />
           </FormControl>
         </div>
       )}
