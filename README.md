@@ -56,6 +56,112 @@ Update is done by deleting and re-adding. Master password sent at every REST cal
 
 + Flash management
 
+### REST APIs details
+
+- Retrieval of all the connected devices
+```
+GET /api/v0/devices
+```
+```json
+{
+  "count": 1,
+  "devices": [
+    {
+      "index": 0,
+      "path": "/media/gabriele97/9016-4EF8/",
+      "serial": "SEcube12340000000000000000000000"
+    }
+  ]
+}
+```
+
+- Retrieval of all stored passwords
+```
+GET /api/v0/device/<device_id>/passwords?pin=<device_pin>
+```
+```json
+{
+  "count": 6,
+  "passwords": [
+    {
+      "id": 1,
+      "hostname": "test.com",
+      "username": "test",
+      "password": "1234"
+    },
+    {
+      "id": 2,
+      "hostname": "test.com",
+      "username": "test",
+      "password": "1234"
+    },
+    {
+      "id": 3,
+      "hostname": "test.com",
+      "username": "test",
+      "password": "1234"
+    },
+    {
+      "id": 4,
+      "hostname": "test.com",
+      "username": "test",
+      "password": "1234"
+    },
+    {
+      "id": 5,
+      "hostname": "facebook.com",
+      "username": "2",
+      "password": "marco"
+    },
+    {
+      "id": 6,
+      "hostname": "facebook.com",
+      "username": "zucca",
+      "password": "marco"
+    }
+  ]
+}
+```
+
+- Retrieval of all stored passwords with **hostname filter**
+```
+GET /api/v0/device/<device_id>/passwords?pin=<device_pin>&hostname=<filter>
+
+GET /api/v0/device/<device_id>/passwords?pin=<device_pin>&hostname=fac
+```
+```json
+{
+  "count": 2,
+  "passwords": [
+    {
+      "id": 5,
+      "hostname": "facebook.com",
+      "username": "2",
+      "password": "marco"
+    },
+    {
+      "id": 6,
+      "hostname": "facebook.com",
+      "username": "zucca",
+      "password": "marco"
+    }
+  ]
+}
+```
+
+- Insertion of a new password
+```
+PUT /api/v0/device/<device_id>/passwords?pin=<device_pin>
+```
+
+*BODY REQUEST:*
+```json
+{
+    "hostname": "facebook.com",
+    "username": "zucca",
+    "password": "marco"
+}
+```
 
 
 # Work distribution
