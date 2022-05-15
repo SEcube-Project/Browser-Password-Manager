@@ -21,7 +21,7 @@ export default function GeneratePasswordElement() {
 }
 
 function CheckboxLabels() {
-  const [showPassword, setShowPassword] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
 
   const handleClickShowPassword = () => {
