@@ -126,7 +126,6 @@ GET /api/v0/device/<device_id>/passwords?pin=<device_pin>
 - Retrieval of all stored passwords with **hostname filter**
 ```
 GET /api/v0/device/<device_id>/passwords?pin=<device_pin>&hostname=<filter>
-
 GET /api/v0/device/<device_id>/passwords?pin=<device_pin>&hostname=fac
 ```
 ```json
@@ -151,15 +150,67 @@ GET /api/v0/device/<device_id>/passwords?pin=<device_pin>&hostname=fac
 
 - Insertion of a new password
 ```
-PUT /api/v0/device/<device_id>/passwords?pin=<device_pin>
+POST /api/v0/device/<device_id>/passwords?pin=<device_pin>
 ```
 
 *BODY REQUEST:*
 ```json
 {
-    "hostname": "facebook.com",
-    "username": "zucca",
-    "password": "marco"
+  "hostname": "facebook.com",
+  "username": "zucca",
+  "password": "marco"
+}
+```
+
+- Details of a single password 
+```
+GET /api/v0/device/<device_id>/password/<password_id>?pin=<device_pin>
+```
+
+```json
+{
+  "id": 3,
+  "hostname": "test.com",
+  "username": "test",
+  "password": "1234"
+}
+```
+
+- Update of a single password 
+```
+PUT /api/v0/device/<device_id>/password/<password_id>?pin=<device_pin>
+```
+
+*BODY REQUEST:*
+```json
+{
+  "id": 3,
+  "hostname": "test.com",
+  "username": "test",
+  "password": "1234"
+}
+```
+
+- Removal of a single password 
+```
+DELETE /api/v0/device/<device_id>/password/<password_id>?pin=<device_pin>
+```
+
+```json
+{
+  "success": true
+}
+```
+
+- Password Generation
+
+```
+GET /api/v0/device/<device_id>/generate?pin=<device_pin>&upper=[0,1]&special=[0,1]&numbers=[0,1]&length=<password_length>
+```
+
+```json
+{
+  "generated": "m2hWwQBdyODd?tnWgPq@fFO8McmbB:;g6ViOC9oosSZ5AamhnTghjVmd$aBRnvOx"
 }
 ```
 
