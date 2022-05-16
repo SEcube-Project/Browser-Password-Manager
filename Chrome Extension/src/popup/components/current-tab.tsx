@@ -100,7 +100,7 @@ export default function CustomizedList(props) {
     setReadOnlyPassword(!readOnlyPassword);
   };
 
-  function handleSaveURL(URL: string): void {
+  function handleSaveURL(URL: string, item): void {
     if (URL.length > 0) {
       setURL(URL);
       setReadOnlyURL(true);
@@ -133,7 +133,6 @@ export default function CustomizedList(props) {
   React.useEffect(() => {
     setPasswordData(props.password);
   }, [props.password]);
-
 
   const handleClickOpen = () => {
     setPopup(true);
@@ -363,7 +362,11 @@ export default function CustomizedList(props) {
                                         type={
                                           showPassword ? "text" : "username"
                                         }
-                                        value={readOnlyUsername ? item.username : username}
+                                        value={
+                                          readOnlyUsername
+                                            ? item.username
+                                            : username
+                                        }
                                         readOnly={readOnlyUsername}
                                         onChange={() =>
                                           handleChangeUsername(event)
@@ -375,17 +378,30 @@ export default function CustomizedList(props) {
                                       <IconButton size="small">
                                         {readOnlyUsername ? (
                                           <Edit
-                                            onClick={() => handleReadOnlyUsername(item)}
+                                            onClick={() =>
+                                              handleReadOnlyUsername(item)
+                                            }
                                           />
                                         ) : (
                                           <Done
-                                            onClick={() => handleSaveUsername(username)}
+                                            onClick={() =>
+                                              handleSaveUsername(username)
+                                            }
                                           />
                                         )}
                                       </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Copy">
-                                      <IconButton size="small">
+                                      <IconButton
+                                        size="small"
+                                        onClick={() => {
+                                          navigator.clipboard.writeText(
+                                            readOnlyUsername
+                                              ? item.username
+                                              : username
+                                          );
+                                        }}
+                                      >
                                         <ContentCopy />
                                       </IconButton>
                                     </Tooltip>
@@ -415,7 +431,11 @@ export default function CustomizedList(props) {
                                         type={
                                           showPassword ? "text" : "password"
                                         }
-                                        value={readOnlyPassword ? item.password : password}
+                                        value={
+                                          readOnlyPassword
+                                            ? item.password
+                                            : password
+                                        }
                                         readOnly={readOnlyPassword}
                                         onChange={() =>
                                           handleChangePassword(event)
@@ -445,17 +465,30 @@ export default function CustomizedList(props) {
                                       <IconButton size="small">
                                         {readOnlyPassword ? (
                                           <Edit
-                                            onClick={() => handleReadOnlyPassword(item)}
+                                            onClick={() =>
+                                              handleReadOnlyPassword(item)
+                                            }
                                           />
                                         ) : (
                                           <Done
-                                            onClick={() => handleSavePassword(password)}
+                                            onClick={() =>
+                                              handleSavePassword(password)
+                                            }
                                           />
                                         )}
                                       </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Copy">
-                                      <IconButton size="small">
+                                      <IconButton
+                                        size="small"
+                                        onClick={() => {
+                                          navigator.clipboard.writeText(
+                                            readOnlyPassword
+                                              ? item.password
+                                              : password
+                                          );
+                                        }}
+                                      >
                                         <ContentCopy />
                                       </IconButton>
                                     </Tooltip>
@@ -483,7 +516,9 @@ export default function CustomizedList(props) {
                                       <OutlinedInput
                                         id="outlined-adornment-URL"
                                         type={showPassword ? "text" : "URL"}
-                                        value={readOnlyURL ? item.hostname : URL}
+                                        value={
+                                          readOnlyURL ? item.hostname : URL
+                                        }
                                         readOnly={readOnlyURL}
                                         onChange={() => handleChangeURL(event)}
                                         label="URL"
@@ -493,17 +528,28 @@ export default function CustomizedList(props) {
                                       <IconButton size="small">
                                         {readOnlyURL ? (
                                           <Edit
-                                            onClick={() => handleReadOnlyURL(item)}
+                                            onClick={() =>
+                                              handleReadOnlyURL(item)
+                                            }
                                           />
                                         ) : (
                                           <Done
-                                            onClick={() => handleSaveURL(URL)}
+                                            onClick={() =>
+                                              handleSaveURL(URL, item)
+                                            }
                                           />
                                         )}
                                       </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Copy">
-                                      <IconButton size="small">
+                                      <IconButton
+                                        size="small"
+                                        onClick={() => {
+                                          navigator.clipboard.writeText(
+                                            readOnlyURL ? item.hostname : URL
+                                          );
+                                        }}
+                                      >
                                         <ContentCopy />
                                       </IconButton>
                                     </Tooltip>
