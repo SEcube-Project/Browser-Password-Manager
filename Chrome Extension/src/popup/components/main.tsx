@@ -46,7 +46,7 @@ export default function FixedBottomNavigation() {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [state]);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);

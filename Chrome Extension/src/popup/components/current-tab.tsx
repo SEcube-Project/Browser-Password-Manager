@@ -104,22 +104,28 @@ export default function CustomizedList(props) {
     if (URL.length > 0) {
       setURL(URL);
       setReadOnlyURL(true);
+      const newItem = { ...item, hostname: URL };
+      PasswordData[item.id - 1] = newItem;
       //TODO: push the change to gabriele API
     }
   }
 
-  function handleSaveUsername(username: string): void {
+  function handleSaveUsername(username: string, item): void {
     if (username.length > 0) {
       setUsername(username);
       setReadOnlyUsername(true);
+      const newItem = {...item, username: username};
+      PasswordData[item.id - 1] = newItem;
       //TODO: push the change to gabriele API
     }
   }
 
-  function handleSavePassword(password: string): void {
+  function handleSavePassword(password: string, item): void {
     if (password.length > 0) {
       setPassword(password);
       setReadOnlyPassword(true);
+      const newItem = {...item, password: password};
+      PasswordData[item.id - 1] = newItem;
       //TODO: push the change to gabriele API
     }
   }
@@ -385,7 +391,7 @@ export default function CustomizedList(props) {
                                         ) : (
                                           <Done
                                             onClick={() =>
-                                              handleSaveUsername(username)
+                                              handleSaveUsername(username, item)
                                             }
                                           />
                                         )}
@@ -472,7 +478,7 @@ export default function CustomizedList(props) {
                                         ) : (
                                           <Done
                                             onClick={() =>
-                                              handleSavePassword(password)
+                                              handleSavePassword(password, item)
                                             }
                                           />
                                         )}
