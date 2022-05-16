@@ -63,10 +63,10 @@ extern "C" void L1_GetPasswords_Sizes(void *instance, uint16_t *maxHostSize, uin
 
     if (totallen) *totallen = passwords.size();
 
-    if (maxHostSize) std::cout << "#CC: maxHostSize: " << *maxHostSize << std::endl;
-    if (maxUserSize) std::cout << "#CC: maxUserSize: " << *maxUserSize << std::endl;
-    if (maxPassSize) std::cout << "#CC: maxPassSize: " << *maxPassSize << std::endl;
-    if (totallen) std::cout << "#CC: totallen: " << *totallen << std::endl;
+    // if (maxHostSize) std::cout << "#CC: maxHostSize: " << *maxHostSize << std::endl;
+    // if (maxUserSize) std::cout << "#CC: maxUserSize: " << *maxUserSize << std::endl;
+    // if (maxPassSize) std::cout << "#CC: maxPassSize: " << *maxPassSize << std::endl;
+    // if (totallen) std::cout << "#CC: totallen: " << *totallen << std::endl;
 
 }
 
