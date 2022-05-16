@@ -379,7 +379,7 @@ export default function CustomizedList(props) {
                                           />
                                         ) : (
                                           <Done
-                                            onClick={() => handleSaveUsername(URL)}
+                                            onClick={() => handleSaveUsername(username)}
                                           />
                                         )}
                                       </IconButton>
@@ -449,7 +449,7 @@ export default function CustomizedList(props) {
                                           />
                                         ) : (
                                           <Done
-                                            onClick={() => handleSavePassword(URL)}
+                                            onClick={() => handleSavePassword(password)}
                                           />
                                         )}
                                       </IconButton>
