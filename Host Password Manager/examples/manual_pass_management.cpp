@@ -39,6 +39,11 @@ using namespace std;
 /* WARNING: this example will write and delete keys in the internal memory of the SEcube. The internal memory will be scanned for
  * existing keys, those keys won't be affected by any change. */
 
+void exitWithError(){
+	printf("\n\n\n########## TEST PROGRAM STOPPED DUE TO AND ERROR DURING A TEST ##########\n\n\n");
+	exit(1);
+}
+
 int fillByteArray(std::string s, shared_ptr<uint8_t[]> val){
 	int cnt = 0;
 	for (char c : s){
@@ -123,7 +128,6 @@ int main(){
 		shared_ptr<uint8_t[]> userVal = make_unique<uint8_t[]>(100);
 
 
-
 		// ############## PASS CREATION ##############
 		// Pass 1
 		uint16_t hostSize = fillByteArray("youtube.com", hostVal);
@@ -133,7 +137,8 @@ int main(){
 		if(l1->L1SEAddPassword(1, hostVal, hostSize, userVal, userSize, passVal, passSize)){
 			printf("Added new pass with id %d!\n", 1);
 		} else {
-			printf("Unable to add!\n");
+			printf("ERROR: Unable to add!\n");
+			exitWithError();
 		}
 
 		// Pass 2
@@ -143,7 +148,8 @@ int main(){
 		if(l1->L1SEAddPassword(2, hostVal, hostSize, userVal, userSize, passVal, passSize)){
 			printf("Added new pass with id %d!\n", 2);
 		} else {
-			printf("Unable to add!\n");
+			printf("ERROR: Unable to add!\n");
+			exitWithError();
 		}
 
 		// Pass 3
@@ -153,7 +159,35 @@ int main(){
 		if(l1->L1SEAddPassword(3, hostVal, hostSize, userVal, userSize, passVal, passSize)){
 			printf("Added new pass with id %d!\n", 3);
 		} else {
-			printf("Unable to add!\n");
+			printf("ERROR: Unable to add!\n");
+			exitWithError();
+		}
+
+		// Check if error in case of password with same hostname
+		if(!l1->L1SEAddPassword(4, hostVal, hostSize, userVal, userSize, passVal, passSize)){
+			printf("Password correctly not added\n");
+		} else {
+			printf("ERROR: Password wrongly added!\n");
+			exitWithError();
+		}
+
+		// Check if error in case of password with same hostname
+		if(!l1->L1SEAddPassword(3, hostVal, hostSize, userVal, userSize, passVal, passSize)){
+			printf("Password correctly not added\n");
+		} else {
+			printf("ERROR: Password wrongly added!\n");
+			exitWithError();
+		}
+
+		// Pass 3
+		hostSize = fillByteArray("xnxx.com", hostVal);
+		userSize = fillByteArray("xxx@gmail.com", userVal);
+		passSize = fillByteArray("xxXxxa33dss", passVal);
+		if(l1->L1SEAddPassword(4, hostVal, hostSize, userVal, userSize, passVal, passSize)){
+			printf("Added new pass with id %d!\n", 4);
+		} else {
+			printf("ERROR: Unable to add!\n");
+			exitWithError();
 		}
 
 
@@ -170,7 +204,8 @@ int main(){
 			printArray(searchedById.pass, searchedById.passSize);
 			printf("\n");
 		} else {
-			printf("Unable to find pass by id\n");
+			printf("ERROR: Unable to find pass by id\n");
+			exitWithError();
 		}
 
 		// ############## MODIFY ##############
@@ -188,14 +223,39 @@ int main(){
 				printArray(searchedById.pass, searchedById.passSize);
 				printf("\n");
 			} else {
-				printf("Unable to find pass by id\n");
+				printf("ERROR: Unable to find pass by id\n");
+				exitWithError();
 			}
 		} else {
-			printf("Unable to modify pass by id\n");
+			printf("ERROR: Unable to modify pass by id\n");
+			exitWithError();
+		}
+
+		// Try to modify password by wrong id
+		searchedById.passSize = fillByteArray("PASSNEW2", userVal);
+		searchedById.pass = userVal.get();
+		if(!l1->L1SEModifyPassword(111, searchedById)){
+			printf("Password with wrong id correctly not modified\n");
+		} else {
+			printf("ERROR: Able to modify password by wrong id\n");
+			exitWithError();
 		}
 
 		// ############## SEARCH BY ID ##############
-
+		if(l1->L1SEGetPasswordById(1, searchedById)){
+			printf("\n\nFound pass with id %d\n", searchedById.id);
+			printf("Element Id:\t\t%d\n", searchedById.id);
+			printf("Element Hostname:\t");
+			printArray(searchedById.host, searchedById.hostSize);
+			printf("Element Username:\t");
+			printArray(searchedById.user, searchedById.userSize);
+			printf("Element Password:\t");
+			printArray(searchedById.pass, searchedById.passSize);
+			printf("\n");
+		} else {
+			printf("ERROR: Unable to find pass by id\n");
+			exitWithError();
+		}
 
 
 		// ############## LIST ALL ##############
@@ -237,7 +297,8 @@ int main(){
 			if(l1->L1SEDeletePassword(elem.id)){
 				printf("Deleted pass %d: \n", elem.id);
 			} else {
-				printf("Unable to delete pass %d: \n", elem.id);
+				printf("ERROR: Unable to delete pass %d: \n", elem.id);
+				exitWithError();
 			}
 		}
 
@@ -248,7 +309,8 @@ int main(){
 			printf("\n\nNew generated password: ");
 			printArray(pass.get(),  100);
 		} else {
-			printf("\n\nUnable to generated password");
+			printf("\n\nERROR: Unable to generated password");
+			exitWithError();
 		}
 
 	}

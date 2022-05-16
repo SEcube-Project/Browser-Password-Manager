@@ -32,12 +32,13 @@
 
 enum{
 	SE3_SEPASS_OP_ADD = 1, 				/**< Add password */
-	SE3_SEPASS_OP_DELETE = 2, 			/**< Delete password */
-	SE3_SEPASS_OP_GET_BY_ID = 3, 		/**< Get password by id */
-	SE3_SEPASS_OP_GETALL = 4, 			/**< Get all password items */
-	SE3_SEPASS_OP_GENERATE_RANDOM = 5, 	/**< Generate Random Password */
-	SE3_SEPASS_OP_EXPORT = 6, 			/**< Export Passwords - TODO */
-	SE3_SEPASS_OP_IMPORT = 7, 			/**< Import Passwords - TODO */
+	SE3_SEPASS_OP_MODIFY = 2, 				/**< Add password */
+	SE3_SEPASS_OP_DELETE = 3, 			/**< Delete password */
+	SE3_SEPASS_OP_GET_BY_ID = 4, 		/**< Get password by id */
+	SE3_SEPASS_OP_GETALL = 5, 			/**< Get all password items */
+	SE3_SEPASS_OP_GENERATE_RANDOM = 6, 	/**< Generate Random Password */
+	SE3_SEPASS_OP_EXPORT = 7, 			/**< Export Passwords - TODO */
+	SE3_SEPASS_OP_IMPORT = 8, 			/**< Import Passwords - TODO */
 };
 
 enum{
@@ -53,6 +54,14 @@ enum{
  * the old key is replaced by the new one.
  */
 uint16_t add_new_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp);
+
+/** \brief Modify a password inside the flash memory of the SEcube.
+ *
+ * The request needs a new id, so the request take in order 4B of id, 2B of hostname length, 2B of username lenght, 2B of password lenght and
+ * in order the hostname, username and password of the size specifed before. If another key with the same id is already stored in the SEcube,
+ * the old key is replaced by the new one.
+ */
+uint16_t modify_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp);
 
 /** \brief Simply delete a password from the flash memory. The ID of the password to be deleted is passed in the request buffer. */
 uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp);

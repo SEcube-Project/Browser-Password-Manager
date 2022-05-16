@@ -100,13 +100,21 @@ bool L1::L1SEAddPassword(uint16_t pass_id, uint8_t *host_data, uint16_t host_len
 	pass.user = std::string((const char*)user_data, user_len);
 	pass.pass = std::string((const char*)pass_data, pass_len);
 
-	return L1::L1SEModifyPassword(pass_id, pass);
+	return L1::L1SEModifyPassword(pass_id, pass, false);
 }
 
 bool L1::L1SEModifyPassword(uint32_t pass_id, se3Pass& password){
+
+	return L1::L1SEModifyPassword(pass_id, password, true);
+}
+
+bool L1::L1SEModifyPassword(uint32_t pass_id, se3Pass& password, bool isModify){
 	uint16_t data_len = 0;
 	uint16_t resp_len = 0;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_ADD;
+	if (isModify) {
+		op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_MODIFY;
+	}
 	uint16_t offset = L1Request::Offset::DATA;
 	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
 	offset += 2;

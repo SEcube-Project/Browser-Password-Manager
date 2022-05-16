@@ -66,7 +66,7 @@ int16_t is_string_contained(uint8_t* a, uint16_t len_text, uint8_t* b, uint16_t 
 }
 
 
-uint16_t add_new_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
+uint16_t modify_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
 	uint32_t pass_id = 0; 	// id of the key to be stored on the device
 	uint16_t host_len = 0; 	// length of the host provided by the caller (this may be encrypted)
 	uint8_t *host = NULL;
@@ -129,6 +129,88 @@ uint16_t add_new_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 			if(user != NULL){free(user);}
 			return SE3_ERR_HW;
 		}
+	} else {
+		// If not found
+		return SE3_ERR_PARAMS;
+	}
+
+	// Create the item
+	se3_flash_it_init(&it);
+	if (!se3_pass_new(&it, &password)) {
+		if(host != NULL){free(host);}
+		if(pass != NULL){free(pass);}
+		if(user != NULL){free(user);}
+		return SE3_ERR_MEMORY;
+	}
+
+	if(host != NULL){free(host);}
+	if(pass != NULL){free(pass);}
+	if(user != NULL){free(user);}
+
+	*resp_size = 2;
+	memcpy(resp, "OK", 2);
+	return SE3_OK;
+}
+
+
+uint16_t add_new_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
+	uint32_t pass_id = 0; 	// id of the key to be stored on the device
+	uint16_t host_len = 0; 	// length of the host provided by the caller (this may be encrypted)
+	uint8_t *host = NULL;
+	uint16_t user_len = 0; 	// length of the user provided by the caller (this may be encrypted)
+	uint8_t *user = NULL;
+	uint16_t pass_len = 0; 	// length of the password provided by the caller (this may be encrypted)
+	uint8_t *pass = NULL;
+	se3_flash_it it = { .addr = NULL };
+
+	se3_flash_pass password;
+
+	// preliminary check
+	if((req_size-2) < 10){ // minimum size check
+		return SE3_ERR_PARAMS;
+	}
+
+	// parse request
+	memcpy(&pass_id, req, 4); 			// key id
+	memcpy(&host_len, req+4, 2); 		// host length
+	memcpy(&user_len, req+4+2, 2); 		// username length
+	memcpy(&pass_len, req+4+2+2, 2); 	// pass length
+	host = (uint8_t*)malloc(host_len); 	// allocate space for the host content
+	user = (uint8_t*)malloc(user_len); 	// allocate space for the user content
+	pass = (uint8_t*)malloc(pass_len); 	// allocate space for the pass content
+	if(host == NULL || pass == NULL || user == NULL){
+		return SE3_ERR_MEMORY;
+	} else {
+		memset(host, 0, host_len);
+		memset(user, 0, user_len);
+		memset(pass, 0, pass_len);
+	}
+
+	if((req_size-2) != (4+2+2+2+host_len+pass_len+user_len)){ // 4B for key ID, 2B for host len, 2B for user len, 2B for pass len
+		if(host != NULL){ free(host);	}
+		if(user != NULL){ free(user);	}
+		if(pass != NULL){ free(pass);	}
+		return SE3_ERR_PARAMS;
+	}
+
+	memcpy(host, req+4+2+2+2, 		 			host_len);
+	memcpy(user, req+4+2+2+2+host_len, 			user_len);
+	memcpy(pass, req+4+2+2+2+host_len+user_len, pass_len);
+
+	// now everything is ready to store the pass in the SEcube
+	// save it into a support structure
+	password.id = pass_id;
+	password.host_size = host_len;
+	password.pass_size = pass_len;
+	password.user_size = user_len;
+	password.host = host;
+	password.user = user;
+	password.pass = pass;
+
+	// Search in the flash memory if a password with the same ID or same hostname
+	if (se3_pass_equal(&password, &it)) {
+		// Try to delete the record
+		return SE3_ERR_PARAMS;
 	}
 
 	// Create the item

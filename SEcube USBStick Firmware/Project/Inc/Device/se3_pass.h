@@ -85,7 +85,6 @@ bool se3_pass_find(uint32_t id, se3_flash_it* it);
  */
 bool se3_pass_new(se3_flash_it* it, se3_flash_pass* password);
 
-bool se3_pass_id_equal(se3_flash_it* it, se3_flash_pass* password);
 
 /** \brief Read a password
  *  
@@ -96,8 +95,29 @@ bool se3_pass_id_equal(se3_flash_it* it, se3_flash_pass* password);
  */
 void se3_pass_read(se3_flash_it* it, se3_flash_pass* password);
 
-/** \brief Write password data
+/** \brief Chech if two password record has the same id or hostname
  *  
+ *  Chech if two password record has the same id or hostname
+ *  \param it a flash iterator pointing to a flash node of password type
+ *  \param password a flash password structure containing the password information
+ *  \return true if the id or username is equal
+ */
+bool se3_pass_equal(se3_flash_pass* password, se3_flash_it* it);
+
+/** \brief Check if the two strings are equals
+ *
+ *  Write password data to a flash node
+ *  \remark if a flash operation fails, the hwerror flag (se3c0.hwerror) is set.
+ *  \param orig string one
+ *  \param lorig length of the first string
+ *  \param val string two
+ *  \param lval length of the second string
+ *  \return true if equal, else false
+ */
+bool is_str_eq(uint8_t* orig, uint16_t lorig, uint8_t* val, uint16_t lval);
+
+/** \brief Write password data
+ *
  *  Write password data to a flash node
  *  \remark if a flash operation fails, the hwerror flag (se3c0.hwerror) is set.
  *  \param it a flash iterator pointing to a newly created flash node of password type

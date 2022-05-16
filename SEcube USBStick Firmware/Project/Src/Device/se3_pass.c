@@ -39,18 +39,51 @@ bool se3_pass_find(uint32_t id, se3_flash_it* it)
 	return false;
 }
 
-
-bool se3_pass_id_equal(se3_flash_it* it, se3_flash_pass* password)
+bool is_str_eq(uint8_t* orig, uint16_t lorig, uint8_t* val, uint16_t lval)
 {
-	uint32_t u32tmp = 0;
-	if (password->host == NULL || password->pass == NULL){
+	if(lorig != lval)
 		return false;
+	else if(orig == NULL && val == NULL)
+		return true;
+	else if(orig == NULL)
+		return false;
+
+	for (uint16_t i = 0; i < lorig && i < lval; i++){
+		if (orig[i] != val[i])
+			return false;
 	}
-	SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, u32tmp);
-	if (u32tmp != password->id){	return false; }
 	return true;
 }
 
+bool se3_pass_equal(se3_flash_pass* password, se3_flash_it* it)
+{
+    se3_flash_pass tmp;
+	se3_flash_it_init(it);
+	while (se3_flash_it_next(it)) {
+		if (it->type == SE3_TYPE_PASS) {
+			se3_pass_read(it, &tmp);
+        	if (password->host == NULL && tmp.host != NULL) {
+
+    			if(tmp.host != NULL) {free(tmp.host);}
+    			if(tmp.user != NULL) {free(tmp.user);}
+    			if(tmp.pass != NULL) {free(tmp.pass);}
+        		return false;
+        	} else if ((password->host == NULL && tmp.host == NULL) || tmp.id == password->id || is_str_eq(tmp.host, tmp.host_size, password->host, password->host_size)) {
+
+				if(tmp.host != NULL) {free(tmp.host);}
+				if(tmp.user != NULL) {free(tmp.user);}
+				if(tmp.pass != NULL) {free(tmp.pass);}
+				return true;
+			}
+
+			if(tmp.host != NULL) {free(tmp.host);}
+			if(tmp.user != NULL) {free(tmp.user);}
+			if(tmp.pass != NULL) {free(tmp.pass);}
+		}
+	}
+
+	return false;
+}
 
 bool se3_pass_write(se3_flash_it* it, se3_flash_pass* password)
 {
