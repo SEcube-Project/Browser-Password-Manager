@@ -9,6 +9,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import { PasswordElement } from "../../utils/api";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
+import DoneIcon from '@mui/icons-material/Done';
 import {
   Alert,
   Button,
@@ -17,8 +18,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControl,
   IconButton,
+  InputAdornment,
+  InputLabel,
   ListSubheader,
+  OutlinedInput,
   Tooltip,
 } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
@@ -28,6 +33,8 @@ import Edit from "@mui/icons-material/Edit";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import Delete from "@mui/icons-material/Delete";
 import Lock from "@mui/icons-material/Lock";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 var icons = [
   { icon: <AccountCircle /> },
@@ -52,8 +59,51 @@ const FireNav = styled(List)<{ component?: React.ElementType }>({
 export default function CustomizedList(props) {
   const [open, setOpen] = React.useState([false]);
   const [popup, setPopup] = React.useState(false);
-  console.log(props.password);
   const [PasswordData, setPasswordData] = React.useState(null);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [password, setPassword] = React.useState("");
+  const [username, setUsername] = React.useState("");
+  const [URL, setURL] = React.useState("");
+  const [readOnlyUsername, setReadOnlyUsername] = React.useState(true);
+  const [readOnlyURL, setReadOnlyURL] = React.useState(true);
+  const [readOnlyPassword, setReadOnlyPassword] = React.useState(true);
+
+
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleChangePassword = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleChangeUsername = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handleChangeURL = (event) => {
+    setURL(event.target.value);
+  };
+
+  const handleReadOnlyUsername = () => {
+    setReadOnlyUsername(!readOnlyUsername);
+  };
+
+  const handleReadOnlyURL = () => {
+    setReadOnlyURL(!readOnlyURL);
+  };
+
+  const handleReadOnlyPassword = () => {
+    setReadOnlyPassword(!readOnlyPassword);
+  };
+
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
 
   React.useEffect(() => {
     setPasswordData(props.password);
@@ -146,225 +196,275 @@ export default function CustomizedList(props) {
               subheader={<li />}
             >
               {letters.map((sectionId) => (
-                <li key={`section-${sectionId}`}>
-                  <ListSubheader
-                    sx={{ bgcolor: "rgba(10, 50, 105, 1)", color: "white" }}
-                  >
-                    {sectionId.toUpperCase()}
-                  </ListSubheader>
+                <div>
+                  <li key={`section-${sectionId}`}>
+                    <ListSubheader
+                      sx={{ bgcolor: "rgba(10, 50, 105, 1)", color: "white" }}
+                    >
+                      {sectionId.toUpperCase()}
+                    </ListSubheader>
 
-                  {PasswordData?.map((item) => (
-                    <div>
-                      {item.hostname[0].toLowerCase() ===
-                        sectionId.toLowerCase() && (
-                        <ListItem key={`item-${sectionId}-${item.id}`}>
-                          <Box
-                            sx={{
-                              bgcolor: open[item.id]
-                                ? "rgba(25, 118, 210, 0.7)"
-                                : "rgba(25, 118, 210, 0.7)",
-                              width: "360px",
-                            }}
-                          >
-                            {/* {console.log("item", item)}
+                    {PasswordData?.map((item) => (
+                      <div>
+                        {item.hostname[0].toLowerCase() ===
+                          sectionId.toLowerCase() && (
+                          <ListItem key={`item-${sectionId}-${item.id}`}>
+                            <Box
+                              sx={{
+                                bgcolor: open[item.id]
+                                  ? "rgba(25, 118, 210, 0.7)"
+                                  : "rgba(25, 118, 210, 0.7)",
+                                width: "360px",
+                              }}
+                            >
+                              {/* {console.log("item", item)}
                         {console.log("sectionId", sectionId)}
                         {console.log(
                           "index",
                           item + convertToIndex(sectionId) * numbers.length
                         )} */}
-                            <ListItem>
-                              <ListItemText
-                                primary={item.hostname}
-                                primaryTypographyProps={{
-                                  noWrap: true,
-                                  fontSize: 15,
-                                  fontWeight: "medium",
-                                  lineHeight: "20px",
-                                  mb: "2px",
-                                }}
-                                // secondary="Username, Password, URL"
-                                // secondaryTypographyProps={{
-                                //   noWrap: true,
-                                //   fontSize: 12,
-                                //   lineHeight: "16px",
-                                //   color: open[item.id]
-                                //     ? "rgba(0, 0, 0, 1)"
-                                //     : "rgba(0, 0, 0, 1)",
-                                // }}
-                                sx={{ my: 0 }}
-                              />
-                              <IconButton
-                                aria-label="delete"
-                                onClick={handleClickOpen}
-                              >
-                                <Delete />
-                              </IconButton>
-                              <Dialog
-                                open={popup}
-                                onClose={() =>
-                                  handleClose(`item-${sectionId}-${item.id}`)
-                                }
-                                aria-labelledby="alert-dialog-title"
-                                aria-describedby="alert-dialog-description"
-                              >
-                                <DialogTitle id="alert-dialog-title">
-                                  {"Delete Password"}
-                                </DialogTitle>
-                                <DialogContent>
-                                  <DialogContentText id="alert-dialog-description">
-                                    Are you sure you want to delete this
-                                    password?
-                                  </DialogContentText>
-                                </DialogContent>
-                                <DialogActions>
-                                  {/* {console.log("item", item)}
-                              {console.log("sectionId", sectionId)} */}
-                                  <Button
-                                    variant="contained"
-                                    onClick={() =>
-                                      handleClose(
-                                        `item-${sectionId}-${item.id}`
-                                      )
-                                    }
-                                    color="success"
-                                  >
-                                    Keep
-                                  </Button>
-                                  <Button
-                                    variant="contained"
-                                    onClick={() =>
-                                      handleClose(
-                                        `item-${sectionId}-${item.id}`
-                                      )
-                                    }
-                                    autoFocus
-                                    color="error"
-                                  >
-                                    Delete
-                                  </Button>
-                                </DialogActions>
-                              </Dialog>
-                              <Tooltip
-                                title={open[item.id] ? "Collapse" : "Expand"}
-                              >
+                              <ListItem>
+                                <ListItemText
+                                  primary={item.hostname}
+                                  primaryTypographyProps={{
+                                    noWrap: true,
+                                    fontSize: 15,
+                                    fontWeight: "medium",
+                                    lineHeight: "20px",
+                                    mb: "2px",
+                                  }}
+                                  // secondary="Username, Password, URL"
+                                  // secondaryTypographyProps={{
+                                  //   noWrap: true,
+                                  //   fontSize: 12,
+                                  //   lineHeight: "16px",
+                                  //   color: open[item.id]
+                                  //     ? "rgba(0, 0, 0, 1)"
+                                  //     : "rgba(0, 0, 0, 1)",
+                                  // }}
+                                  sx={{ my: 0 }}
+                                />
                                 <IconButton
-                                  size="small"
-                                  onClick={() => handleClick(item.id)}
+                                  aria-label="delete"
+                                  onClick={handleClickOpen}
                                 >
-                                  <KeyboardArrowDown
-                                    sx={{
-                                      transform: open[item.id]
-                                        ? "rotate(-180deg)"
-                                        : "rotate(0)",
-                                      transition: "0.2s",
-                                    }}
-                                  />
+                                  <Delete />
                                 </IconButton>
-                              </Tooltip>
-                            </ListItem>
-                            {open[item.id] && (
-                              <>
-                                <ListItemButton
-                                  // key={item.label}
-                                  sx={{
-                                    py: 0,
-                                    minHeight: 32,
-                                    color: "rgba(0, 0, 0, 1)",
-                                  }}
+                                <Dialog
+                                  open={popup}
+                                  onClose={() =>
+                                    handleClose(`item-${sectionId}-${item.id}`)
+                                  }
+                                  aria-labelledby="alert-dialog-title"
+                                  aria-describedby="alert-dialog-description"
                                 >
-                                  <ListItemIcon sx={{ color: "inherit" }}>
-                                    <AccountCircle />
-                                  </ListItemIcon>
-                                  <ListItemText
-                                    primary={item.username}
-                                    primaryTypographyProps={{
-                                      fontSize: 14,
-                                      fontWeight: "medium",
-                                    }}
-                                  />
-                                  <Tooltip title="Edit">
-                                    <IconButton size="small">
-                                      <Edit />
-                                    </IconButton>
-                                  </Tooltip>
-                                  <Tooltip title="Copy">
-                                    <IconButton size="small">
-                                      <ContentCopy />
-                                    </IconButton>
-                                  </Tooltip>
-                                </ListItemButton>
-
-                                {/* divider */}
-
-                                <ListItemButton
-                                  // key={item.label}
-                                  sx={{
-                                    py: 0,
-                                    minHeight: 32,
-                                    color: "rgba(0, 0, 0, 1)",
-                                  }}
+                                  <DialogTitle id="alert-dialog-title">
+                                    {"Delete Password"}
+                                  </DialogTitle>
+                                  <DialogContent>
+                                    <DialogContentText id="alert-dialog-description">
+                                      Are you sure you want to delete this
+                                      password?
+                                    </DialogContentText>
+                                  </DialogContent>
+                                  <DialogActions>
+                                    {/* {console.log("item", item)}
+                              {console.log("sectionId", sectionId)} */}
+                                    <Button
+                                      variant="contained"
+                                      onClick={() =>
+                                        handleClose(
+                                          `item-${sectionId}-${item.id}`
+                                        )
+                                      }
+                                      color="success"
+                                    >
+                                      Keep
+                                    </Button>
+                                    <Button
+                                      variant="contained"
+                                      onClick={() =>
+                                        handleClose(
+                                          `item-${sectionId}-${item.id}`
+                                        )
+                                      }
+                                      autoFocus
+                                      color="error"
+                                    >
+                                      Delete
+                                    </Button>
+                                  </DialogActions>
+                                </Dialog>
+                                <Tooltip
+                                  title={open[item.id] ? "Collapse" : "Expand"}
                                 >
-                                  <ListItemIcon sx={{ color: "inherit" }}>
-                                    <Lock />
-                                  </ListItemIcon>
-                                  <ListItemText
-                                    primary={item.password}
-                                    primaryTypographyProps={{
-                                      fontSize: 14,
-                                      fontWeight: "medium",
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleClick(item.id)}
+                                  >
+                                    <KeyboardArrowDown
+                                      sx={{
+                                        transform: open[item.id]
+                                          ? "rotate(-180deg)"
+                                          : "rotate(0)",
+                                        transition: "0.2s",
+                                      }}
+                                    />
+                                  </IconButton>
+                                </Tooltip>
+                              </ListItem>
+                              {open[item.id] && (
+                                <>
+                                  <ListItemButton
+                                    // key={item.label}
+                                    sx={{
+                                      py: 0,
+                                      minHeight: 32,
+                                      color: "rgba(0, 0, 0, 1)",
                                     }}
-                                  />
-                                  <Tooltip title="Edit">
-                                    <IconButton size="small">
-                                      <Edit />
-                                    </IconButton>
-                                  </Tooltip>
-                                  <Tooltip title="Copy">
-                                    <IconButton size="small">
-                                      <ContentCopy />
-                                    </IconButton>
-                                  </Tooltip>
-                                </ListItemButton>
+                                  >
+                                    <ListItemIcon sx={{ color: "inherit" }}>
+                                      <AccountCircle />
+                                    </ListItemIcon>
+                                    <FormControl
+                                      sx={{ m: 1, width: "30ch" }}
+                                      variant="outlined"
+                                      size="small"
+                                    >
+                                      <InputLabel htmlFor="outlined-adornment-username"></InputLabel>
+                                      <OutlinedInput
+                                        id="outlined-adornment-username"
+                                        type={
+                                          showPassword ? "text" : "username"
+                                        }
+                                        value={username}
+                                        readOnly={readOnlyUsername}
+                                        onChange={() => handleChangeUsername(event)}
+                                        label="Username"
+                                      />
+                                    </FormControl>
+                                    <Tooltip title="Edit">
+                                      <IconButton size="small" onClick={() => handleReadOnlyUsername()}>
+                                        <Edit />
+                                      </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Copy">
+                                      <IconButton size="small">
+                                        <ContentCopy />
+                                      </IconButton>
+                                    </Tooltip>
+                                  </ListItemButton>
 
-                                {/* divider */}
+                                  {/* divider */}
 
-                                <ListItemButton
-                                  // key={item.label}
-                                  sx={{
-                                    py: 0,
-                                    minHeight: 32,
-                                    color: "rgba(0, 0, 0, 1)",
-                                  }}
-                                >
-                                  <ListItemIcon sx={{ color: "inherit" }}>
-                                    <Link />
-                                  </ListItemIcon>
-                                  <ListItemText
-                                    primary={item.hostname}
-                                    primaryTypographyProps={{
-                                      fontSize: 14,
-                                      fontWeight: "medium",
+                                  <ListItemButton
+                                    // key={item.label}
+                                    sx={{
+                                      py: 0,
+                                      minHeight: 32,
+                                      color: "rgba(0, 0, 0, 1)",
                                     }}
-                                  />
-                                  <Tooltip title="Edit">
-                                    <IconButton size="small">
-                                      <Edit />
-                                    </IconButton>
-                                  </Tooltip>
-                                  <Tooltip title="Copy">
-                                    <IconButton size="small">
-                                      <ContentCopy />
-                                    </IconButton>
-                                  </Tooltip>
-                                </ListItemButton>
-                              </>
-                            )}
-                          </Box>
-                        </ListItem>
-                      )}
-                    </div>
-                  ))}
-                </li>
+                                  >
+                                    <ListItemIcon sx={{ color: "inherit" }}>
+                                      <Lock />
+                                    </ListItemIcon>
+                                    <FormControl
+                                      sx={{ m: 1, width: "30ch" }}
+                                      variant="outlined"
+                                      size="small"
+                                    >
+                                      <InputLabel htmlFor="outlined-adornment-password"></InputLabel>
+                                      <OutlinedInput
+                                        id="outlined-adornment-password"
+                                        type={
+                                          showPassword ? "text" : "password"
+                                        }
+                                        value={password}
+                                        readOnly={readOnlyPassword} 
+                                        onChange={() => handleChangePassword(event)}
+                                        endAdornment={
+                                          <InputAdornment position="end">
+                                            <IconButton
+                                              aria-label="toggle password visibility"
+                                              onClick={handleClickShowPassword}
+                                              onMouseDown={
+                                                handleMouseDownPassword
+                                              }
+                                              edge="end"
+                                            >
+                                              {showPassword ? (
+                                                <VisibilityOff />
+                                              ) : (
+                                                <Visibility />
+                                              )}
+                                            </IconButton>
+                                          </InputAdornment>
+                                        }
+                                        label="Password"
+                                      />
+                                    </FormControl>
+                                    <Tooltip title="Edit">
+                                      <IconButton size="small" onClick={() => handleReadOnlyPassword()}>
+                                        <Edit />
+                                      </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Copy">
+                                      <IconButton size="small">
+                                        <ContentCopy />
+                                      </IconButton>
+                                    </Tooltip>
+                                  </ListItemButton>
+
+                                  {/* divider */}
+
+                                  <ListItemButton
+                                    // key={item.label}
+                                    sx={{
+                                      py: 0,
+                                      minHeight: 32,
+                                      color: "rgba(0, 0, 0, 1)",
+                                    }}
+                                  >
+                                    <ListItemIcon sx={{ color: "inherit" }}>
+                                      <Link />
+                                    </ListItemIcon>
+                                    <FormControl
+                                      sx={{ m: 1, width: "30ch" }}
+                                      variant="outlined"
+                                      size="small"
+                                    >
+                                      <InputLabel htmlFor="outlined-adornment-URL"></InputLabel>
+                                      <OutlinedInput
+                                        id="outlined-adornment-URL"
+                                        type={
+                                          showPassword ? "text" : "URL"
+                                        }
+                                        value={URL}
+                                        readOnly={readOnlyURL}
+                                        onChange={() => handleChangeURL(event)}
+                                        label="URL"
+                                      />
+                                    </FormControl>
+                                    <Tooltip title="Edit"> 
+                                      <IconButton size="small" onClick={() => handleReadOnlyURL()}>
+                                        <Edit />
+                                      </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Copy">
+                                      <IconButton size="small">
+                                        <ContentCopy />
+                                      </IconButton>
+                                    </Tooltip>
+                                  </ListItemButton>
+                                </>
+                              )}
+                            </Box>
+                          </ListItem>
+                        )}
+                      </div>
+                    ))}
+                  </li>
+                </div>
               ))}
             </List>
           </FireNav>
@@ -382,16 +482,3 @@ export default function CustomizedList(props) {
 const convertToIndex = (char: string) => {
   return char.toUpperCase().charCodeAt(0) - 65;
 };
-
-function isPopupOpenAndExpand(
-  item: number,
-  sectionId: string,
-  popup: boolean,
-  open: boolean[],
-  numbers: number[]
-) {
-  if (open[item + convertToIndex(sectionId) * numbers.length] && !popup) {
-    return true;
-  }
-  return false;
-}
