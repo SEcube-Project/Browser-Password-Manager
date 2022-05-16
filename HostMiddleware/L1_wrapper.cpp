@@ -152,3 +152,21 @@ extern "C" int L1_DeletePassword(void *instance, uint32_t id) {
     std::cout << "#CC: L1_DeletePassword: " << res << std::endl;
     return res ? 1 : 0;
 }
+
+extern "C" int L1_GeneratePassword(void *instance, uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, uint8_t enable_numbers_chars, char *generated) {
+
+    L1 *l1 = reinterpret_cast<L1 *>(instance);
+
+    // print all arguments
+    // std::cout << "#CC: L1_GeneratePassword: " << std::endl;
+    // std::cout << "#CC: pass_len: " << pass_len << std::endl;
+    // std::cout << "#CC: enable_upper_case: " << (enable_upper_case == 1 ? 1 : 0) << "\n";
+    // std::cout << "#CC: enable_special_chars: " << (enable_special_chars == 1 ? 1 : 0) << "\n";
+    // std::cout << "#CC: enable_numbers_chars: " << (enable_numbers_chars == 1 ? 1 : 0) << "\n";
+
+    std::shared_ptr<uint8_t[]> pass(new uint8_t[pass_len], std::default_delete<uint8_t[]>());
+    auto res = l1->L1SEGenerateRandomPassword(pass_len, enable_upper_case, enable_special_chars, enable_numbers_chars, pass);
+    std::copy(pass.get(), pass.get() + pass_len, generated);
+
+    return res ? 1 : 0;
+}

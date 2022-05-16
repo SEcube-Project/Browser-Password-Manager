@@ -106,6 +106,12 @@ class L1:
     def DeletePassword(self, id: int):
         return self._c_lib.L1_DeletePassword(self._l1inst, ctypes.c_uint32(id)) == 1
 
+    def GeneratePassword(self, length: int = 16, upper: bool = True, special: bool = True, digits: bool = True):
+        
+        pwd = (ctypes.c_char*length)()
+        res = self._c_lib.L1_GeneratePassword(self._l1inst, ctypes.c_uint16(length), self._bool2uint8(upper), self._bool2uint8(special), self._bool2uint8(digits), pwd)
+        return res == 1, str(pwd.value.decode('utf-8'))
+
     def _bool2uint8(self, b: bool):
         return ctypes.c_uint8(1 if b else 0)
 

@@ -187,6 +187,40 @@ class API_Device_Password_ID(API_DeviceBase):
         finally:
             self._l1.Logout()
 
+class API_Device_Generate(API_DeviceBase):
+
+    def init(self, logger, l0: L0, l1: L1):
+        super().__init__(logger, l0, l1)
+
+    def get(self, indx: int):
+
+        argument_parser = self._parser.copy()
+        argument_parser.add_argument('length', type=int, required=False, help='Length argument required. Must be an integer', location='args')
+        argument_parser.add_argument('upper', type=int, required=False, help='Upper argument required. Must be an intenger', location='args')
+        argument_parser.add_argument('special', type=int, required=False, help='Special argument required. Must be an integer', location='args')
+        argument_parser.add_argument('numbers', type=int, required=False, help='Numbers argument required. Must be an integer', location='args')
+
+        args = argument_parser.parse_args()
+        if not self._setdev_login(indx, args["pin"], True, True):
+            return {'error': 'Could not login: wrong pin or device not found'}, 400
+
+        try:
+            llen = args["length"] if args["length"] is not None else 64
+            upper = args["upper"] == 1 if args["upper"] is not None else True
+            special = (args["special"] == 1) if args["special"] is not None else True
+            numbers = args["numbers"] == 1 if args["numbers"] is not None else True
+
+            res = self._l1.GeneratePassword(llen, upper, special, numbers)
+            return ({'generated': res[1]}, 200) if res[0] else ({'success': res[0]}, 400)
+
+        except BadRequest as e:
+            raise
+        except Exception as e:
+            self._logger.error(f"Could not generate passwords: {e}")
+            return {'error': f'Could not generate passwords: {e}'}, 400
+        finally:
+            self._l1.Logout()
+
 if __name__ == "__main__":
     
     app = Flask(__name__)
@@ -208,6 +242,7 @@ if __name__ == "__main__":
         logger.info(f"Found {device_cnt} devices")
 
     api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0])
+    api.add_resource(API_Device_Generate, "/api/v0/device/<int:indx>/generate", resource_class_args=[logger, l0, l1])
     api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1])
     api.add_resource(API_Device_Password_ID, "/api/v0/device/<int:indx>/password/<int:id>", resource_class_args=[logger, l0, l1])
     app.run(ssl_context='adhoc', debug=True)
