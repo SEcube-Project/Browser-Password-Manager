@@ -21,6 +21,7 @@ OBJECTS := $(addprefix $(BUILDDIR)/,$(OBJECTS))
 
 all: lib.so
 
+.PHONY: ../Host\ Password\ Manager/host_lib.so
 ../Host\ Password\ Manager/host_lib.so: Makefile ../Host\ Password\ Manager/Makefile $(SOURCES) $(SOURCESCPP)
 	@$(MAKE) -C ../Host\ Password\ Manager SRSC=$(CURDIR)
 
