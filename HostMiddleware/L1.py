@@ -70,7 +70,41 @@ class L1:
         lu, pu = self._str2charptr(username)
         lp, pp = self._str2charptr(password)
 
-        self._c_lib.L1_AddPassword(self._l1inst, ph, ln, pu, lu, pp, lp)
+        res = self._c_lib.L1_AddPassword(self._l1inst, ph, ln, pu, lu, pp, lp)
+        return res == 1
+
+    def ModifyPassword(self, id: int, hostname:str , username:str , password:str):
+
+        ln, ph = self._str2charptr(hostname)
+        lu, pu = self._str2charptr(username)
+        lp, pp = self._str2charptr(password)
+
+        res = self._c_lib.L1_ModifyPassword(self._l1inst, ctypes.c_uint32(id), ph, ln, pu, lu, pp, lp)
+        return res == 1
+
+    def GetPassword(self, id: int):
+
+        hostsize = (ctypes.c_uint16)()
+        usersize = (ctypes.c_uint16)()
+        passsize = (ctypes.c_uint16)()
+        self._c_lib.L1_GetPasswords_Sizes(self._l1inst, ctypes.byref(hostsize), ctypes.byref(usersize), ctypes.byref(passsize), 0x0, 0x0, 0)
+
+        hostsize = hostsize.value
+        usersize = usersize.value
+        passsize = passsize.value
+
+        hs = (ctypes.c_uint16)()
+        us = (ctypes.c_uint16)()
+        ps = (ctypes.c_uint16)()
+        host = (ctypes.c_char*hostsize)()
+        user = (ctypes.c_char*usersize)()
+        passs = (ctypes.c_char*passsize)()
+
+        res = self._c_lib.L1_GetPasswordByID(self._l1inst, ctypes.c_uint32(id), ctypes.byref(hs), ctypes.byref(us), ctypes.byref(ps), host, user, passs)
+        return res == 1, str(host.value.decode('utf-8')), str(user.value.decode('utf-8')), str(passs.value.decode('utf-8'))
+
+    def DeletePassword(self, id: int):
+        return self._c_lib.L1_DeletePassword(self._l1inst, ctypes.c_uint32(id)) == 1
 
     def _bool2uint8(self, b: bool):
         return ctypes.c_uint8(1 if b else 0)

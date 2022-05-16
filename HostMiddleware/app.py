@@ -34,6 +34,11 @@ class API_DeviceBase(Resource):
 
         self._parser = reqparse.RequestParser()
         self._parser.add_argument('pin', type=str, required=True, help='PIN argument required. Must be a string', location='args')
+
+        self._bodyargs_template = reqparse.RequestParser()
+        self._bodyargs_template.add_argument('hostname', type=str, required=True, help='Hostname argument required. Must be a string', location='json')
+        self._bodyargs_template.add_argument('username', type=str, required=True, help='Username argument required. Must be a string', location='json')
+        self._bodyargs_template.add_argument('password', type=str, required=True, help='Password argument required. Must be a string', location='json')
     
     def _setdev(self, indx: int):
         self._logger.info(f"Selecting device {indx}")
@@ -96,20 +101,17 @@ class API_Device_Passwords(API_DeviceBase):
             } for x in l]
         }
 
-    def put(self, indx: int):
+    def post(self, indx: int):
 
         args = self._parser.parse_args()
         if not self._setdev_login(indx, args["pin"], True, True):
             return {'error': 'Could not login: wrong pin or device not found'}, 400
 
         try:
-            bodyargs_template = reqparse.RequestParser()
-            bodyargs_template.add_argument('hostname', type=str, required=True, help='Hostname argument required. Must be a string', location='json')
-            bodyargs_template.add_argument('username', type=str, required=True, help='Username argument required. Must be a string', location='json')
-            bodyargs_template.add_argument('password', type=str, required=True, help='Password argument required. Must be a string', location='json')
-            bodyargs = bodyargs_template.parse_args()
+            bodyargs = self._bodyargs_template.parse_args()
+            res = self._l1.AddPassword(bodyargs["hostname"], bodyargs["username"], bodyargs["password"])
 
-            self._l1.AddPassword(bodyargs["hostname"], bodyargs["username"], bodyargs["password"])
+            return {'success': res}, 201 if res else 400
         except BadRequest as e:
             raise
         except Exception as e:
@@ -118,7 +120,72 @@ class API_Device_Passwords(API_DeviceBase):
         finally:
             self._l1.Logout()
 
-        return {'success': True}
+class API_Device_Password_ID(API_DeviceBase):
+
+    def init(self, logger, l0: L0, l1: L1):
+        super().__init__(logger, l0, l1)
+
+    def get(self, indx: int, id: int):
+
+        args = self._parser.parse_args()
+        if not self._setdev_login(indx, args["pin"], True, True):
+            return {'error': 'Could not login: wrong pin or device not found'}, 400
+
+        try:
+            res = self._l1.GetPassword(id)
+            if not res[0]:
+                return {'error': f'Could not get password with id {id}'}, 400
+            
+            return {
+                "id": id,
+                "hostname": res[1],
+                "username": res[2],
+                "password": res[3]
+            }
+            
+        except BadRequest as e:
+            raise
+        except Exception as e:
+            self._logger.error(f"Could not get password: {e}")
+            return {'error': f'Could not get password: {e}'}, 400
+        finally:
+            self._l1.Logout()
+
+    def put(self, indx: int, id: int):
+
+        args = self._parser.parse_args()
+        if not self._setdev_login(indx, args["pin"], True, True):
+            return {'error': 'Could not login: wrong pin or device not found'}, 400
+
+        try:
+            bodyargs = self._bodyargs_template.parse_args()
+            res = self._l1.ModifyPassword(id, bodyargs["hostname"], bodyargs["username"], bodyargs["password"])
+
+            return {'success': res}, 201 if res else 400
+        except BadRequest as e:
+            raise
+        except Exception as e:
+            self._logger.error(f"Could not update password: {e}")
+            return {'error': f'Could not update password: {e}'}, 400
+        finally:
+            self._l1.Logout()
+
+    def delete(self, indx: int, id: int):
+            
+        args = self._parser.parse_args()
+        if not self._setdev_login(indx, args["pin"], True, True):
+            return {'error': 'Could not login: wrong pin or device not found'}, 400
+
+        try:
+            res = self._l1.DeletePassword(id)
+            return {'success': res}, 200 if res else 400
+        except BadRequest as e:
+            raise
+        except Exception as e:
+            self._logger.error(f"Could not delete password: {e}")
+            return {'error': f'Could not delete password: {e}'}, 400
+        finally:
+            self._l1.Logout()
 
 if __name__ == "__main__":
     
@@ -126,7 +193,6 @@ if __name__ == "__main__":
     api = Api(app)
     l0 = L0()
     l1 = L1()
-    # middleware = MiddlewareAPI()
 
     logger = logging.getLogger("main")
     logger.setLevel(logging.DEBUG)
@@ -143,4 +209,5 @@ if __name__ == "__main__":
 
     api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0])
     api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1])
+    api.add_resource(API_Device_Password_ID, "/api/v0/device/<int:indx>/password/<int:id>", resource_class_args=[logger, l0, l1])
     app.run(ssl_context='adhoc', debug=True)

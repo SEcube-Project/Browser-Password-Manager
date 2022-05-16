@@ -101,23 +101,54 @@ extern "C" int L1_GetPasswords(void *instance, uint32_t *ids, uint16_t *hostSize
         pass_itr += p.passSize;
     }
 
-    return 1;
+    return res ? 1 : 0;
 }
 
-extern "C" void L1_AddPassword(void *instance, uint8_t *host_data, uint16_t host_len, uint8_t *user_data, uint16_t user_len, uint8_t *pass_data, uint16_t pass_len) {
+extern "C" int L1_AddPassword(void *instance, uint8_t *host_data, uint16_t host_len, uint8_t *user_data, uint16_t user_len, uint8_t *pass_data, uint16_t pass_len) {
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 
     uint16_t len;
     L1_GetPasswords_Sizes(instance, nullptr, nullptr, nullptr, &len, nullptr, 0);
 
-    l1->L1SEAddPassword(++len, host_data, host_len, user_data, user_len, pass_data, pass_len);
+    auto res = l1->L1SEAddPassword(++len, host_data, host_len, user_data, user_len, pass_data, pass_len);
+    std::cout << "#CC: L1_AddPassword: " << res << std::endl;
+    return res ? 1 : 0;
+}
 
-    //TODO: remove
-    std::vector<se3Pass> pwds;
-    l1->L1SEGetAllPasswords(pwds);
-    for (auto &p : pwds) {
-        std::cout << p.id << " " << p.host << p.user << p.pass << std::endl;
-    }
+extern "C" int L1_ModifyPassword(void *instance, uint32_t id, uint8_t *host_data, uint16_t host_len, uint8_t *user_data, uint16_t user_len, uint8_t *pass_data, uint16_t pass_len) {
 
+    L1 *l1 = reinterpret_cast<L1 *>(instance);
+
+    se3Pass pwd = { id, host_len, user_len, pass_len, std::string(host_data, host_data + host_len), std::string(user_data, user_data + user_len), std::string(pass_data, pass_data + pass_len) };
+    auto res = l1->L1SEModifyPassword(id, pwd);
+
+    return res ? 1 : 0;
+}
+
+extern "C" int L1_GetPasswordByID(void *instance, uint32_t id, uint16_t *hostSize, uint16_t *userSize, uint16_t *passSize, char *host, char *user, char *pass) {
+
+    L1 *l1 = reinterpret_cast<L1 *>(instance);
+
+    se3Pass pwd;
+    auto res = l1->L1SEGetPasswordById(id, pwd);
+
+    if (hostSize) *hostSize = pwd.hostSize;
+    if (userSize) *userSize = pwd.userSize;
+    if (passSize) *passSize = pwd.passSize;
+
+    if (host) std::copy(pwd.host.begin(), pwd.host.end(), host);
+    if (user) std::copy(pwd.user.begin(), pwd.user.end(), user);
+    if (pass) std::copy(pwd.pass.begin(), pwd.pass.end(), pass);
+
+    return res ? 1 : 0;
+}
+
+extern "C" int L1_DeletePassword(void *instance, uint32_t id) {
+
+    L1 *l1 = reinterpret_cast<L1 *>(instance);
+
+    auto res = l1->L1SEDeletePassword(id);
+    std::cout << "#CC: L1_DeletePassword: " << res << std::endl;
+    return res ? 1 : 0;
 }
