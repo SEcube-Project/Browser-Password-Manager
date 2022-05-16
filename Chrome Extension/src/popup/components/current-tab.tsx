@@ -9,7 +9,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import { PasswordElement } from "../../utils/api";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
-import DoneIcon from '@mui/icons-material/Done';
+import DoneIcon from "@mui/icons-material/Done";
 import {
   Alert,
   Button,
@@ -35,6 +35,7 @@ import Delete from "@mui/icons-material/Delete";
 import Lock from "@mui/icons-material/Lock";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Done from "@mui/icons-material/Done";
 
 var icons = [
   { icon: <AccountCircle /> },
@@ -68,8 +69,6 @@ export default function CustomizedList(props) {
   const [readOnlyURL, setReadOnlyURL] = React.useState(true);
   const [readOnlyPassword, setReadOnlyPassword] = React.useState(true);
 
-
-
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -98,6 +97,29 @@ export default function CustomizedList(props) {
     setReadOnlyPassword(!readOnlyPassword);
   };
 
+  function handleSaveURL(URL: string): void {
+    if (URL.length > 0) {
+      setURL(URL);
+      setReadOnlyURL(true);
+      //TODO: push the change to gabriele API
+    }
+  }
+
+  function handleSaveUsername(username: string): void {
+    if (username.length > 0) {
+      setUsername(username);
+      setReadOnlyUsername(true);
+      //TODO: push the change to gabriele API
+    }
+  }
+
+  function handleSavePassword(password: string): void {
+    if (password.length > 0) {
+      setPassword(password);
+      setReadOnlyPassword(true);
+      //TODO: push the change to gabriele API
+    }
+  }
 
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -339,13 +361,23 @@ export default function CustomizedList(props) {
                                         }
                                         value={username}
                                         readOnly={readOnlyUsername}
-                                        onChange={() => handleChangeUsername(event)}
+                                        onChange={() =>
+                                          handleChangeUsername(event)
+                                        }
                                         label="Username"
                                       />
                                     </FormControl>
                                     <Tooltip title="Edit">
-                                      <IconButton size="small" onClick={() => handleReadOnlyUsername()}>
-                                        <Edit />
+                                      <IconButton size="small">
+                                        {readOnlyUsername ? (
+                                          <Edit
+                                            onClick={() => handleReadOnlyUsername()}
+                                          />
+                                        ) : (
+                                          <Done
+                                            onClick={() => handleSaveUsername(URL)}
+                                          />
+                                        )}
                                       </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Copy">
@@ -380,8 +412,10 @@ export default function CustomizedList(props) {
                                           showPassword ? "text" : "password"
                                         }
                                         value={password}
-                                        readOnly={readOnlyPassword} 
-                                        onChange={() => handleChangePassword(event)}
+                                        readOnly={readOnlyPassword}
+                                        onChange={() =>
+                                          handleChangePassword(event)
+                                        }
                                         endAdornment={
                                           <InputAdornment position="end">
                                             <IconButton
@@ -404,8 +438,16 @@ export default function CustomizedList(props) {
                                       />
                                     </FormControl>
                                     <Tooltip title="Edit">
-                                      <IconButton size="small" onClick={() => handleReadOnlyPassword()}>
-                                        <Edit />
+                                      <IconButton size="small">
+                                        {readOnlyPassword ? (
+                                          <Edit
+                                            onClick={() => handleReadOnlyPassword()}
+                                          />
+                                        ) : (
+                                          <Done
+                                            onClick={() => handleSavePassword(URL)}
+                                          />
+                                        )}
                                       </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Copy">
@@ -436,18 +478,24 @@ export default function CustomizedList(props) {
                                       <InputLabel htmlFor="outlined-adornment-URL"></InputLabel>
                                       <OutlinedInput
                                         id="outlined-adornment-URL"
-                                        type={
-                                          showPassword ? "text" : "URL"
-                                        }
+                                        type={showPassword ? "text" : "URL"}
                                         value={URL}
                                         readOnly={readOnlyURL}
                                         onChange={() => handleChangeURL(event)}
                                         label="URL"
                                       />
                                     </FormControl>
-                                    <Tooltip title="Edit"> 
-                                      <IconButton size="small" onClick={() => handleReadOnlyURL()}>
-                                        <Edit />
+                                    <Tooltip title="Edit">
+                                      <IconButton size="small">
+                                        {readOnlyURL ? (
+                                          <Edit
+                                            onClick={() => handleReadOnlyURL()}
+                                          />
+                                        ) : (
+                                          <Done
+                                            onClick={() => handleSaveURL(URL)}
+                                          />
+                                        )}
                                       </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Copy">
@@ -473,12 +521,3 @@ export default function CustomizedList(props) {
     </Box>
   );
 }
-
-/**
- * Convert A => 0, B => 1, C => 2, D => 3, E => 4 etc..
- * @param char The letter to convert
- * @returns The number of the letter
- */
-const convertToIndex = (char: string) => {
-  return char.toUpperCase().charCodeAt(0) - 65;
-};
