@@ -302,6 +302,13 @@ int main(){
 			}
 		}
 
+		if(!l1->L1SEDeletePassword(111)){
+			printf("Correctly not deleted unexsting password\n");
+		} else {
+			printf("ERROR: Able to delete pass with non-existing id\n");
+			exitWithError();
+		}
+
 
 		// ############## GENERATE RANDOM PASS ##############
 		shared_ptr<uint8_t[]> pass = make_unique<uint8_t[]>(100);
