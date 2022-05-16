@@ -85,15 +85,18 @@ export default function CustomizedList(props) {
     setURL(event.target.value);
   };
 
-  const handleReadOnlyUsername = () => {
+  const handleReadOnlyUsername = (item) => {
+    setUsername(item.username);
     setReadOnlyUsername(!readOnlyUsername);
   };
 
-  const handleReadOnlyURL = () => {
+  const handleReadOnlyURL = (item) => {
+    setURL(item.hostname);
     setReadOnlyURL(!readOnlyURL);
   };
 
-  const handleReadOnlyPassword = () => {
+  const handleReadOnlyPassword = (item) => {
+    setPassword(item.password);
     setReadOnlyPassword(!readOnlyPassword);
   };
 
@@ -130,6 +133,7 @@ export default function CustomizedList(props) {
   React.useEffect(() => {
     setPasswordData(props.password);
   }, [props.password]);
+
 
   const handleClickOpen = () => {
     setPopup(true);
@@ -359,7 +363,7 @@ export default function CustomizedList(props) {
                                         type={
                                           showPassword ? "text" : "username"
                                         }
-                                        value={username}
+                                        value={readOnlyUsername ? item.username : username}
                                         readOnly={readOnlyUsername}
                                         onChange={() =>
                                           handleChangeUsername(event)
@@ -371,7 +375,7 @@ export default function CustomizedList(props) {
                                       <IconButton size="small">
                                         {readOnlyUsername ? (
                                           <Edit
-                                            onClick={() => handleReadOnlyUsername()}
+                                            onClick={() => handleReadOnlyUsername(item)}
                                           />
                                         ) : (
                                           <Done
@@ -411,7 +415,7 @@ export default function CustomizedList(props) {
                                         type={
                                           showPassword ? "text" : "password"
                                         }
-                                        value={password}
+                                        value={readOnlyPassword ? item.password : password}
                                         readOnly={readOnlyPassword}
                                         onChange={() =>
                                           handleChangePassword(event)
@@ -441,7 +445,7 @@ export default function CustomizedList(props) {
                                       <IconButton size="small">
                                         {readOnlyPassword ? (
                                           <Edit
-                                            onClick={() => handleReadOnlyPassword()}
+                                            onClick={() => handleReadOnlyPassword(item)}
                                           />
                                         ) : (
                                           <Done
@@ -479,7 +483,7 @@ export default function CustomizedList(props) {
                                       <OutlinedInput
                                         id="outlined-adornment-URL"
                                         type={showPassword ? "text" : "URL"}
-                                        value={URL}
+                                        value={readOnlyURL ? item.hostname : URL}
                                         readOnly={readOnlyURL}
                                         onChange={() => handleChangeURL(event)}
                                         label="URL"
@@ -489,7 +493,7 @@ export default function CustomizedList(props) {
                                       <IconButton size="small">
                                         {readOnlyURL ? (
                                           <Edit
-                                            onClick={() => handleReadOnlyURL()}
+                                            onClick={() => handleReadOnlyURL(item)}
                                           />
                                         ) : (
                                           <Done
