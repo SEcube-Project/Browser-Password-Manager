@@ -68,6 +68,7 @@ export default function CustomizedList(props) {
   const [readOnlyUsername, setReadOnlyUsername] = React.useState(true);
   const [readOnlyURL, setReadOnlyURL] = React.useState(true);
   const [readOnlyPassword, setReadOnlyPassword] = React.useState(true);
+  const [deleteId, setDeleteId] = React.useState(-1);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -114,7 +115,7 @@ export default function CustomizedList(props) {
     if (username.length > 0) {
       setUsername(username);
       setReadOnlyUsername(true);
-      const newItem = {...item, username: username};
+      const newItem = { ...item, username: username };
       PasswordData[item.id - 1] = newItem;
       //TODO: push the change to gabriele API
     }
@@ -124,7 +125,7 @@ export default function CustomizedList(props) {
     if (password.length > 0) {
       setPassword(password);
       setReadOnlyPassword(true);
-      const newItem = {...item, password: password};
+      const newItem = { ...item, password: password };
       PasswordData[item.id - 1] = newItem;
       //TODO: push the change to gabriele API
     }
@@ -140,15 +141,22 @@ export default function CustomizedList(props) {
     setPasswordData(props.password);
   }, [props.password]);
 
-  const handleClickOpen = () => {
+  function handleClickOpen(id) {
     setPopup(true);
-    // console.log("popup", popup);
-  };
+    setDeleteId(id);
+  }
 
-  function handleClose(key) {
-    // console.log(key)
+  function handleCloseNoDelete() {
     setPopup(false);
-    // console.log("popup", popup);
+  }
+
+  function handleCloseYesDelete() {
+
+    const newPasswordData = PasswordData.filter(
+      (item) => item.id !== deleteId
+    );
+    setPasswordData(newPasswordData);
+    setPopup(false);
   }
 
   const handleClick = (index: number) => {
@@ -239,7 +247,7 @@ export default function CustomizedList(props) {
                       <div>
                         {item.hostname[0].toLowerCase() ===
                           sectionId.toLowerCase() && (
-                          <ListItem key={`item-${sectionId}-${item.id}`}>
+                          <ListItem key={item.id}>
                             <Box
                               sx={{
                                 bgcolor: open[item.id]
@@ -277,15 +285,13 @@ export default function CustomizedList(props) {
                                 />
                                 <IconButton
                                   aria-label="delete"
-                                  onClick={handleClickOpen}
+                                  onClick={() => handleClickOpen(item.id)}
                                 >
                                   <Delete />
                                 </IconButton>
                                 <Dialog
                                   open={popup}
-                                  onClose={() =>
-                                    handleClose(`item-${sectionId}-${item.id}`)
-                                  }
+                                  onClose={() => handleCloseNoDelete()}
                                   aria-labelledby="alert-dialog-title"
                                   aria-describedby="alert-dialog-description"
                                 >
@@ -303,22 +309,14 @@ export default function CustomizedList(props) {
                               {console.log("sectionId", sectionId)} */}
                                     <Button
                                       variant="contained"
-                                      onClick={() =>
-                                        handleClose(
-                                          `item-${sectionId}-${item.id}`
-                                        )
-                                      }
+                                      onClick={() => handleCloseNoDelete()}
                                       color="success"
                                     >
                                       Keep
                                     </Button>
                                     <Button
                                       variant="contained"
-                                      onClick={() =>
-                                        handleClose(
-                                          `item-${sectionId}-${item.id}`
-                                        )
-                                      }
+                                      onClick={() => handleCloseYesDelete()}
                                       autoFocus
                                       color="error"
                                     >
@@ -347,7 +345,6 @@ export default function CustomizedList(props) {
                               {open[item.id] && (
                                 <>
                                   <ListItemButton
-                                    // key={item.label}
                                     sx={{
                                       py: 0,
                                       minHeight: 32,
@@ -416,7 +413,6 @@ export default function CustomizedList(props) {
                                   {/* divider */}
 
                                   <ListItemButton
-                                    // key={item.label}
                                     sx={{
                                       py: 0,
                                       minHeight: 32,
@@ -503,7 +499,6 @@ export default function CustomizedList(props) {
                                   {/* divider */}
 
                                   <ListItemButton
-                                    // key={item.label}
                                     sx={{
                                       py: 0,
                                       minHeight: 32,
