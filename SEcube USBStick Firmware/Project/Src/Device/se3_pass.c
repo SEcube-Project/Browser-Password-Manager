@@ -57,23 +57,15 @@ bool is_str_eq(uint8_t* orig, uint16_t lorig, uint8_t* val, uint16_t lval)
 
 bool se3_pass_equal(se3_flash_pass* password, se3_flash_it* it)
 {
+	bool areEquals = false;
     se3_flash_pass tmp;
 	se3_flash_it_init(it);
-	while (se3_flash_it_next(it)) {
+	while (se3_flash_it_next(it) && !areEquals) {
 		if (it->type == SE3_TYPE_PASS) {
 			se3_pass_read(it, &tmp);
-        	if (password->host == NULL && tmp.host != NULL) {
+        	if (tmp.id == password->id || (is_str_eq(tmp.host, tmp.host_size, password->host, password->host_size) && is_str_eq(tmp.user, tmp.user_size, password->user, password->user_size))) {
 
-    			if(tmp.host != NULL) {free(tmp.host);}
-    			if(tmp.user != NULL) {free(tmp.user);}
-    			if(tmp.pass != NULL) {free(tmp.pass);}
-        		return false;
-        	} else if ((password->host == NULL && tmp.host == NULL) || tmp.id == password->id || is_str_eq(tmp.host, tmp.host_size, password->host, password->host_size)) {
-
-				if(tmp.host != NULL) {free(tmp.host);}
-				if(tmp.user != NULL) {free(tmp.user);}
-				if(tmp.pass != NULL) {free(tmp.pass);}
-				return true;
+        		areEquals = true;
 			}
 
 			if(tmp.host != NULL) {free(tmp.host);}
@@ -82,7 +74,7 @@ bool se3_pass_equal(se3_flash_pass* password, se3_flash_it* it)
 		}
 	}
 
-	return false;
+	return areEquals;
 }
 
 bool se3_pass_write(se3_flash_it* it, se3_flash_pass* password)

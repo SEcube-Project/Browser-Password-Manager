@@ -127,6 +127,18 @@ int main(){
 		shared_ptr<uint8_t[]> passVal = make_unique<uint8_t[]>(100);
 		shared_ptr<uint8_t[]> userVal = make_unique<uint8_t[]>(100);
 
+		// ############## DELETE ALL PASSWORD ##############
+		std::vector<se3Pass> passList;
+		l1->L1SEGetAllPasswords(passList);
+		for(se3Pass elem : passList){
+			if(l1->L1SEDeletePassword(elem.id)){
+				printf("Deleted pass %d: \n", elem.id);
+			} else {
+				printf("ERROR: Unable to delete pass %d: \n", elem.id);
+				exitWithError();
+			}
+		}
+
 
 		// ############## PASS CREATION ##############
 		// Pass 1
@@ -163,7 +175,7 @@ int main(){
 			exitWithError();
 		}
 
-		// Check if error in case of password with same hostname
+		// Check if error in case of password with same hostname and username
 		if(!l1->L1SEAddPassword(4, hostVal, hostSize, userVal, userSize, passVal, passSize)){
 			printf("Password correctly not added\n");
 		} else {
@@ -171,7 +183,7 @@ int main(){
 			exitWithError();
 		}
 
-		// Check if error in case of password with same hostname
+		// Check if error in case of password with same id
 		if(!l1->L1SEAddPassword(3, hostVal, hostSize, userVal, userSize, passVal, passSize)){
 			printf("Password correctly not added\n");
 		} else {
@@ -179,12 +191,21 @@ int main(){
 			exitWithError();
 		}
 
-		// Pass 3
+		// Check if error in case of password with same hostname but different username
+		userSize = fillByteArray("test1@gmail.com", userVal);
+		if(l1->L1SEAddPassword(4, hostVal, hostSize, userVal, userSize, passVal, passSize)){
+			printf("Added new pass with id %d!\n", 4);
+		} else {
+			printf("ERROR: Unable to add!\n");
+			exitWithError();
+		}
+
+		// Pass 5
 		hostSize = fillByteArray("xnxx.com", hostVal);
 		userSize = fillByteArray("xxx@gmail.com", userVal);
 		passSize = fillByteArray("xxXxxa33dss", passVal);
-		if(l1->L1SEAddPassword(4, hostVal, hostSize, userVal, userSize, passVal, passSize)){
-			printf("Added new pass with id %d!\n", 4);
+		if(l1->L1SEAddPassword(5, hostVal, hostSize, userVal, userSize, passVal, passSize)){
+			printf("Added new pass with id %d!\n", 5);
 		} else {
 			printf("ERROR: Unable to add!\n");
 			exitWithError();
@@ -259,7 +280,6 @@ int main(){
 
 
 		// ############## LIST ALL ##############
-		std::vector<se3Pass> passList;
 		l1->L1SEGetAllPasswords(passList);
 		printf("\n\nComplete pass list\n");
 		for(se3Pass elem : passList){
