@@ -1,4 +1,8 @@
-import {getStoredOptions, LocalStorageOptions, setStoredOptions } from "../utils/storage"
+import {
+  getStoredOptions,
+  LocalStorageOptions,
+  setStoredOptions,
+} from "../utils/storage";
 
 chrome.runtime.onInstalled.addListener(() => {
   const values: LocalStorageOptions = {
@@ -7,4 +11,13 @@ chrome.runtime.onInstalled.addListener(() => {
   };
   setStoredOptions(values);
   console.log(getStoredOptions());
-})
+});
+
+// print hello world on page load
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === "complete") {
+    chrome.tabs.executeScript(tabId, {
+      file: "../content/content.ts",
+    });
+  }
+});

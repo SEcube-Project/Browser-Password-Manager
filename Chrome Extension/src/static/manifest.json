@@ -14,15 +14,28 @@
     "default_title": "Password Manager",
     "default_icon": "password.png"
   },
-  "permissions": ["storage"],
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "contextMenus",
+    "webNavigation",
+    "webRequest",
+    "notifications",
+    "identity"
+  ],
   "options_page": "options.html",
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["contentScript.js"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ]
     }
   ]
 }
