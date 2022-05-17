@@ -31,6 +31,7 @@
 #include "se3_common.h"
 #include "se3_rand.h"
 #include "se3_sekey.h"
+#include "se3_sepass.h"
 
 #define SE3_CMD1_MAX 	16
 #define SE3_N_HARDWARE 	3
@@ -100,6 +101,9 @@ uint16_t dispatcher_call(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 // added for SEKey
 uint16_t sekey_utilities(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp);
 
+
+uint16_t sepassword_manager_utilities(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp);
+
 /** \brief Initialize structures */
 void se3_dispatcher_init();
 
@@ -123,7 +127,7 @@ static se3_cmd_func handlers[SE3_N_HARDWARE][SE3_CMD1_MAX] = {{
     /* 10 */ crypto_list,
     /* 11 */ NULL, // forced logout
     /* 12 */ sekey_utilities,
-    /* 13 */ NULL,
+    /* 13 */ sepassword_manager_utilities,
     /* 14 */ NULL,
     /* 15 */ error
 	/* Each number identifies a command sent by the host-side. This must be consistent with

@@ -420,7 +420,8 @@ namespace L1Commands {
 			CRYPTO_UPDATE = 9,
 			CRYPTO_LIST = 10,
 			FORCED_LOGOUT=11,
-			SEKEY = 12
+			SEKEY = 12,
+			SEPASS = 13
 		};
 	};
 
@@ -439,6 +440,20 @@ namespace L1Commands {
 			SE3_SEKEY_ISREADY = 9
 		};
 	};
+
+	struct OptionsPasswordManager {
+		enum{
+			SE3_SEPASS_OP_ADD = 1, /**< Add password */
+			SE3_SEPASS_OP_MODIFY = 2, /**< Add password */
+			SE3_SEPASS_OP_DELETE = 3, /**< Delete password */
+			SE3_SEPASS_OP_GET_BY_ID = 4, /**< Get all password items */
+			SE3_SEPASS_OP_GETALL = 5, /**< Get all password items */
+			SE3_SEPASS_OP_GENERATE_RANDOM = 6, /**< Generate Random Password */
+			SE3_SEPASS_OP_EXPORT = 7, /**< Export Passwords */
+			SE3_SEPASS_OP_IMPORT = 8 /**< Import Passwords */
+		};
+	};
+
 
 	struct KeyOpEdit {
 		enum {

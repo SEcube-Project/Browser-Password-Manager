@@ -38,6 +38,7 @@
 #include "../Crypto_Libraries/pbkdf2.h"
 #include "../L1_error_manager.h"
 #include "../L1_enumerations.h"
+#include <string>
 
 #ifndef B5_AES_256
 	#define B5_AES_256 32 /**< Size (in bytes) of a AES-256 key. */
@@ -109,6 +110,26 @@ typedef struct se3Key_ {
 	uint8_t* data;
 //	uint8_t name[L1Key::Size::MAX_NAME];
 } se3Key;
+
+typedef struct se3Pass_ {
+	uint32_t id;
+//	uint32_t validity;
+	uint16_t hostSize;
+	uint16_t userSize;
+	uint16_t passSize;
+//	uint16_t nameSize;
+	std::string host;
+	std::string user;
+	std::string pass;
+
+//	uint8_t name[L1Key::Size::MAX_NAME];
+} se3Pass;
+
+typedef enum se3_list_filter_type_ {
+    NO_FILTER = 0,
+	HOST_FILTER = 1,
+    USER_FILTER = 2
+} se3_list_filter_type;
 
 class L1Base {
 private:

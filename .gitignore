@@ -4,3 +4,5 @@ HostMiddleware/__pycache__/**
 *.so
 */.vscode/**
 init
+HostMiddleware/Makefile
+HostMiddleware/BPMMiddleware
