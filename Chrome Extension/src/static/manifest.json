@@ -14,9 +14,15 @@
     "default_title": "Password Manager",
     "default_icon": "password.png"
   },
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*",
+    "*://extensions/*"
+  ],
   "permissions": [
     "storage",
     "tabs",
+    "scripting",
     "activeTab",
     "contextMenus",
     "webNavigation",
@@ -31,7 +37,8 @@
   "content_scripts": [
     {
       "matches": [
-        "<all_urls>"
+        "http://*/*",
+        "https://*/*"
       ],
       "js": [
         "content.js"

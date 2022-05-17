@@ -13,11 +13,15 @@ chrome.runtime.onInstalled.addListener(() => {
   console.log(getStoredOptions());
 });
 
-// print hello world on page load
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === "complete") {
-    chrome.tabs.executeScript(tabId, {
-      file: "../content/content.ts",
-    });
-  }
+  console.log(getStoredOptions())
+  getStoredOptions().then((options) => {
+    console.log(options.is_autocomplete_enabled);
+    if (changeInfo.status === "complete" && options.is_autocomplete_enabled === false) {
+      chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        files: ["content.js"],
+      });
+    }
+  });
 });

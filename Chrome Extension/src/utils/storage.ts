@@ -32,6 +32,7 @@ export function getStoredOptions(): Promise<LocalStorageOptions> {
         reject(chrome.runtime.lastError);
       } else {
         resolve(res.options);
+        console.log(res.options);
       }
     });
   });
