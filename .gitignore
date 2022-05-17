@@ -1,0 +1,6 @@
+HostMiddleware/__pycache__/**
+*.o
+*.d
+*.so
+*/.vscode/**
+init

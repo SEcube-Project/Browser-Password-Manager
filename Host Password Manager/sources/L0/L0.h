@@ -30,10 +30,10 @@
 #ifndef _L0_H_
 #define _L0_H_
 
-#include "Commodities API/commodities_api.h"
-#include "Communication API/communication_api.h"
-#include "Provision API/provision_api.h"
-#include "L0 Base/L0_base.h"
+#include "Commodities_API/commodities_api.h"
+#include "Communication_API/communication_api.h"
+#include "Provision_API/provision_api.h"
+#include "L0_Base/L0_base.h"
 
 const uint32_t SE3_TIMEOUT = 10000;
 

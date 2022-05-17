@@ -1,0 +1,35 @@
+
+CPP = g++
+LFLAGS += 
+CFLAGS += -g -MMD
+INCLUDES += 
+
+OUT_DIR := build
+BASE_DIR := sources
+CPP_SRCS := $(shell find $(BASE_DIR) -name '*.cpp' | sort | uniq | sed 's/ /\\\\ /g')
+CPP_DIRS := $(shell find $(BASE_DIR) -name '*.cpp' -printf '%h\n' | sort | uniq | sed 's/ /\\\\ /g')
+OBJS     := $(addprefix $(OUT_DIR)/, $(shell find $(BASE_DIR) -name '*.cpp' -printf '%f\n'))
+OBJS     := $(OBJS:.cpp=.o)
+DEPS     := $(OBJS:.o=.d)
+
+
+lib.so: $(OBJS) Makefile
+
+$(OUT_DIR)/%.o: $(wildcard $(CPP_SRCS)/%.cpp) Makefile
+	@echo "[C] $<"
+	$(CPP) -c "$<" -g $(INCLUDES) -o "$@"
+
+include $(DEPS)
+
+$(OUT_DIR)/%.d : $(wildcard $(CPP_SRCS)/%.cpp)
+	$(CPP) -g -MF"$@" -MG -MM -MP -MT"$@" -MT"$(@:.d=.o)" "$<"
+
+all:
+	@echo $(CPP_SRCS)
+	@echo
+	@echo $(OBJS)
+	@echo
+	@echo $(CPP_DIRS)
+	@echo
+	@echo $(DEPS)
+

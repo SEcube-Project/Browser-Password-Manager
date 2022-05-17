@@ -1,0 +1,18 @@
+
+s+ = $(subst \\ ,+,$1)
++s = $(subst +,\ ,$1) 
+
+SRC_DIR	   := sources
+BUILD_DIR  := ../build
+RBUILD_DIR := $(shell realpath $(BUILD_DIR) | sed 's/ /\\\\ /g')
+RBUILD_DIR := $(call s+,$(RBUILD_DIR))
+SUBDIRS    := $(shell find $(SRC_DIR) -name '*.c*' -printf '%h\n' | sort | uniq)
+
+# compilers (at least gcc and clang) don't create the subdirectories automatically
+$(shell mkdir -p $(BUILD_DIR) >/dev/null)
+
+build: $(SUBDIRS)
+
+.PHONY: $(SUBDIRS)
+$(SUBDIRS): 
+	$(MAKE) -C $@ BUILD_DIR=$(RBUILD_DIR)
