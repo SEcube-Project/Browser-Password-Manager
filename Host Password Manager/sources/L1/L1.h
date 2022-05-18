@@ -31,10 +31,10 @@
 #define L1_H_
 
 #include "../L0/L0.h"
-#include "L1 Base/L1_base.h"
-#include "Login-Logout API/login_logout_api.h"
-#include "Security API/security_api.h"
-#include "Utility API/utility_api.h"
+#include "L1_Base/L1_base.h"
+#include "Login-Logout_API/login_logout_api.h"
+#include "Security_API/security_api.h"
+#include "Utility_API/utility_api.h"
 
 /** This class defines the attributes and the methods of a L1 object. L1 is built upon L0, therefore it uses a higher
  *  level of abstraction. L0 is focused on very basic actions (such as low level USB communication with the SEcube),
@@ -59,7 +59,7 @@ private:
 	void L1Config(uint16_t type, uint16_t op, std::array<uint8_t, L1Parameters::Size::PIN>& value);
 	void KeyList(uint16_t maxKeys, uint16_t skip, se3Key* keyArray, uint16_t* count);
 	void PassList(uint8_t *buffer, uint16_t *buflen);
-	bool L1SEGetAllPasswords(uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen, std::vector<se3Pass>& passList);
+	bool L1SEGetAllPasswords(uint8_t filterType, std::vector<uint8_t> *filter, std::vector<se3Pass>& passList);
 	bool L1SEModifyPassword(uint32_t pass_id, se3Pass& password, bool isModify);
 public:
 	L1(); /**< Default constructor. */
@@ -228,7 +228,7 @@ public:
 	 * @param [in] user_data plain username string.
 	 * @param [in] pass_data plain password string.
 	 * @return True on success, false otherwise. */
-	bool L1SEAddPassword(uint16_t pass_id, std::shared_ptr<uint8_t[]> host_data, uint16_t host_len, std::shared_ptr<uint8_t[]> user_data, uint16_t user_len, std::shared_ptr<uint8_t[]> pass_data, uint16_t pass_len);
+	bool L1SEAddPassword(uint16_t pass_id, uint8_t *host_data, uint16_t host_len, uint8_t *user_data, uint16_t user_len, uint8_t *pass_data, uint16_t pass_len);
 
 	/** @brief Export a password in plain text from the SEcube flash memory.
 	 * @param [in] pass_id The ID of the password to be exported.
@@ -252,14 +252,14 @@ public:
 	 * @param [in] filterLen lenght of the input.
 	 * @param [out] passList vector of all the retrieved passwords.
 	 * @return True on success, false otherwise. */
-	bool L1SEGetAllPasswordsByHostName(std::shared_ptr<uint8_t[]> hostname, uint16_t filterLen, std::vector<se3Pass>& passList);
+	bool L1SEGetAllPasswordsByHostName(std::vector<uint8_t> hostname, std::vector<se3Pass>& passList);
 
 	/** @brief Export the list of all passwords in plain text from the SEcube flash memory filtered by username.
 	 * @param [in] username of the password to search.
 	 * @param [in] filterLen lenght of the input.
 	 * @param [out] passList vector of all the retrieved passwords.
 	 * @return True on success, false otherwise. */
-	bool L1SEGetAllPasswordsByUserName(std::shared_ptr<uint8_t[]> username, uint16_t filterLen, std::vector<se3Pass>& passList);
+	bool L1SEGetAllPasswordsByUserName(std::vector<uint8_t> username, std::vector<se3Pass>& passList);
 
 	/** @brief Delete a password from the SEcube flash memory.
 	 * @param [in] pass_id The ID of the password to be exported.

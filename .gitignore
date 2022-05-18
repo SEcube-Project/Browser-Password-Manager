@@ -1,0 +1,8 @@
+HostMiddleware/__pycache__/**
+*.o
+*.d
+*.so
+*/.vscode/**
+init
+HostMiddleware/Makefile
+HostMiddleware/BPMMiddleware

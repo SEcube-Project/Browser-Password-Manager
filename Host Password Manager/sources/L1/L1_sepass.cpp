@@ -89,15 +89,16 @@ bool L1::L1SEGenerateRandomPassword(uint16_t pass_len, uint8_t enable_upper_case
 	return true;
 }
 
-bool L1::L1SEAddPassword(uint16_t pass_id, std::shared_ptr<uint8_t[]> host_data, uint16_t host_len, std::shared_ptr<uint8_t[]> user_data, uint16_t user_len, std::shared_ptr<uint8_t[]> pass_data, uint16_t pass_len){
+bool L1::L1SEAddPassword(uint16_t pass_id, uint8_t *host_data, uint16_t host_len, uint8_t *user_data, uint16_t user_len, uint8_t *pass_data, uint16_t pass_len){
 	se3Pass pass;
 	pass.id = pass_id;
 	pass.hostSize = host_len;
 	pass.userSize = user_len;
 	pass.passSize = pass_len;
-	pass.host = host_data.get();
-	pass.user = user_data.get();
-	pass.pass = pass_data.get();
+
+	pass.host = std::string((const char*)host_data, host_len);
+	pass.user = std::string((const char*)user_data, user_len);
+	pass.pass = std::string((const char*)pass_data, pass_len);
 
 	return L1::L1SEModifyPassword(pass_id, pass, false);
 }
@@ -125,12 +126,12 @@ bool L1::L1SEModifyPassword(uint32_t pass_id, se3Pass& password, bool isModify){
 	offset += 2;
 	this->base.FillSessionBuffer((unsigned char*)&password.passSize, offset, 2);
 	offset += 2;
-	if(password.host != nullptr && password.user != nullptr && password.pass != nullptr){ // this is in case the host wants to explicitly send the key content to the SEcube
-		this->base.FillSessionBuffer((unsigned char*)password.host, offset, password.hostSize);
+	if(!password.host.empty() && !password.user.empty() && !password.pass.empty()) { // this is in case the host wants to explicitly send the key content to the SEcube
+		this->base.FillSessionBuffer((unsigned char*)password.host.c_str(), offset, password.hostSize);
 		offset += password.hostSize;
-		this->base.FillSessionBuffer((unsigned char*)password.user, offset, password.userSize);
+		this->base.FillSessionBuffer((unsigned char*)password.user.c_str(), offset, password.userSize);
 		offset += password.userSize;
-		this->base.FillSessionBuffer((unsigned char*)password.pass, offset, password.passSize);
+		this->base.FillSessionBuffer((unsigned char*)password.pass.c_str(), offset, password.passSize);
 		offset += password.passSize;
 	}
 	data_len = offset - L1Request::Offset::DATA;
@@ -181,10 +182,12 @@ bool L1::L1SEGetPasswordById(uint32_t pass_id, se3Pass& pass)
 	uint16_t host_len = 0;
 	uint16_t user_len = 0;
 	uint16_t pass_len = 0;
+
+	offset = 0;
 	memcpy(&passid, buffer.get(), 4);
-	memcpy(&host_len, buffer.get()+4, 2);
-	memcpy(&user_len, buffer.get()+6, 2);
-	memcpy(&pass_len, buffer.get()+8, 2);
+	memcpy(&host_len, buffer.get() + (offset += 4), 2);
+	memcpy(&user_len, buffer.get() + (offset += 2), 2);
+	memcpy(&pass_len, buffer.get() + (offset += 2), 2);
 	if(passid == 0){
 		return false; // when the SEcube reaches the end of the flash (all keys returned) it sends 0, so we have our condition to terminate
 	}
@@ -193,32 +196,30 @@ bool L1::L1SEGetPasswordById(uint32_t pass_id, se3Pass& pass)
 	pass.hostSize = host_len;
 	pass.userSize = user_len;
 	pass.passSize = pass_len;
-	pass.host = (uint8_t*)malloc(host_len*sizeof(uint8_t));
-	memcpy(pass.host,  buffer.get()+10, host_len);
-	pass.user = (uint8_t*)malloc(user_len*sizeof(uint8_t));
-	memcpy(pass.user,  buffer.get()+10 + host_len, user_len);
-	pass.pass = (uint8_t*)malloc(pass_len*sizeof(uint8_t));
-	memcpy(pass.pass,  buffer.get()+10+host_len+user_len, pass_len);
+
+	pass.host = std::string((const char*)buffer.get() + (offset += 2), host_len);
+	pass.user = std::string((const char*)buffer.get() + (offset += host_len), user_len);
+	pass.pass = std::string((const char*)buffer.get() + (offset += user_len), pass_len);
 
 	return true;
 }
 
-bool L1::L1SEGetAllPasswordsByUserName(std::shared_ptr<uint8_t[]> username, uint16_t usernameLen, std::vector<se3Pass>& passList)
+bool L1::L1SEGetAllPasswordsByUserName(std::vector<uint8_t> username, std::vector<se3Pass>& passList)
 {
-	return L1SEGetAllPasswords(USER_FILTER, username, usernameLen, passList);
+	return L1SEGetAllPasswords(USER_FILTER, &username, passList);
 }
 
-bool L1::L1SEGetAllPasswordsByHostName(std::shared_ptr<uint8_t[]> hostname, uint16_t hostnameLen, std::vector<se3Pass>& passList)
+bool L1::L1SEGetAllPasswordsByHostName(std::vector<uint8_t> hostname, std::vector<se3Pass>& passList)
 {
-	return L1SEGetAllPasswords(HOST_FILTER, hostname, hostnameLen, passList);
+	return L1SEGetAllPasswords(HOST_FILTER, &hostname, passList);
 }
 
 bool L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList)
 {
-	return L1SEGetAllPasswords(NO_FILTER, NULL, 0, passList);
+	return L1SEGetAllPasswords(NO_FILTER, nullptr, passList);
 }
 
-bool L1::L1SEGetAllPasswords(uint8_t filterType, std::shared_ptr<uint8_t[]> filterField, uint16_t filterLen, std::vector<se3Pass>& passList)
+bool L1::L1SEGetAllPasswords(uint8_t filterType, std::vector<uint8_t> *filter, std::vector<se3Pass>& passList)
 {
 	L1PasswordListException passListExc;
 	passList.clear();
@@ -233,10 +234,13 @@ bool L1::L1SEGetAllPasswords(uint8_t filterType, std::shared_ptr<uint8_t[]> filt
 	if(filterType != NO_FILTER){
 		this->base.FillSessionBuffer((unsigned char*)&filterType, offset, 2);
 		offset += 2;
-		this->base.FillSessionBuffer((unsigned char*)&filterLen, offset, 2);
+
+		uint16_t filterSize = filter->size();
+		this->base.FillSessionBuffer((unsigned char*)&filterSize, offset, 2);
 		offset += 2;
-		this->base.FillSessionBuffer((unsigned char*)filterField.get(), offset, filterLen);
-		offset += filterLen;
+
+		this->base.FillSessionBuffer((unsigned char*)filter->data(), offset, filter->size());
+		offset += filter->size();
 	}
 
 	data_len = offset - L1Request::Offset::DATA;
@@ -277,16 +281,18 @@ bool L1::L1SEGetAllPasswords(uint8_t filterType, std::shared_ptr<uint8_t[]> filt
 		pass.hostSize = host_len;
 		pass.userSize = user_len;
 		pass.passSize = pass_len;
-		pass.host = (uint8_t*)malloc(host_len*sizeof(uint8_t));
-		memcpy(pass.host,  buffer.get()+offset, host_len);
-		offset+=host_len;
-		pass.user = (uint8_t*)malloc(user_len*sizeof(uint8_t));
-		memcpy(pass.user,  buffer.get()+offset, user_len);
-		offset+=user_len;
-		pass.pass = (uint8_t*)malloc(pass_len*sizeof(uint8_t));
-		memcpy(pass.pass,  buffer.get()+offset, pass_len);
-		offset+=pass_len;
+
+		pass.host = std::string((const char*)buffer.get() + offset, host_len);
+		offset += host_len;
+
+		pass.user = std::string((const char*)buffer.get() + offset, user_len);
+		offset += user_len;
+
+		pass.pass = std::string((const char*)buffer.get() + offset, pass_len);
+		offset += pass_len;
+
 		passList.push_back(pass); // copy ID in list
 	}
+
 	return true;
 }
