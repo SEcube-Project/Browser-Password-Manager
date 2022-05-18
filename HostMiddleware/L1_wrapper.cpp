@@ -1,4 +1,5 @@
 #include <new>
+#include <numeric>
 #include <iterator>
 #include <iostream>
 #include <algorithm>
@@ -108,11 +109,24 @@ extern "C" int L1_AddPassword(void *instance, uint8_t *host_data, uint16_t host_
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 
-    uint16_t len;
-    L1_GetPasswords_Sizes(instance, nullptr, nullptr, nullptr, &len, nullptr, 0);
+    std::vector<se3Pass> pwds;
+    l1->L1SEGetAllPasswords(pwds);
+    std::sort(pwds.begin(), pwds.end(), [](const se3Pass &a, const se3Pass &b) { return a.id < b.id; });
 
-    auto res = l1->L1SEAddPassword(++len, host_data, host_len, user_data, user_len, pass_data, pass_len);
-    std::cout << "#CC: L1_AddPassword: " << res << std::endl;
+    uint32_t previd = -1;
+    uint32_t useid = -1;
+    for (auto &p : pwds) {
+        if (previd != -1 && p.id - previd > 1) {
+            useid = previd + 1;
+            break;
+        }
+
+        previd = p.id;
+    }
+
+    uint32_t id = useid == -1 ? pwds[pwds.size() - 1].id + 1 : useid;
+
+    auto res = l1->L1SEAddPassword(id, host_data, host_len, user_data, user_len, pass_data, pass_len);
     return res ? 1 : 0;
 }
 
