@@ -15,6 +15,7 @@ import { useSnackbar, VariantType, SnackbarProvider } from "notistack";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
+import { generatePassword } from "../../utils/api";
 
 export default function GeneratePasswordElement() {
   return <CheckboxLabels />;
@@ -22,7 +23,23 @@ export default function GeneratePasswordElement() {
 
 function CheckboxLabels() {
   const [showPassword, setShowPassword] = useState(false);
+  const [upper, setUpper] = useState(true);
+  const [special, setSpecial] = useState(true);
+  const [numbers, setNumbers] = useState(true);
+  const [length, setLength] = useState(8);
   const [password, setPassword] = useState("");
+
+  const handleUpperChange = (event) => {
+    setUpper(event.target.checked);
+  };
+
+  const handleSpecialChange = (event) => {
+    setSpecial(event.target.checked);
+  };
+
+  const handleNumbersChange = (event) => {
+    setNumbers(event.target.checked);
+  };
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -36,8 +53,13 @@ function CheckboxLabels() {
 
   function MyApp() {
     const handleClick = () => {
-      setPassword("ciao come stai");
-      // TODO: Send the parameters to generate the password to the backend
+      generatePassword(upper, special, numbers, length)
+        .then((res) => {
+          setPassword(res.generated);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     };
 
     return (
@@ -62,11 +84,20 @@ function CheckboxLabels() {
       sx={{ display: "flex", flexWrap: "wrap", maxWidth: 400, maxHeight: 400 }}
     >
       <FormControl sx={{ m: 1, width: "55ch" }} variant="outlined">
-        <FormControlLabel control={<Checkbox defaultChecked />} label="A-Z" />
-        <FormControlLabel control={<Checkbox defaultChecked />} label="0-9" />
+        <FormControlLabel
+          control={<Checkbox defaultChecked />}
+          label="A-Z"
+          onChange={() => handleUpperChange(event)}
+        />
+        <FormControlLabel
+          control={<Checkbox defaultChecked />}
+          label="0-9"
+          onChange={() => handleNumbersChange(event)}
+        />
         <FormControlLabel
           control={<Checkbox defaultChecked />}
           label="-_.:;,?&%$!@#"
+          onChange={() => handleSpecialChange(event)}
         />
       </FormControl>
       <FormControl sx={{ m: 1, width: "55ch" }} variant="outlined">

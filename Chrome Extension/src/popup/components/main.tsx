@@ -30,7 +30,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
-const DEBUG = true;
+const DEBUG = false;
 
 export default function FixedBottomNavigation() {
   const [state, setState] = useState(0);
@@ -39,8 +39,7 @@ export default function FixedBottomNavigation() {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    getAllPasswords(DEBUG)
-      .then((res) => {
+    getAllPasswords().then((res) => {
         setPasswordData(res.passwords);
       })
       .catch((err) => {
