@@ -9,7 +9,7 @@ import TabIcon from "@mui/icons-material/Tab";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
 import Paper from "@mui/material/Paper";
-import { fetchApi, PasswordElement } from "../../utils/api";
+import { getAllPasswords, PasswordElement } from "../../utils/api";
 import { useEffect, useState } from "react";
 import {
   FormControl,
@@ -39,7 +39,7 @@ export default function FixedBottomNavigation() {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    fetchApi(DEBUG)
+    getAllPasswords(DEBUG)
       .then((res) => {
         setPasswordData(res.passwords);
       })
