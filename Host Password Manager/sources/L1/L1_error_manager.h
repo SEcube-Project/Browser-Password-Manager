@@ -165,6 +165,13 @@ public:
 	}
 };
 
+class L1PasswordListException : public L1Exception {
+public:
+	virtual const char* what() const throw() override {
+		return "Error while listing the passwords!";
+	}
+};
+
 class L1FindKeyException : public L1Exception {
 public:
 	virtual const char* what() const throw() override {

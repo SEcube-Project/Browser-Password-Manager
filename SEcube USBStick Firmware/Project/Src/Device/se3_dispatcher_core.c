@@ -33,6 +33,48 @@ SE3_LOGIN_STATUS login_struct;
 static void login_cleanup();
 bool key_len_valid(uint16_t len);
 
+uint16_t sepassword_manager_utilities(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp)
+{
+    uint16_t operation; // the type of operation to be executed
+    memcpy((void*)&(operation), (void*)req, 2);
+    se3_flash_it it = { .addr = NULL};
+    if(!login_struct.y){
+        return SE3_ERR_ACCESS;
+    }
+    se3_flash_it_init(&it);
+    it.addr = NULL;
+    switch (operation) {
+        case SE3_SEPASS_OP_ADD:
+            return add_new_password(req_size, req+2, resp_size, resp);
+            break;
+        case SE3_SEPASS_OP_MODIFY:
+            return modify_password(req_size, req+2, resp_size, resp);
+            break;
+        case SE3_SEPASS_OP_DELETE:
+            return delete_password(req_size, req+2, resp_size, resp);
+            break;
+        case SE3_SEPASS_OP_GET_BY_ID:
+        	return get_password_by_id(req_size, req+2, resp_size, resp);
+        	break;
+        case SE3_SEPASS_OP_GETALL:
+        	return get_all_passwords(req_size, req+2, resp_size, resp);
+        	break;
+        case SE3_SEPASS_OP_GENERATE_RANDOM:
+        	return generate_random_password(req_size, req+2, resp_size, resp);
+        	break;
+        case SE3_SEPASS_OP_EXPORT:
+        	return export_passwords(req_size, req+2, resp_size, resp);
+        	break;
+        case SE3_SEPASS_OP_IMPORT:
+        	return import_passwords(req_size, req+2, resp_size, resp);
+        	break;
+        default:
+            SE3_TRACE(("[sepassword_utilities] invalid operation\n"));
+            return SE3_ERR_PARAMS;
+    }
+    return SE3_OK;
+}
+
 /* simple dispatcher for sekey-related operations */
 uint16_t sekey_utilities(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp)
 {

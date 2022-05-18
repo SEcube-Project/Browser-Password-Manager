@@ -155,6 +155,14 @@ enum {
 	SE3_KEY_SALT_SIZE = 32
 };
 
+/** Password: maximum sizes for variable fields */
+enum {
+	SE3_PASS_DATA_MAX = 2048,
+	SE3_PASS_NAME_MAX = 32,
+	SE3_PASS_FINGERPRINT_SIZE = 32,
+	SE3_PASS_SALT_SIZE = 32
+};
+
 /**
  *  @defgroup KeyOpEdit
  *  @{
