@@ -234,6 +234,7 @@ uint16_t add_new_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
 	uint32_t key_id = 0, kid = 0;
 	bool error_ = false;
+	bool found = false;
 	se3_flash_it it = { .addr = NULL };
 	*resp_size = 0;
 
@@ -247,6 +248,7 @@ uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 		if (it.type == SE3_TYPE_PASS){
 			SE3_GET32(it.addr, SE3_FLASH_PASS_OFF_ID, key_id);
 			if(key_id == kid){
+				found = true;
 				// Delete the record if has same id
 				if (!se3_flash_it_delete(&it)) {
 					error_ = true;
@@ -254,7 +256,7 @@ uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 			}
 		}
 	}
-	if(error_){
+	if(error_ || !found){
 		return SE3_ERR_RESOURCE;
 	} else {
 		memcpy(resp, "OK", 2);
