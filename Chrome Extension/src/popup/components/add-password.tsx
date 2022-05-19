@@ -53,6 +53,32 @@ export default function AddPasswordElement(props) {
     setUrl(props.url);
   }, [props.url]);
 
+
+  function MyApp() {
+    const { enqueueSnackbar } = useSnackbar();
+  
+    const handleClickVariant = () => () => {
+      insertNewPassword(url, username, password, "POST")
+      enqueueSnackbar("Password saved correctly", {variant: "success"});
+    };
+  
+    return (
+      <React.Fragment>
+        <Button variant="contained" onClick={handleClickVariant()}>
+          Save
+        </Button>
+      </React.Fragment>
+    );
+  }
+  
+  function IntegrationNotistack() {
+    return (
+      <SnackbarProvider maxSnack={1} autoHideDuration={1300}>
+        <MyApp />
+      </SnackbarProvider>
+    );
+  }
+
   return (
     <Box
       sx={{
@@ -112,27 +138,4 @@ export default function AddPasswordElement(props) {
   );
 }
 
-function MyApp() {
-  const { enqueueSnackbar } = useSnackbar();
 
-  const handleClickVariant = (variant: VariantType) => () => {
-    // TODO: Send the value of username, password and url to the backend
-    enqueueSnackbar("Password saved correctly", { variant });
-  };
-
-  return (
-    <React.Fragment>
-      <Button variant="contained" onClick={handleClickVariant("success")}>
-        Save
-      </Button>
-    </React.Fragment>
-  );
-}
-
-function IntegrationNotistack() {
-  return (
-    <SnackbarProvider maxSnack={1} autoHideDuration={1300}>
-      <MyApp />
-    </SnackbarProvider>
-  );
-}

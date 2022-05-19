@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 
 import CustomizedList from "./current-tab";
+import MyVault from "./my-vault";
 import AddPasswordElement from "./add-password";
 import GeneratePasswordElement from "./generate-password";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -121,7 +122,7 @@ export default function FixedBottomNavigation() {
     <Box sx={{ width: 400, height: 500 }}>
       {console.log("PasswordData", passwordData)}
       {state === 0 && <CustomizedList password={passwordData}/>}
-      {state === 1 && <CustomizedList password={passwordData}/>}
+      {state === 1 && <MyVault password={passwordData}/>}
       {state === 2 && <GeneratePasswordElement />}
       {state === 3 && <AddPasswordElement url={pageHostname}/>}
       {[0, 1, 2, 3].includes(state) && (
