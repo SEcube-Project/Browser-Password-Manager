@@ -10,12 +10,14 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
+  Tooltip,
 } from "@mui/material";
 import { useSnackbar, VariantType, SnackbarProvider } from "notistack";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 import { generatePassword } from "../../utils/api";
+import ContentCopy from "@mui/icons-material/ContentCopy";
 
 export default function GeneratePasswordElement() {
   return <CheckboxLabels />;
@@ -121,6 +123,18 @@ function CheckboxLabels() {
               >
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
+              <Tooltip title="Copy">
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      password
+                    );
+                  }}
+                >
+                  <ContentCopy />
+                </IconButton>
+              </Tooltip>
             </InputAdornment>
           }
           label="Password"

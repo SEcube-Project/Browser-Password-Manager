@@ -93,62 +93,55 @@ export async function insertNewPassword(
 }
 
 export async function updatePassword(
-    id: number,
-    hostname: string,
-    username: string,
-    password: string,
-  requestType?: fetchType,
+  id: number,
+  hostname: string,
+  username: string,
+  password: string,
+  requestType?: fetchType
 ) {
-    const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=test`;
-    const res = await fetch(url, {
-      method: requestType ? requestType : "PUT",
-      body: JSON.stringify(
-        {
-            id: id,
-            hostname: hostname,
-            username: username,
-            password: password,
-        }
-      ),
-    });
-    // check if the response is 200; if not throw an error
-    if (!res.ok) {
-      throw new Error(res.statusText);
-    }
+  const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=test`;
+  const res = await fetch(url, {
+    method: requestType ? requestType : "PUT",
+    body: JSON.stringify({
+      id: id,
+      hostname: hostname,
+      username: username,
+      password: password,
+    }),
+  });
+  // check if the response is 200; if not throw an error
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
 }
 
-export async function getDevices(
-  requestType?: fetchType,
-): Promise<devices> {
-    const url = `https://127.0.0.1:5000/api/v0/devices`;
-    const res = await fetch(url, {
-      method: requestType,
-    });
-    // check if the response is 200; if not throw an error
-    if (!res.ok) {
-      throw new Error(res.statusText);
-    }
-    // Declare data as a devices type to take advantage of the type checking
-    const data: devices = await res.json();
-    return data;
+export async function getDevices(requestType?: fetchType): Promise<devices> {
+  const url = `https://127.0.0.1:5000/api/v0/devices`;
+  const res = await fetch(url, {
+    method: requestType,
+  });
+  // check if the response is 200; if not throw an error
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
+  // Declare data as a devices type to take advantage of the type checking
+  const data: devices = await res.json();
+  return data;
 }
 
-export async function deletePassword(
-    id: number,
-    requestType?: fetchType,
-) {
-    const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=test`;
-    const res = await fetch(url, {
-      method: requestType,
-    });
-    // check if the response is 200; if not throw an error
-    if (!res.ok) {
-      throw new Error(res.statusText);
-    }
-    const data: removePassword = await res.json();
-    if (!data.success) {
-      throw new Error("Success: false");
-    }
+export async function deletePassword(id: number, requestType?: fetchType) {
+  const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=test`;
+  const res = await fetch(url, {
+    method: requestType,
+  });
+  // check if the response is 200; if not throw an error
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
+  const data: removePassword = await res.json();
+  if (!data.success) {
+    throw new Error("Success: false");
+  }
 }
 
 export async function generatePassword(
@@ -163,6 +156,7 @@ export async function generatePassword(
     upper ? 1 : 0
   }&special=${special ? 1 : 0}&numbers=${numbers ? 1 : 0}&length=${length}`;
   console.log(url);
+
   const res = await fetch(url, {
     method: requestType,
   });
