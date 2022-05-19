@@ -1,3 +1,6 @@
+import { getAllPasswordsByHostname, ApiBody } from "../utils/api";
+import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
+
 (() => {
   function nextField() {
     var inputs = document.getElementsByTagName("input");
@@ -22,25 +25,57 @@
             /* Username + Password fields */
             console.log(
               "Found username and password fields for: " +
-                window.location.hostname
+                window.location.hostname.replace("www.", "")
             );
-            if (focusedElement instanceof HTMLInputElement) {
-              focusedElement.value = "username";
-            }
-            nextInput.value = "password";
+
+            // Get the username and password from the API
+            getAllPasswordsByHostname(window.location.hostname.replace("www.", "")).then(
+              (data: ApiBody) => {
+                console.log(data);
+                // get the stored options
+                getStoredOptions().then((options: LocalStorageOptions) => {
+                  // if autocomplete is enabled and there is only one stored password for the current hostname
+                  if (
+                    data.count == 1 &&
+                    options.is_autocomplete_enabled
+                  ) {
+                    // Set the username and password
+                    if (focusedElement instanceof HTMLInputElement) {
+                      focusedElement.value = data.passwords[0].username;
+                    }
+                    nextInput.value = data.passwords[0].password;
+                  }
+                });
+              }
+            );
+          } else {
+            /* Only password field */
+            console.log(
+              "Found only password field for: " + window.location.hostname.replace("www.", "")
+            );
+
+            // Get the username and password from the API
+            getAllPasswordsByHostname(window.location.hostname.replace("www.", "")).then(
+              (data: ApiBody) => {
+                console.log(data);
+                // get the stored options
+                getStoredOptions().then((options: LocalStorageOptions) => {
+                  // if autocomplete is enabled and there is only one stored password for the current hostname
+                  if (
+                    data.count == 1 &&
+                    options.is_autocomplete_enabled
+                  ) {
+                    if (focusedElement instanceof HTMLInputElement) {
+                      focusedElement.value = data.passwords[0].password;
+                    }
+                  }
+                });
+              }
+            );
           }
-        } else {
-          /* Only password field */
-          console.log(
-            "Found only username field for: " + window.location.hostname
-          );
-          if (focusedElement instanceof HTMLInputElement) {
-            focusedElement.value = "password";
-          }
+          lastFocusedElement = focusedElement;
         }
       }
-
-      lastFocusedElement = focusedElement;
     }
   });
 })();

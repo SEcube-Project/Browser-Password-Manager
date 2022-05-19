@@ -61,6 +61,12 @@ export async function getAllPasswordsByHostname(
   const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=test&hostname=${hostname}`;
   const res = await fetch(url, {
     method: requestType,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "*",
+      "Access-Control-Allow-Methods": "*",
+      "Content-Type": "application/json",
+    }
   });
   // check if the response is 200; if not throw an error
   if (!res.ok) {

@@ -9,7 +9,11 @@ import TabIcon from "@mui/icons-material/Tab";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
 import Paper from "@mui/material/Paper";
-import { getAllPasswords, PasswordElement } from "../../utils/api";
+import {
+  getAllPasswords,
+  PasswordElement,
+  getAllPasswordsByHostname,
+} from "../../utils/api";
 import { useEffect, useState } from "react";
 import {
   FormControl,
@@ -33,32 +37,44 @@ import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
 const DEBUG = false;
 
-export default function FixedBottomNavigation() {
+export default function FixedBottomNavigation(props) {
   const [state, setState] = useState(0);
-  const [passwordData, setPasswordData] = useState<PasswordElement[]>(null);
+  const [allPasswords, setAllPasswords] = useState<PasswordElement[]>(null);
+  const [currentTabPasswords, setCurrentTabPasswords] =
+    useState<PasswordElement[]>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [pageHostname, setPageHostname] = useState("");
 
-  useEffect(() => {
-    getAllPasswords().then((res) => {
-        setPasswordData(res.passwords);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [state]);
+  // receive the message from background.ts and save the value to the pageHostname
 
   useEffect(() => {
-    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-      var full_url = tabs[0].url;
-      // Extract the hostname from the URL
-      var page_hostname = full_url.split("/")[2];
-      // remove www. from the string
-      page_hostname = page_hostname.replace("www.", "");
-      setPageHostname(page_hostname);
-  });
-  }, [state]);
+    if (state === 1) {
+      getAllPasswords()
+        .then((res) => {
+          setAllPasswords(res.passwords);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else if (state === 0) {
+      getAllPasswordsByHostname(props.hostname)
+        .then((res) => {
+          setCurrentTabPasswords(res.passwords);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [state, props.hostname]);
+
+  useEffect(() => {
+    if (props.hostname) {
+      setPageHostname(props.hostname);
+    }
+  }
+  , [props.hostname]);
+
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -74,16 +90,6 @@ export default function FixedBottomNavigation() {
     setPassword(event.target.value);
   };
 
-  function handleOnClickLogin(event: Event, newPassword: string) {
-    if (DEBUG) {
-      if (newPassword == "login") {
-        setState(0);
-        return true;
-      }
-    }
-    // TODO: make a call to gabriel's API to check if the password is correct
-  }
-
   function handleOnClickLock(event: Event) {
     setState(4);
   }
@@ -93,19 +99,23 @@ export default function FixedBottomNavigation() {
 
     function handleClickVariant(newPassword: string) {
       // variant could be success, error, warning, info, or default
-      if (DEBUG) {
-        if (newPassword == "login") {
-          setState(0);
-          return true;
-        } else {
-          enqueueSnackbar("Wrong Password", { variant: "error" });
-        }
+      if (newPassword == "login") {
+        setState(0);
+        return true;
+      } else {
+        enqueueSnackbar("Wrong Password", { variant: "error" });
       }
     }
 
     return (
       <React.Fragment>
-        <Button variant="contained" onClick={() => handleClickVariant(password)} endIcon={<LockOpenIcon />}>Login</Button>
+        <Button
+          variant="contained"
+          onClick={() => handleClickVariant(password)}
+          endIcon={<LockOpenIcon />}
+        >
+          Login
+        </Button>
       </React.Fragment>
     );
   }
@@ -120,11 +130,10 @@ export default function FixedBottomNavigation() {
 
   return (
     <Box sx={{ width: 400, height: 500 }}>
-      {console.log("PasswordData", passwordData)}
-      {state === 0 && <CustomizedList password={passwordData}/>}
-      {state === 1 && <MyVault password={passwordData}/>}
+      {state === 0 && <CustomizedList password={currentTabPasswords} />}
+      {state === 1 && <MyVault password={allPasswords} />}
       {state === 2 && <GeneratePasswordElement />}
-      {state === 3 && <AddPasswordElement url={pageHostname}/>}
+      {state === 3 && <AddPasswordElement url={pageHostname} />}
       {[0, 1, 2, 3].includes(state) && (
         <Paper
           sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
