@@ -78,13 +78,19 @@ export async function insertNewPassword(
   requestType?: fetchType
 ) {
   const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=test`;
+  const body = JSON.stringify({
+    hostname: hostname,
+    username: username,
+    password: password
+  });
+  console.log(body);
   const res = await fetch(url, {
     method: requestType ? requestType : "POST",
-    body: JSON.stringify({
-      hostname: hostname,
-      username: username,
-      password: password,
-    }),
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: body
   });
   // check if the response is 200; if not throw an error
   if (!res.ok) {
