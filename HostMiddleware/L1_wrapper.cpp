@@ -78,11 +78,12 @@ extern "C" int L1_GetPasswords(void *instance, uint32_t *ids, uint16_t *hostSize
     std::vector<se3Pass> pwds;
 
     bool res;
-    if (hostfilter && hostfilterlen > 0) 
+    if (hostfilter && hostfilterlen > 0) {
         res = l1->L1SEGetAllPasswordsByHostName(std::vector<uint8_t>(hostfilter, hostfilter + hostfilterlen), pwds);
-    else 
+    } else {
         res = l1->L1SEGetAllPasswords(pwds);
-    
+    }
+
     std::transform(pwds.begin(), pwds.end(), ids, [](se3Pass &p) { return p.id; });
     std::transform(pwds.begin(), pwds.end(), hostSizes, [](se3Pass &p) { return p.hostSize; });
     std::transform(pwds.begin(), pwds.end(), userSizes, [](se3Pass &p) { return p.userSize; });
@@ -124,7 +125,7 @@ extern "C" int L1_AddPassword(void *instance, uint8_t *host_data, uint16_t host_
         previd = p.id;
     }
 
-    uint32_t id = useid == -1 ? pwds[pwds.size() - 1].id + 1 : useid;
+    uint32_t id = !pwds.size() ? 1 : useid == -1 ? pwds[pwds.size() - 1].id + 1 : useid;
 
     auto res = l1->L1SEAddPassword(id, host_data, host_len, user_data, user_len, pass_data, pass_len);
     return res ? 1 : 0;
