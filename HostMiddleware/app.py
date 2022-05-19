@@ -2,6 +2,7 @@ import sys
 import logging
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
+from flask_cors import CORS
 from werkzeug.exceptions import BadRequest
 
 from L0 import L0
@@ -225,6 +226,7 @@ if __name__ == "__main__":
     
     app = Flask(__name__)
     api = Api(app)
+    CORS(app)
     l0 = L0()
     l1 = L1()
 
