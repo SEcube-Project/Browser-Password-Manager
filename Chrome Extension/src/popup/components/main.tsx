@@ -37,6 +37,7 @@ export default function FixedBottomNavigation() {
   const [passwordData, setPasswordData] = useState<PasswordElement[]>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
+  const [pageHostname, setPageHostname] = useState("");
 
   useEffect(() => {
     getAllPasswords().then((res) => {
@@ -45,6 +46,17 @@ export default function FixedBottomNavigation() {
       .catch((err) => {
         console.log(err);
       });
+  }, [state]);
+
+  useEffect(() => {
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+      var full_url = tabs[0].url;
+      // Extract the hostname from the URL
+      var page_hostname = full_url.split("/")[2];
+      // remove www. from the string
+      page_hostname = page_hostname.replace("www.", "");
+      setPageHostname(page_hostname);
+  });
   }, [state]);
 
   const handleClickShowPassword = () => {
@@ -111,7 +123,7 @@ export default function FixedBottomNavigation() {
       {state === 0 && <CustomizedList password={passwordData}/>}
       {state === 1 && <CustomizedList password={passwordData}/>}
       {state === 2 && <GeneratePasswordElement />}
-      {state === 3 && <AddPasswordElement />}
+      {state === 3 && <AddPasswordElement url={pageHostname}/>}
       {[0, 1, 2, 3].includes(state) && (
         <Paper
           sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}

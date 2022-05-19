@@ -19,7 +19,9 @@ import {
   setStoredOptions,
 } from "../../utils/storage";
 
-export default function AddPasswordElement() {
+import { insertNewPassword } from "../../utils/api";
+
+export default function AddPasswordElement(props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [url, setUrl] = useState("");
@@ -47,9 +49,18 @@ export default function AddPasswordElement() {
     setUrl(event.target.value);
   };
 
+  React.useEffect(() => {
+    setUrl(props.url);
+  }, [props.url]);
+
   return (
     <Box
-      sx={{ display: "flex", flexWrap: "wrap", maxWidth: "100%" , maxHeight: "100%" }}
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        maxWidth: "100%",
+        maxHeight: "100%",
+      }}
     >
       <FormControl
         sx={{ m: 1, width: "55ch", maxWidth: "100%", maxHeight: "100%" }}
