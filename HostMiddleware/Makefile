@@ -68,7 +68,7 @@ dist: lib.so Makefile $(wildcard *.py)
 # pyarmor obfuscate app.py
 # pyarmor pack --name BPMMiddleware --clean -e "--onefile " app.py
 # pyarmor pack --name BPMMiddleware --clean -e "--add-data 'lib.so:.' " app.py
-	@pyarmor pack --name BPMMiddleware --clean -e "--add-data 'lib.so:.' --onefile --key '$(AKEY)' " app.py
+	@pyarmor pack --name BPMMiddleware --clean -e "--add-data 'lib.so:.' --add-data 'cert.pem:.' --add-data 'key.pem:.' --onefile --key '$(AKEY)' " app.py
 	@$(ECHO) Cleaning up
 	@cp dist/BPMMiddleware .
 	@rm -r build dist

@@ -245,4 +245,4 @@ if __name__ == "__main__":
     api.add_resource(API_Device_Generate, "/api/v0/device/<int:indx>/generate", resource_class_args=[logger, l0, l1])
     api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1])
     api.add_resource(API_Device_Password_ID, "/api/v0/device/<int:indx>/password/<int:id>", resource_class_args=[logger, l0, l1])
-    app.run(ssl_context='adhoc', debug=False)
+    app.run(ssl_context=('cert.pem', 'key.pem'), debug=False)
