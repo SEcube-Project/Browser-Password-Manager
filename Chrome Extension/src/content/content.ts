@@ -16,10 +16,10 @@ import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
   let lastFocusedElement = null;
 
   const logId = setInterval(() => {
-    const focusedElement = document.activeElement;
+    let focusedElement = document.activeElement;
     if (focusedElement !== lastFocusedElement) {
       if (focusedElement.tagName.toLowerCase() == "input") {
-        if (focusedElement.tagName.toLowerCase() != "password") {
+        if ((focusedElement as HTMLInputElement).type.toLowerCase() != "password") {
           let nextInput = nextField();
           if (nextInput.type.toLowerCase() == "password") {
             /* Username + Password fields */
@@ -44,12 +44,15 @@ import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
                       focusedElement.value = data.passwords[0].username;
                     }
                     nextInput.value = data.passwords[0].password;
+                    (document.activeElement as HTMLInputElement).blur()
                   }
                 });
               }
             );
-          } else {
+          } 
+        } else {
             /* Only password field */
+            // Get the element with the type password
             console.log(
               "Found only password field for: " + window.location.hostname.replace("www.", "")
             );
@@ -67,6 +70,7 @@ import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
                   ) {
                     if (focusedElement instanceof HTMLInputElement) {
                       focusedElement.value = data.passwords[0].password;
+                      (document.activeElement as HTMLInputElement).blur()
                     }
                   }
                 });
@@ -76,6 +80,5 @@ import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
           lastFocusedElement = focusedElement;
         }
       }
-    }
   });
 })();
