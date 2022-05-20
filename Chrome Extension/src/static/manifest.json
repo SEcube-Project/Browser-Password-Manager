@@ -1,0 +1,48 @@
+{
+  "name": "Password Manager",
+  "description": "Browser Password Manager",
+  "version": "1.0.0",
+  "author": "Giovanni Pollo, Matteo Battilina, Salvatore Gabriele La Greca",
+  "manifest_version": 3,
+  "icons": {
+    "16": "password.png",
+    "48": "password.png",
+    "128": "password.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Password Manager",
+    "default_icon": "password.png"
+  },
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*",
+    "*://extensions/*"
+  ],
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting",
+    "activeTab",
+    "contextMenus",
+    "webNavigation",
+    "webRequest",
+    "notifications",
+    "identity"
+  ],
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ]
+}

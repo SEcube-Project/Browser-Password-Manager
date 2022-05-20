@@ -7,7 +7,7 @@
 - The API rest must be HTTPS? Yes,no problem for sending pin at each command
 - Everytime the logout is automatically done at each tab change + timeout + esplicit user request
 
-## Extension specs
+## Extension specs 
 - Master password at the beginning ( the same wtr the user pin of the FW )
 - Logout
 
