@@ -33,9 +33,10 @@ export interface removePassword {
 }
 
 export async function getAllPasswords(
+  pin: string,
   requestType?: fetchType
 ): Promise<ApiBody> {
-  const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=test`;
+  const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=${pin}`;
   const res = await fetch(url, {
     method: requestType,
   });
@@ -51,9 +52,10 @@ export async function getAllPasswords(
 
 export async function getAllPasswordsByHostname(
   hostname: string,
+  pin: string,
   requestType?: fetchType
 ): Promise<ApiBody> {
-  const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=test&hostname=${hostname}`;
+  const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=${pin}&hostname=${hostname}`;
   const res = await fetch(url, {
     method: requestType,
     headers: {
@@ -76,9 +78,10 @@ export async function insertNewPassword(
   hostname: string,
   username: string,
   password: string,
+  pin: string,
   requestType?: fetchType
 ) {
-  const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=test`;
+  const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=${pin}`;
   const body = JSON.stringify({
     hostname: hostname,
     username: username,
@@ -104,9 +107,10 @@ export async function updatePassword(
   hostname: string,
   username: string,
   password: string,
+  pin: string,
   requestType?: fetchType
 ) {
-  const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=test`;
+  const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=${pin}`;
   const res = await fetch(url, {
     method: requestType ? requestType : "PUT",
     headers: {
@@ -140,8 +144,8 @@ export async function getDevices(requestType?: fetchType): Promise<devices> {
   return data;
 }
 
-export async function deletePassword(id: number, requestType?: fetchType) {
-  const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=test`;
+export async function deletePassword(id: number, pin: string, requestType?: fetchType) {
+  const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=${pin}`;
   const res = await fetch(url, {
     method: requestType ? requestType : "DELETE",
   });
@@ -160,10 +164,11 @@ export async function generatePassword(
   numbers: boolean,
   special: boolean,
   length: number,
+  pin: string,
   requestType?: fetchType
 ): Promise<generatedPassword> {
   console.log(upper, numbers, special, length);
-  const url = `https://127.0.0.1:5000/api/v0/device/0/generate?pin=test&upper=${
+  const url = `https://127.0.0.1:5000/api/v0/device/0/generate?pin=${pin}&upper=${
     upper ? 1 : 0
   }&special=${special ? 1 : 0}&numbers=${numbers ? 1 : 0}&length=${length}`;
   console.log(url);
@@ -178,4 +183,25 @@ export async function generatePassword(
   // Declare data as a generatedPassword type to take advantage of the type checking
   const data: generatedPassword = await res.json();
   return data;
+}
+
+
+export async function login(
+  pin: string,
+): Promise<boolean> {
+  const upper = true;
+  const numbers = true;
+  const special = true;
+  const length = 5;
+  const url = `https://127.0.0.1:5000/api/v0/device/0/generate?pin=${pin}&upper=${
+    upper ? 1 : 0
+  }&special=${special ? 1 : 0}&numbers=${numbers ? 1 : 0}&length=${length}`;
+
+  const res = await fetch(url);
+  // check if the response is 200; if not throw an error
+  if (!res.ok) {
+    return false;
+  } else {
+    return true;
+  }
 }

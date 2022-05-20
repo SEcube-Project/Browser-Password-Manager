@@ -1,6 +1,8 @@
 import { getAllPasswordsByHostname, ApiBody } from "../utils/api";
 import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
 
+import { pin_lock } from "../popup/components/main";
+
 (() => {
   function nextField() {
     var inputs = document.getElementsByTagName("input");
@@ -29,7 +31,7 @@ import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
             );
 
             // Get the username and password from the API
-            getAllPasswordsByHostname(window.location.hostname.replace("www.", "")).then(
+            getAllPasswordsByHostname(window.location.hostname.replace("www.", ""), pin_lock).then(
               (data: ApiBody) => {
                 console.log(data);
                 // get the stored options
@@ -58,7 +60,7 @@ import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
             );
 
             // Get the username and password from the API
-            getAllPasswordsByHostname(window.location.hostname.replace("www.", "")).then(
+            getAllPasswordsByHostname(window.location.hostname.replace("www.", ""), pin_lock).then(
               (data: ApiBody) => {
                 console.log(data);
                 // get the stored options

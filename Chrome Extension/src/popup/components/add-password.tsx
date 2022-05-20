@@ -12,7 +12,7 @@ import {
   Snackbar,
 } from "@mui/material";
 import { VariantType, useSnackbar, SnackbarProvider } from "notistack";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getStoredOptions,
   LocalStorageOptions,
@@ -26,6 +26,13 @@ export default function AddPasswordElement(props) {
   const [password, setPassword] = useState("");
   const [url, setUrl] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [pin, setPin] = useState("");
+
+    // track the changes on the props.pin with a use effect
+    useEffect(() => {
+      setPin(props.pin);
+    }, [props.pin]);
+    
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -59,7 +66,7 @@ export default function AddPasswordElement(props) {
   
     const handleClickVariant = () => () => {
       console.log("url", url, "username", username, "password", password);
-      insertNewPassword(url, username, password, "POST")
+      insertNewPassword(url, username, password, pin, "POST")
       enqueueSnackbar("Password saved correctly", {variant: "success"});
     };
   

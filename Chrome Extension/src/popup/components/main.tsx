@@ -13,6 +13,7 @@ import {
   getAllPasswords,
   PasswordElement,
   getAllPasswordsByHostname,
+  login,
 } from "../../utils/api";
 import { useEffect, useState } from "react";
 import {
@@ -35,20 +36,24 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
+export var pin_lock = "";
+
+
 export default function FixedBottomNavigation(props) {
-  const [state, setState] = useState(0);
+  const [state, setState] = useState(4);
   const [allPasswords, setAllPasswords] = useState<PasswordElement[]>(null);
   const [currentTabPasswords, setCurrentTabPasswords] =
     useState<PasswordElement[]>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [pageHostname, setPageHostname] = useState("");
+  const [pin, setPin] = useState("");
 
   // receive the message from background.ts and save the value to the pageHostname
 
   useEffect(() => {
     if (state === 1) {
-      getAllPasswords()
+      getAllPasswords(pin)
         .then((res) => {
           setAllPasswords(res.passwords);
         })
@@ -56,7 +61,7 @@ export default function FixedBottomNavigation(props) {
           console.log(err);
         });
     } else if (state === 0) {
-      getAllPasswordsByHostname(props.hostname)
+      getAllPasswordsByHostname(props.hostname, pin)
         .then((res) => {
           setCurrentTabPasswords(res.passwords);
         })
@@ -96,13 +101,25 @@ export default function FixedBottomNavigation(props) {
     const { enqueueSnackbar } = useSnackbar();
 
     function handleClickVariant(newPassword: string) {
-      // variant could be success, error, warning, info, or default
-      if (newPassword == "login") {
-        setState(0);
-        return true;
-      } else {
-        enqueueSnackbar("Wrong Password", { variant: "error" });
-      }
+      // make a call to login function
+      login(newPassword)
+        .then((res) => {
+          if (res) {
+            setState(0);
+            setPin(newPassword);
+            pin_lock = newPassword;
+            enqueueSnackbar("Login Successful", {
+              variant: "success",
+            });
+          } else {
+            enqueueSnackbar("Login Failed", {
+              variant: "error",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
 
     return (
@@ -128,10 +145,10 @@ export default function FixedBottomNavigation(props) {
 
   return (
     <Box sx={{ width: 400, height: 500 }}>
-      {state === 0 && <CustomizedList password={currentTabPasswords} />}
-      {state === 1 && <MyVault password={allPasswords} />}
-      {state === 2 && <GeneratePasswordElement />}
-      {state === 3 && <AddPasswordElement url={pageHostname} />}
+      {state === 0 && <CustomizedList password={currentTabPasswords} pin={pin} />}
+      {state === 1 && <MyVault password={allPasswords} pin={pin} />}
+      {state === 2 && <GeneratePasswordElement pin={pin}/>}
+      {state === 3 && <AddPasswordElement url={pageHostname} pin={pin}/>}
       {[0, 1, 2, 3].includes(state) && (
         <Paper
           sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}

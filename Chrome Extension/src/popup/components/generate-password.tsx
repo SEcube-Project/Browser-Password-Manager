@@ -20,16 +20,23 @@ import {
 import { useSnackbar, VariantType, SnackbarProvider } from "notistack";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generatePassword } from "../../utils/api";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import Numbers from "@mui/icons-material/Numbers";
 
-export default function GeneratePasswordElement() {
-  return <CheckboxLabels />;
+export default function GeneratePasswordElement(props) {
+  const [pin, setPin] = useState("");
+
+  // track the changes on the props.pin with a use effect
+  useEffect(() => {
+    setPin(props.pin);
+  }, [props.pin]);
+
+  return <CheckboxLabels pin={pin}/>;
 }
 
-function CheckboxLabels() {
+function CheckboxLabels(props) {
   const [showPassword, setShowPassword] = useState(false);
   const [upper, setUpper] = useState(true);
   const [special, setSpecial] = useState(true);
@@ -38,6 +45,13 @@ function CheckboxLabels() {
   const [value, setValue] = React.useState<
     number | string | Array<number | string>
   >(30);
+
+  const [pin, setPin] = useState("");
+
+  // track the changes on the props.pin with a use effect
+  useEffect(() => {
+    setPin(props.pin);
+  }, [props.pin]);
 
   const handleUpperChange = (event) => {
     setUpper(event.target.checked);
@@ -122,7 +136,7 @@ function CheckboxLabels() {
 
   function MyApp() {
     const handleClick = () => {
-      generatePassword(upper, special, numbers, Number(value))
+      generatePassword(upper, special, numbers, Number(value), pin)
         .then((res) => {
           setPassword(res.generated);
         })
