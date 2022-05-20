@@ -6,11 +6,16 @@ import {
   Box,
   Button,
   FormControl,
+  Grid,
   IconButton,
+  Input,
   InputAdornment,
   InputLabel,
   OutlinedInput,
+  Slider,
+  styled,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import { useSnackbar, VariantType, SnackbarProvider } from "notistack";
 import Visibility from "@mui/icons-material/Visibility";
@@ -18,6 +23,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 import { generatePassword } from "../../utils/api";
 import ContentCopy from "@mui/icons-material/ContentCopy";
+import Numbers from "@mui/icons-material/Numbers";
 
 export default function GeneratePasswordElement() {
   return <CheckboxLabels />;
@@ -30,6 +36,9 @@ function CheckboxLabels() {
   const [numbers, setNumbers] = useState(true);
   const [length, setLength] = useState(8);
   const [password, setPassword] = useState("");
+  const [value, setValue] = React.useState<
+    number | string | Array<number | string>
+  >(30);
 
   const handleUpperChange = (event) => {
     setUpper(event.target.checked);
@@ -53,9 +62,68 @@ function CheckboxLabels() {
     event.preventDefault();
   };
 
+  // const Input = styled(MuiInput)`
+  //   width: 42px;
+  // `;
+
+  function InputSlider() {
+    const handleSliderChange = (event: Event, newValue: number | number[]) => {
+      setValue(newValue);
+    };
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setValue(event.target.value === "" ? "" : Number(event.target.value));
+    };
+
+    const handleBlur = () => {
+      if (value < 0) {
+        setValue(0);
+      } else if (value > 500) {
+        setValue(500);
+      }
+    };
+
+    return (
+      <Box sx={{ width: "95%" }}>
+        <Typography id="input-slider" gutterBottom>
+          Number of Characters
+        </Typography>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item>
+            <Numbers />
+          </Grid>
+          <Grid item xs>
+            <Slider
+              value={typeof value === "number" ? value : 0}
+              onChange={handleSliderChange}
+              aria-labelledby="input-slider"
+              min={0}
+              max={500}
+            />
+          </Grid>
+          <Grid item>
+            <Input
+              value={value}
+              size="small"
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              inputProps={{
+                step: 10,
+                min: 10,
+                max: 500,
+                type: "number",
+                "aria-labelledby": "input-slider",
+              }}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  }
+
   function MyApp() {
     const handleClick = () => {
-      generatePassword(upper, special, numbers, length)
+      generatePassword(upper, special, numbers,  Number(value))
         .then((res) => {
           setPassword(res.generated);
         })
@@ -102,6 +170,11 @@ function CheckboxLabels() {
           onChange={() => handleSpecialChange(event)}
         />
       </FormControl>
+
+      <FormControl sx={{ m: 1, width: "55ch" }} variant="outlined">
+        <InputSlider />
+      </FormControl>
+
       <FormControl sx={{ m: 1, width: "55ch" }} variant="outlined">
         <IntegrationNotistack />
       </FormControl>
@@ -127,9 +200,7 @@ function CheckboxLabels() {
                 <IconButton
                   size="small"
                   onClick={() => {
-                    navigator.clipboard.writeText(
-                      password
-                    );
+                    navigator.clipboard.writeText(password);
                   }}
                 >
                   <ContentCopy />

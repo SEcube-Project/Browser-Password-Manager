@@ -32,11 +32,6 @@ export interface removePassword {
   success: boolean;
 }
 
-/**
- * @param debug if true, it will use the password_debug.json file
- * @param type The type of request. Can be GET, POST, PUT, DELETE
- * @param url The url to send the request to
- */
 export async function getAllPasswords(
   requestType?: fetchType
 ): Promise<ApiBody> {
@@ -66,7 +61,7 @@ export async function getAllPasswordsByHostname(
       "Access-Control-Allow-Headers": "*",
       "Access-Control-Allow-Methods": "*",
       "Content-Type": "application/json",
-    }
+    },
   });
   // check if the response is 200; if not throw an error
   if (!res.ok) {
@@ -87,16 +82,16 @@ export async function insertNewPassword(
   const body = JSON.stringify({
     hostname: hostname,
     username: username,
-    password: password
+    password: password,
   });
   console.log(body);
   const res = await fetch(url, {
     method: requestType ? requestType : "POST",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
-    body: body
+    body: body,
   });
   // check if the response is 200; if not throw an error
   if (!res.ok) {
@@ -114,6 +109,10 @@ export async function updatePassword(
   const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=test`;
   const res = await fetch(url, {
     method: requestType ? requestType : "PUT",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       id: id,
       hostname: hostname,

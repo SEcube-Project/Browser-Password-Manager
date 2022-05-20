@@ -35,8 +35,6 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
-const DEBUG = false;
-
 export default function FixedBottomNavigation(props) {
   const [state, setState] = useState(0);
   const [allPasswords, setAllPasswords] = useState<PasswordElement[]>(null);
