@@ -143,7 +143,7 @@ export async function getDevices(requestType?: fetchType): Promise<devices> {
 export async function deletePassword(id: number, requestType?: fetchType) {
   const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=test`;
   const res = await fetch(url, {
-    method: requestType,
+    method: requestType ? requestType : "DELETE",
   });
   // check if the response is 200; if not throw an error
   if (!res.ok) {

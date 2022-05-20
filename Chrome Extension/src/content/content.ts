@@ -34,7 +34,7 @@ import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
                 console.log(data);
                 // get the stored options
                 getStoredOptions().then((options: LocalStorageOptions) => {
-                  // if autocomplete is enabled and there is only one stored password for the current hostname
+                  // if auxtocomplete is enabled and there is only one stored password for the current hostname
                   if (
                     data.count == 1 &&
                     options.is_autocomplete_enabled
