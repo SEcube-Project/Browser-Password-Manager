@@ -7,7 +7,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
-import { PasswordElement } from "../../utils/api";
+import { PasswordElement, deletePassword } from "../../utils/api";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import DoneIcon from "@mui/icons-material/Done";
 import {
@@ -153,6 +153,7 @@ export default function CustomizedList(props) {
   function handleCloseYesDelete() {
     const newPasswordData = PasswordData.filter((item) => item.id !== deleteId);
     setPasswordData(newPasswordData);
+    deletePassword(deleteId);
     setPopup(false);
   }
 

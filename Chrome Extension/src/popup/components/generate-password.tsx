@@ -34,7 +34,6 @@ function CheckboxLabels() {
   const [upper, setUpper] = useState(true);
   const [special, setSpecial] = useState(true);
   const [numbers, setNumbers] = useState(true);
-  const [length, setLength] = useState(8);
   const [password, setPassword] = useState("");
   const [value, setValue] = React.useState<
     number | string | Array<number | string>
@@ -123,7 +122,7 @@ function CheckboxLabels() {
 
   function MyApp() {
     const handleClick = () => {
-      generatePassword(upper, special, numbers,  Number(value))
+      generatePassword(upper, special, numbers, Number(value))
         .then((res) => {
           setPassword(res.generated);
         })
