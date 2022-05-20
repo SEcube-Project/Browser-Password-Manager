@@ -20,6 +20,7 @@ const App: React.FC<{}> = () => {
   return (
     <div>
       <Box sx={{maxWidth: "100%", maxHeight: "100%"}}>
+        {console.log("pageHostname", pageHostname)}
         <FixedBottomNavigation hostname={pageHostname}/>
       </Box>
     </div>

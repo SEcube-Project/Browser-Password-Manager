@@ -37,6 +37,7 @@ export async function getAllPasswords(
   requestType?: fetchType
 ): Promise<ApiBody> {
   const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=${pin}`;
+  // const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=test`;
   const res = await fetch(url, {
     method: requestType,
   });
@@ -56,6 +57,7 @@ export async function getAllPasswordsByHostname(
   requestType?: fetchType
 ): Promise<ApiBody> {
   const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=${pin}&hostname=${hostname}`;
+  // const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=test&hostname=${hostname}`;
   const res = await fetch(url, {
     method: requestType,
     headers: {

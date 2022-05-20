@@ -7,7 +7,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
-import { PasswordElement, deletePassword } from "../../utils/api";
+import { PasswordElement, deletePassword, updatePassword } from "../../utils/api";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import DoneIcon from "@mui/icons-material/Done";
 import {
@@ -113,8 +113,13 @@ export default function MyVault(props) {
       setURL(URL);
       setReadOnlyURL(true);
       const newItem = { ...item, hostname: URL };
-      PasswordData[item.id - 1] = newItem;
-      //TODO: push the change to gabriele API
+      for (let index = 0; index < PasswordData.length; index++) {
+        if (PasswordData[index].id === item.id) {
+          PasswordData[index] = newItem;
+          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password, pin);
+          break;
+        }
+      }
     }
   }
 
@@ -123,8 +128,13 @@ export default function MyVault(props) {
       setUsername(username);
       setReadOnlyUsername(true);
       const newItem = { ...item, username: username };
-      PasswordData[item.id - 1] = newItem;
-      //TODO: push the change to gabriele API
+      for (let index = 0; index < PasswordData.length; index++) {
+        if (PasswordData[index].id === item.id) {
+          PasswordData[index] = newItem;
+          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password, pin);
+          break;
+        }
+      }
     }
   }
 
@@ -133,8 +143,13 @@ export default function MyVault(props) {
       setPassword(password);
       setReadOnlyPassword(true);
       const newItem = { ...item, password: password };
-      PasswordData[item.id - 1] = newItem;
-      //TODO: push the change to gabriele API
+      for (let index = 0; index < PasswordData.length; index++) {
+        if (PasswordData[index].id === item.id) {
+          PasswordData[index] = newItem;
+          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password, pin);
+          break;
+        }
+      }
     }
   }
 
@@ -201,15 +216,9 @@ export default function MyVault(props) {
     "z",
   ];
 
-  var numbers = [
-    0, 1,
-    // 2,
-    // 3,
-    // 4,
-  ];
-
   return (
     <Box>
+      {}
       <ThemeProvider
         theme={createTheme({
           components: {
