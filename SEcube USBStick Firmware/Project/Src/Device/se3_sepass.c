@@ -91,7 +91,7 @@ uint16_t modify_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 	host = (uint8_t*)malloc(host_len); 	// allocate space for the host content
 	user = (uint8_t*)malloc(user_len); 	// allocate space for the user content
 	pass = (uint8_t*)malloc(pass_len); 	// allocate space for the pass content
-	if(host == NULL || pass == NULL || user == NULL){
+	if(host == NULL || pass == NULL || user == NULL || pass_id == 0){
 		return SE3_ERR_MEMORY;
 	} else {
 		memset(host, 0, host_len);
@@ -178,7 +178,7 @@ uint16_t add_new_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 	host = (uint8_t*)malloc(host_len); 	// allocate space for the host content
 	user = (uint8_t*)malloc(user_len); 	// allocate space for the user content
 	pass = (uint8_t*)malloc(pass_len); 	// allocate space for the pass content
-	if(host == NULL || pass == NULL || user == NULL){
+	if(host == NULL || pass == NULL || user == NULL || pass_id == 0){
 		return SE3_ERR_MEMORY;
 	} else {
 		memset(host, 0, host_len);
@@ -243,6 +243,11 @@ uint16_t delete_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 		return SE3_ERR_PARAMS;
 	}
 	memcpy(&kid, req, 4); 		// retrieve the key id from the input buffer
+
+	if(kid == 0){
+		return SE3_ERR_PARAMS;
+	}
+
 	se3_flash_it_init(&it);
 	while (se3_flash_it_next(&it)){
 		if (it.type == SE3_TYPE_PASS){
@@ -279,6 +284,11 @@ uint16_t get_password_by_id(uint16_t req_size, const uint8_t* req, uint16_t* res
 	}
 
 	memcpy(&kid, req, 4); // retrieve the key id from the input buffer
+
+	if(kid == 0){
+		return SE3_ERR_PARAMS;
+	}
+
 	se3_flash_it_init(&it);
 	while (se3_flash_it_next(&it)){
 		if (it.type == SE3_TYPE_PASS){
