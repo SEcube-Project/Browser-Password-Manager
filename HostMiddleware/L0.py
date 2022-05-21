@@ -16,8 +16,10 @@ class L0:
         if size is None:
             size = self.getDeviceListSize()
 
-        plen = size * self._c_lib.L0_get_DevicePathSize(self._l0inst)
-        ylen = size * self._c_lib.HOST_get_SerialSize()
+        plen = size * (self._c_lib.L0_get_DevicePathSize(self._l0inst) + 1)
+
+        ylen = size * (self._c_lib.HOST_get_SerialSize() + 1)
+
         p = (ctypes.c_char*plen)()
         y = (ctypes.c_char*ylen)()
         self._c_lib.L0_getDeviceList(self._l0inst, p, y, size)
