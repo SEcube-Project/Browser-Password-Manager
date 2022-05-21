@@ -346,6 +346,14 @@ int main(){
 
 		// ############## GENERATE RANDOM PASS ##############
 		shared_ptr<uint8_t[]> pass = make_unique<uint8_t[]>(100);
+
+		if(!l1->L1SEGenerateRandomPassword(2500, true, true, true, pass)){
+			printf("\n\nCorrectly unable to generate password with len > 1024");
+		} else {
+			printf("\n\nERROR: Able to generated password with len > 1024");
+			exitWithError();
+		}
+
 		if(l1->L1SEGenerateRandomPassword(100, true, true, true, pass)){
 			printf("\n\nNew generated password: ");
 			printArray(pass.get(),  100);

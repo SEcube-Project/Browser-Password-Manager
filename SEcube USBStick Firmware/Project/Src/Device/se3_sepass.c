@@ -419,6 +419,10 @@ uint16_t generate_random_password(uint16_t req_size, const uint8_t* req, uint16_
 		all_usable_count+=13;
 	}
 
+	if(pass_len > 1024){
+		return SE3_ERR_MEMORY;
+	}
+
 	// Allocate space for the key content
 	uint8_t *key_data = NULL;
 	key_data = (uint8_t*)malloc(pass_len);

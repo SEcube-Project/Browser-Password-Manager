@@ -78,7 +78,7 @@ bool L1::L1SEGenerateRandomPassword(uint16_t pass_len, uint8_t enable_upper_case
 	try{
 		TXRXData(L1Commands::Codes::SEPASS, data_len, 0, &resp_len);
 	} catch(L1Exception& e){
-		// TODO
+		return false;
 	}
 
 	unique_ptr<uint8_t[]> buffer = make_unique<uint8_t[]>(L1Response::Size::MAX_DATA);
