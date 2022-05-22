@@ -163,8 +163,8 @@ export async function deletePassword(id: number, pin: string, requestType?: fetc
 
 export async function generatePassword(
   upper: boolean,
-  numbers: boolean,
   special: boolean,
+  numbers: boolean,
   length: number,
   pin: string,
   requestType?: fetchType
