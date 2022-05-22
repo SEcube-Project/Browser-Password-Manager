@@ -44,7 +44,7 @@ void exitWithError(){
 	exit(1);
 }
 
-int fillByteArray(std::string s, shared_ptr<uint8_t[]> val){
+int fillByteArray(std::string s, uint8_t* val){
 	int cnt = 0;
 	for (char c : s){
 		val[cnt++] = c;
@@ -52,11 +52,15 @@ int fillByteArray(std::string s, shared_ptr<uint8_t[]> val){
 	return cnt;
 }
 
-void printArray(uint8_t* string, int len){
-	for(int i=0; i <len; i++){
-		printf("%c", string[i]);
-	}
-	printf("\n");
+void printArray(std::string s, int len){
+	std::cout << s << "\n";
+}
+
+void printArray(uint8_t* arr, int len){
+	for (int i = 0; i < len; i++)
+		std::cout << arr[i];
+
+	std::cout << "\n";
 }
 
 // RENAME THIS TO main()
@@ -123,9 +127,9 @@ int main(){
 		array<uint8_t, 32> pin = {'t','e','s','t'}; // customize this PIN according to the PIN that you set on your SEcube device
 		l1->L1Login(pin, SE3_ACCESS_USER, true); // login to the SEcube
 
-		shared_ptr<uint8_t[]> hostVal = make_unique<uint8_t[]>(100);
-		shared_ptr<uint8_t[]> passVal = make_unique<uint8_t[]>(100);
-		shared_ptr<uint8_t[]> userVal = make_unique<uint8_t[]>(100);
+		uint8_t hostVal[100];
+		uint8_t passVal[100];
+		uint8_t userVal[100];
 
 		// ############## DELETE ALL PASSWORD ##############
 		std::vector<se3Pass> passList;
@@ -211,6 +215,15 @@ int main(){
 			exitWithError();
 		}
 
+		// Check if error in case of password with same hostname but different username
+		userSize = fillByteArray("test1@gmail.com", userVal);
+		if(!l1->L1SEAddPassword(0, hostVal, hostSize, userVal, userSize, passVal, passSize)){
+			printf("Correctly not add password with id %d!\n", 0);
+		} else {
+			printf("ERROR: Able to add password with id 0!\n");
+			exitWithError();
+		}
+
 
 		// ############## SEARCH BY ID ##############
 		se3Pass searchedById;
@@ -230,8 +243,8 @@ int main(){
 		}
 
 		// ############## MODIFY ##############
-		searchedById.passSize = fillByteArray("PASSNEW", userVal);
-		searchedById.pass = userVal.get();
+		searchedById.passSize = 7;
+		searchedById.pass = "PASSNEW";
 		if(l1->L1SEModifyPassword(searchedById.id, searchedById)){
 			if(l1->L1SEGetPasswordById(searchedById.id, searchedById)){
 				printf("\n\nFound modified pass with id %d\n", searchedById.id);
@@ -253,8 +266,8 @@ int main(){
 		}
 
 		// Try to modify password by wrong id
-		searchedById.passSize = fillByteArray("PASSNEW2", userVal);
-		searchedById.pass = userVal.get();
+		searchedById.passSize = 8;
+		searchedById.pass = "PASSNEW2";
 		if(!l1->L1SEModifyPassword(111, searchedById)){
 			printf("Password with wrong id correctly not modified\n");
 		} else {
@@ -296,9 +309,10 @@ int main(){
 		// ############## FILTER BY HOSTNAME ##############
 		printf("\n\nPasswords with youtube.co as hostname\n");
 		passList.clear();
-		shared_ptr<uint8_t[]> hostFilter = make_unique<uint8_t[]>(100);
-		userSize = fillByteArray("youtube.co", hostFilter);
-		l1->L1SEGetAllPasswordsByHostName(hostFilter, userSize, passList);
+		std::string str = "youtube.co";
+		std::vector<uint8_t> vec;
+		vec.assign(str.begin(), str.end());
+		l1->L1SEGetAllPasswordsByHostName(vec, passList);
 		for(se3Pass elem : passList){
 			printf("Element Id:\t\t%d\n", elem.id);
 			printf("Element Hostname:\t");
@@ -332,6 +346,14 @@ int main(){
 
 		// ############## GENERATE RANDOM PASS ##############
 		shared_ptr<uint8_t[]> pass = make_unique<uint8_t[]>(100);
+
+		if(!l1->L1SEGenerateRandomPassword(2500, true, true, true, pass)){
+			printf("\n\nCorrectly unable to generate password with len > 1024");
+		} else {
+			printf("\n\nERROR: Able to generated password with len > 1024");
+			exitWithError();
+		}
+
 		if(l1->L1SEGenerateRandomPassword(100, true, true, true, pass)){
 			printf("\n\nNew generated password: ");
 			printArray(pass.get(),  100);
