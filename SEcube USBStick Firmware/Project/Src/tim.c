@@ -39,6 +39,7 @@
 
 /* USER CODE END 0 */
 
+TIM_HandleTypeDef htim10;
 TIM_HandleTypeDef htim4;
 
 /* TIM4 init function */
@@ -66,6 +67,20 @@ void MX_TIM4_Init(void)
 
   HAL_TIM_MspPostInit(&htim4);
 
+}
+
+
+void MX_TIM10_Init(void)
+{
+    htim10.Instance = TIM10;
+    htim10.Init.Prescaler = 8999;
+    htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim10.Init.Period = 19999;
+    htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV2;
+    if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
+    {
+        Error_Handler();
+    }
 }
 
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* htim_pwm)

@@ -33,6 +33,8 @@
 #include <thread> 		// thread::sleep_for
 #include <algorithm> 	// std::find
 #include <string>
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -124,8 +126,42 @@ int main(){
 		l1->L1SelectSEcube(sn); // select secube with correct serial number
 		cout << "\nDevice " << devices.at(sel).first << " - " << devices.at(sel).second << " selected." << endl;
 
-		array<uint8_t, 32> pin = {'t','e','s','t'}; // customize this PIN according to the PIN that you set on your SEcube device
-		l1->L1Login(pin, SE3_ACCESS_USER, true); // login to the SEcube
+		array<uint8_t, 32> pin = {'t','e','s','2'}; // customize this PIN according to the PIN that you set on your SEcube device
+		try{
+			l1->L1LoginBypass(pin, SE3_ACCESS_USER, true); // login to the SEcube
+			printf("ERROR: Able to login with wrong password\n");
+			exitWithError();
+		} catch(...) {
+			printf("Correctly unable to login with wrong password\n");
+		}
+		try{
+			l1->L1LoginBypass(pin, SE3_ACCESS_USER, true); // login to the SEcube
+			printf("ERROR: Able to login with wrong password\n");
+			exitWithError();
+		} catch(...) {
+			printf("Correctly unable to login with wrong password\n");
+		}
+		try{
+			l1->L1LoginBypass(pin, SE3_ACCESS_USER, true); // login to the SEcube
+			printf("ERROR: Able to login with wrong password\n");
+			exitWithError();
+		} catch(...) {
+			printf("Correctly unable to login with wrong password\n");
+		}
+
+		array<uint8_t, 32> pin2 = {'t','e','s','t'};
+		try{
+			l1->L1Login(pin2, SE3_ACCESS_USER, true); // login to the SEcube
+			printf("ERROR: Able to login even after 3 wrong attempts password\n");
+			exitWithError();
+		} catch(...) {
+			printf("Correctly unable to login \n");
+		}
+
+		// Wait 5 seconds
+		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+		l1->L1Login(pin2, SE3_ACCESS_USER, true); // login to the SEcube
+
 
 		uint8_t hostVal[100];
 		uint8_t passVal[100];

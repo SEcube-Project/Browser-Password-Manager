@@ -70,7 +70,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-
+void Error_Handler(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -80,6 +80,9 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
+
+extern TIM_HandleTypeDef htim10;
+uint32_t timeCounter = 0;
 
 int main(void)
 {
@@ -93,7 +96,7 @@ int main(void)
 	/* MCU Configuration----------------------------------------------------------*/
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+    HAL_Init();
 
 	/* Configure the system clock */
 	SystemClock_Config();
@@ -126,13 +129,23 @@ int main(void)
 	MX_CRC_Init();
 	MX_RNG_Init();
 
+  MX_TIM10_Init();
+  HAL_TIM_Base_Start_IT(&htim10);
+
 	/* USER CODE BEGIN */
 	device_init();
 
 	device_loop();
 	/* USER CODE END  */
+}
 
-	return 0;
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim == &htim10)
+	{
+		// Increase time
+		timeCounter++;
+	}
 }
 
 
@@ -176,6 +189,14 @@ void SystemClock_Config(void)
 
 	/* SysTick_IRQn interrupt configuration */
 	HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+}
+
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+
+  /* USER CODE END Error_Handler_Debug */
 }
 
 /* USER CODE BEGIN 4 */

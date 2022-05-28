@@ -46,6 +46,7 @@ extern PCD_HandleTypeDef hpcd_USB_OTG_HS;
 extern DMA_HandleTypeDef hdma_sdio_rx;
 extern DMA_HandleTypeDef hdma_sdio_tx;
 extern SD_HandleTypeDef hsd;
+extern TIM_HandleTypeDef htim10;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -73,6 +74,10 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
 
+void TIM1_UP_TIM10_IRQHandler(void)
+{
+    HAL_TIM_IRQHandler(&htim10);
+}
 /**
 * @brief This function handles SDIO global interrupt.
 */

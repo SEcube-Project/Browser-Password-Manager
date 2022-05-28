@@ -27,6 +27,9 @@
 
 uint8_t algo_implementation;
 uint8_t crypto_algo;
+uint32_t failedAttempts = 0;
+uint32_t failedAttemptTime = 0;
+extern uint32_t timeCounter;
 
 SE3_LOGIN_STATUS login_struct;
 
@@ -307,6 +310,11 @@ uint16_t challenge(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, u
  */
 uint16_t login(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp)
 {
+	if(failedAttempts >= 3 && timeCounter - failedAttemptTime <= 3){
+		failedAttemptTime = timeCounter;
+        return SE3_ERR_PARAMS;
+	}
+
     struct {
         const uint8_t* cresp;
     } req_params;
@@ -336,6 +344,8 @@ uint16_t login(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8
 	login_struct.challenge_access = SE3_ACCESS_MAX;
 	if (memcmp(req_params.cresp, (uint8_t*)login_struct.challenge, 32)) {
 		SE3_TRACE(("[login] challenge response mismatch"));
+		failedAttemptTime = timeCounter;
+		failedAttempts++;
 		return SE3_ERR_PIN;
 	}
 
@@ -348,6 +358,9 @@ uint16_t login(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8
 	login_struct.access = access;
 
     *resp_size = SE3_CMD1_LOGIN_RESP_SIZE;
+
+	failedAttempts = 0;
+	failedAttemptTime = 0;
 	return SE3_OK;
 }
 

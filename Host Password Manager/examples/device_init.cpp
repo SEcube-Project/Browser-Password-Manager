@@ -36,7 +36,7 @@
 using namespace std;
 
 // RENAME THIS TO main()
-int main() {
+int init() {
 	/* we recommend using smart pointers to manage L0 and L1 objects in order
 	   to ensure proper memory management by their constructors and destructors. */
 	unique_ptr<L0> l0 = make_unique<L0>();

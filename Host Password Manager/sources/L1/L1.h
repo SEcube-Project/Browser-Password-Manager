@@ -74,6 +74,7 @@ public:
 	 * @detail The recommended value for the last parameter is always true. Since there is no return value, exceptions are triggered if
 	 * any problem arises (i.e. wrong PIN); exceptions must be managed by the caller. */
 	void L1Login(const std::array<uint8_t, L1Parameters::Size::PIN>& pin, se3_access_type access, bool force) override ;
+	void L1LoginBypass(const std::array<uint8_t, L1Parameters::Size::PIN>& pin, se3_access_type access, bool force) ;
 	/** @brief Logout from the SEcube.
 	 *  @detail Since there is no return value, exceptions are triggered if any problem arises (i.e. wrong PIN); exceptions must be managed by the caller. */
 	void L1Logout() override ;
