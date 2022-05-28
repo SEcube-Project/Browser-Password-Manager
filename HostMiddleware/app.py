@@ -1,5 +1,6 @@
 import sys
 import logging
+import ntplib
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
@@ -24,6 +25,19 @@ class API_Devices(Resource):
                 'serial': y
             } for i, x, y in self._l0.getDeviceList()]
         }
+
+class API_Time(Resource):
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def get(self):
+        c = ntplib.NTPClient()
+        response = c.request('europe.pool.ntp.org', version=3)
+        return {
+            'time': str(response.tx_time)
+        }
+
         
 class API_DeviceBase(Resource):
 
@@ -244,6 +258,7 @@ if __name__ == "__main__":
         logger.info(f"Found {device_cnt} devices")
 
     api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0])
+    api.add_resource(API_Time, "/api/v0/time")
     api.add_resource(API_Device_Generate, "/api/v0/device/<int:indx>/generate", resource_class_args=[logger, l0, l1])
     api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1])
     api.add_resource(API_Device_Password_ID, "/api/v0/device/<int:indx>/password/<int:id>", resource_class_args=[logger, l0, l1])
