@@ -35,12 +35,13 @@ import GeneratePasswordElement from "./generate-password";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import { getStoredOptions, setStoredOptions } from "../../utils/storage";
 
 export var pin_lock = "";
 
 
 export default function FixedBottomNavigation(props) {
-  const [state, setState] = useState(4);
+  const [state, setState] = useState(0);
   const [allPasswords, setAllPasswords] = useState<PasswordElement[]>(null);
   const [currentTabPasswords, setCurrentTabPasswords] =
     useState<PasswordElement[]>(null);
@@ -78,6 +79,13 @@ export default function FixedBottomNavigation(props) {
   }
   , [props.hostname]);
 
+  useEffect(() => {
+    if (props.default_state) {
+      console.log("props.default_state", props.default_state);
+      setState(props.default_state);
+    }
+  }, [props.default_state]);
+
 
 
 
@@ -111,6 +119,16 @@ export default function FixedBottomNavigation(props) {
             setPin(newPassword);
             setCurrentTabPasswords(res.passwords);
             pin_lock = newPassword;
+
+            getStoredOptions().then((options) => {
+              if (options.is_locked) {
+                setStoredOptions({ 
+                  ...options,
+                  is_locked: false,
+                  end_lock_time: Math.round(new Date().getTime() / 1000) + options.lock_after_minutes * 60
+                });
+              }
+            });
             enqueueSnackbar("Login Successful", {
               variant: "success",
             });
