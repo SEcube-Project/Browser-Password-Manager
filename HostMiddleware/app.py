@@ -312,4 +312,4 @@ if __name__ == "__main__":
     api.add_resource(API_Device_Generate, "/api/v0/device/<int:indx>/generate", resource_class_args=[logger, l0, l1, utils])
     api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1, utils])
     api.add_resource(API_Device_Password_ID, "/api/v0/device/<int:indx>/password/<int:id>", resource_class_args=[logger, l0, l1, utils])
-    app.run(ssl_context=('cert.pem', 'key.pem'), debug=True, threaded=False)
+    app.run(ssl_context=('cert.pem', 'key.pem'), debug=False, threaded=False)
