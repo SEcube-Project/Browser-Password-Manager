@@ -7,3 +7,4 @@ HostMiddleware/__pycache__/**
 init
 HostMiddleware/Makefile
 HostMiddleware/BPMMiddleware
+HostMiddleware/flask_session/**

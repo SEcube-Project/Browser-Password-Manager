@@ -1,14 +1,16 @@
+import os
 import sys
 import logging
-import ntplib
-from flask import Flask
+from flask import Flask, session
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
+from flask_session import Session
 from werkzeug.exceptions import BadRequest
 
 from L0 import L0
 from L1 import L1
 from CustomFormatter import CustomFormatter
+from Utils import Utils
 
 class API_Devices(Resource):
 
@@ -32,20 +34,19 @@ class API_Time(Resource):
         super().__init__()
 
     def get(self):
-        c = ntplib.NTPClient()
-        response = c.request('europe.pool.ntp.org', version=3)
         return {
-            'time': str(response.tx_time)
+            'time': str(Utils.NTP_TIME())
         }
 
         
 class API_DeviceBase(Resource):
 
-    def __init__(self, logger: logging, l0: L0, l1: L1) -> None:
+    def __init__(self, logger: logging, l0: L0, l1: L1, utils: Utils) -> None:
         super().__init__()
         self._l0 : L0 = l0
         self._l1 : L1 = l1
         self._logger = logger
+        self._utils = utils
 
         self._parser = reqparse.RequestParser()
         self._parser.add_argument('pin', type=str, required=True, help='PIN argument required. Must be a string', location='args')
@@ -82,6 +83,46 @@ class API_DeviceBase(Resource):
 
         return True
 
+    def _setdev_checklogin(self, indx: int):
+        
+        if not self._setdev(0):
+            return False
+
+        if not self._utils.pinkeystr in session.keys():
+            self._logger.error(f"PIN not set. Maybe login not done?")
+            return False
+
+        if not self._dologin(self._utils.decrypt(session[self._utils.pinkeystr]), True, True):
+            return False
+
+        return True
+
+class API_Device_Sessions(API_DeviceBase):
+
+    def init(self, logger: logging, l0: L0, l1: L1, utils: Utils) -> None:
+        super().__init__(logger, l0, l1, utils)
+
+    def get(self, indx: int):
+
+        args = self._parser.parse_args()
+        if not self._setdev_login(indx, args["pin"], True, True):
+            return {'error': 'Could not login: wrong pin or device not found'}, 403
+
+        session[self._utils.pinkeystr] = self._utils.encrypt(args["pin"])
+        self._l1.Logout()
+
+        return {
+            'session': True
+        }
+
+    def post(self, indx: int):
+        self._logger.info(f"session: {session[self._utils.pinkeystr]}")
+        self._logger.info(f"session: {self._utils.decrypt(session[self._utils.pinkeystr])}")
+        return {
+            'session': True
+        }
+
+
 class API_Device_Passwords(API_DeviceBase):
 
     def init(self, logger, l0: L0, l1: L1):
@@ -89,12 +130,12 @@ class API_Device_Passwords(API_DeviceBase):
 
     def get(self, indx: int):
 
-        parser = self._parser.copy()
-        parser.add_argument('hostname', type=str, required=False, help='Hostname argument required. Must be a string', location='args')
+        if not self._setdev_checklogin(indx):
+            return {'error': 'Could not login: device not found or invalid login'}, 403
 
+        parser = reqparse.RequestParser()
+        parser.add_argument('hostname', type=str, required=False, help='Hostname argument required. Must be a string', location='args')
         args = parser.parse_args()
-        if not self._setdev_login(indx, args["pin"], True, True):
-            return {'error': 'Could not login: wrong pin or device not found'}, 403
 
         try:
             l = self._l1.GetAllPasswords(hostname=args["hostname"])
@@ -118,8 +159,7 @@ class API_Device_Passwords(API_DeviceBase):
 
     def post(self, indx: int):
 
-        args = self._parser.parse_args()
-        if not self._setdev_login(indx, args["pin"], True, True):
+        if not self._setdev_checklogin(indx):
             return {'error': 'Could not login: wrong pin or device not found'}, 403
 
         try:
@@ -142,8 +182,7 @@ class API_Device_Password_ID(API_DeviceBase):
 
     def get(self, indx: int, id: int):
 
-        args = self._parser.parse_args()
-        if not self._setdev_login(indx, args["pin"], True, True):
+        if not self._setdev_checklogin(indx):
             return {'error': 'Could not login: wrong pin or device not found'}, 403
 
         try:
@@ -168,8 +207,7 @@ class API_Device_Password_ID(API_DeviceBase):
 
     def put(self, indx: int, id: int):
 
-        args = self._parser.parse_args()
-        if not self._setdev_login(indx, args["pin"], True, True):
+        if not self._setdev_checklogin(indx):
             return {'error': 'Could not login: wrong pin or device not found'}, 403
 
         try:
@@ -187,8 +225,7 @@ class API_Device_Password_ID(API_DeviceBase):
 
     def delete(self, indx: int, id: int):
             
-        args = self._parser.parse_args()
-        if not self._setdev_login(indx, args["pin"], True, True):
+        if not self._setdev_checklogin(indx):
             return {'error': 'Could not login: wrong pin or device not found'}, 403
 
         try:
@@ -209,16 +246,16 @@ class API_Device_Generate(API_DeviceBase):
 
     def get(self, indx: int):
 
-        argument_parser = self._parser.copy()
+        if not self._setdev_checklogin(indx):
+            return {'error': 'Could not login: wrong pin or device not found'}, 403
+
+        argument_parser = reqparse.RequestParser()
         argument_parser.add_argument('length', type=int, required=False, help='Length argument required. Must be an integer', location='args')
         argument_parser.add_argument('upper', type=int, required=False, help='Upper argument required. Must be an intenger', location='args')
         argument_parser.add_argument('special', type=int, required=False, help='Special argument required. Must be an integer', location='args')
         argument_parser.add_argument('numbers', type=int, required=False, help='Numbers argument required. Must be an integer', location='args')
 
         args = argument_parser.parse_args()
-        if not self._setdev_login(indx, args["pin"], True, True):
-            return {'error': 'Could not login: wrong pin or device not found'}, 403
-
         try:
             llen = args["length"] if args["length"] is not None else 64
             upper = args["upper"] == 1 if args["upper"] is not None else True
@@ -237,12 +274,24 @@ class API_Device_Generate(API_DeviceBase):
             self._l1.Logout()
 
 if __name__ == "__main__":
+
+    # remove flask_session directory if it exists
+    if os.path.exists("flask_session"):
+        for f in os.listdir("flask_session"):
+            os.remove(os.path.join("flask_session", f))
     
     app = Flask(__name__)
+
+    app.config["SESSION_PERMANENT"] = False
+    app.config["SESSION_TYPE"] = "filesystem"
+
     api = Api(app)
     CORS(app)
+    Session(app)
+
     l0 = L0()
     l1 = L1()
+    utils = Utils()
 
     logger = logging.getLogger("main")
     logger.setLevel(logging.DEBUG)
@@ -257,9 +306,10 @@ if __name__ == "__main__":
     else:
         logger.info(f"Found {device_cnt} devices")
 
-    api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0])
     api.add_resource(API_Time, "/api/v0/time")
-    api.add_resource(API_Device_Generate, "/api/v0/device/<int:indx>/generate", resource_class_args=[logger, l0, l1])
-    api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1])
-    api.add_resource(API_Device_Password_ID, "/api/v0/device/<int:indx>/password/<int:id>", resource_class_args=[logger, l0, l1])
-    app.run(ssl_context=('cert.pem', 'key.pem'), debug=False, threaded=False)
+    api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0])
+    api.add_resource(API_Device_Sessions, "/api/v0/device/<int:indx>/sessions", resource_class_args=[logger, l0, l1, utils])
+    api.add_resource(API_Device_Generate, "/api/v0/device/<int:indx>/generate", resource_class_args=[logger, l0, l1, utils])
+    api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1, utils])
+    api.add_resource(API_Device_Password_ID, "/api/v0/device/<int:indx>/password/<int:id>", resource_class_args=[logger, l0, l1, utils])
+    app.run(ssl_context=('cert.pem', 'key.pem'), debug=True, threaded=False)
