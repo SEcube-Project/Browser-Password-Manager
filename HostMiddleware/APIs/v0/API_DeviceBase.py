@@ -1,6 +1,6 @@
 import logging
 
-from flask import session
+from flask import session, request
 from flask_restful import Resource, reqparse
 from werkzeug.exceptions import BadRequest
 
@@ -55,6 +55,10 @@ class API_DeviceBase(Resource):
 
     def _setdev_checklogin(self, indx: int):
         
+        # self._logger.debug("HEADERS: ")
+        # for k, v, in request.headers.items():
+        #     self._logger.debug(f"    {k}: {v}")
+
         if not self._setdev(0):
             return False
 
