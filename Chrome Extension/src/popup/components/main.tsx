@@ -41,7 +41,7 @@ export var pin_lock = "";
 
 
 export default function FixedBottomNavigation(props) {
-  const [state, setState] = useState(4);
+  const [state, setState] = useState(0);
   const [allPasswords, setAllPasswords] = useState<PasswordElement[]>(null);
   const [currentTabPasswords, setCurrentTabPasswords] =
     useState<PasswordElement[]>(null);

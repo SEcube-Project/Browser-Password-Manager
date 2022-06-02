@@ -61,9 +61,10 @@ export async function getAllPasswordsByHostname(
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "*",
         "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Credentials": "true",
         "Content-Type": "application/json",
       },
-      credentials: "same-origin",
+      credentials: "include",
     });
     // check if the response is 200; if not throw an error
     if (!res.ok) {
