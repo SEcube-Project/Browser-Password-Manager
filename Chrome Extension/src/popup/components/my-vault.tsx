@@ -116,7 +116,7 @@ export default function MyVault(props) {
       for (let index = 0; index < PasswordData.length; index++) {
         if (PasswordData[index].id === item.id) {
           PasswordData[index] = newItem;
-          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password, pin);
+          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password);
           break;
         }
       }
@@ -131,7 +131,7 @@ export default function MyVault(props) {
       for (let index = 0; index < PasswordData.length; index++) {
         if (PasswordData[index].id === item.id) {
           PasswordData[index] = newItem;
-          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password, pin);
+          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password);
           break;
         }
       }
@@ -146,7 +146,7 @@ export default function MyVault(props) {
       for (let index = 0; index < PasswordData.length; index++) {
         if (PasswordData[index].id === item.id) {
           PasswordData[index] = newItem;
-          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password, pin);
+          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password);
           break;
         }
       }
@@ -175,7 +175,7 @@ export default function MyVault(props) {
   function handleCloseYesDelete() {
     const newPasswordData = PasswordData.filter((item) => item.id !== deleteId);
     setPasswordData(newPasswordData);
-    deletePassword(deleteId, pin);
+    deletePassword(deleteId);
     setPopup(false);
   }
 

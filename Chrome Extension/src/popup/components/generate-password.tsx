@@ -136,7 +136,7 @@ function CheckboxLabels(props) {
 
   function MyApp() {
     const handleClick = () => {
-      generatePassword(upper, special, numbers, Number(value), pin)
+      generatePassword(upper, special, numbers, Number(value))
         .then((res) => {
           setPassword(res.generated);
         })

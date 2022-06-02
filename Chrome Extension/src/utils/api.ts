@@ -1,5 +1,3 @@
-import password_debug from "../static/password_debug.json";
-
 export type fetchType = "GET" | "POST" | "PUT" | "DELETE";
 
 export interface PasswordElement {
@@ -33,14 +31,12 @@ export interface removePassword {
 }
 
 export async function getAllPasswords(
-  pin: string,
   requestType?: fetchType
 ): Promise<ApiBody> {
-  if (pin !== "") {
-    const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=${pin}`;
-    // const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=test`;
+    const url = `https://127.0.0.1:5000/api/v0/device/0/passwords`;
     const res = await fetch(url, {
       method: requestType,
+      credentials: "same-origin",
     });
     // check if the response is 200; if not throw an error
     if (!res.ok) {
@@ -50,18 +46,15 @@ export async function getAllPasswords(
     const data: ApiBody = await res.json();
     console.log("password from api", data);
     return data;
-  }
 }
 
 export async function getAllPasswordsByHostname(
   hostname: string,
-  pin: string,
   requestType?: fetchType
 ): Promise<ApiBody> {
-  const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=${pin}&hostname=${hostname}`;
-  // const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=test&hostname=${hostname}`;
+  const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?hostname=${hostname}`;
 
-  if (hostname !== "" && pin !== "") {
+  if (hostname !== "") {
     const res = await fetch(url, {
       method: requestType,
       headers: {
@@ -70,6 +63,7 @@ export async function getAllPasswordsByHostname(
         "Access-Control-Allow-Methods": "*",
         "Content-Type": "application/json",
       },
+      credentials: "same-origin",
     });
     // check if the response is 200; if not throw an error
     if (!res.ok) {
@@ -86,11 +80,10 @@ export async function insertNewPassword(
   hostname: string,
   username: string,
   password: string,
-  pin: string,
   requestType?: fetchType
 ) {
-  if (hostname !== "" && username !== "" && password !== "" && pin != "") {
-    const url = `https://127.0.0.1:5000/api/v0/device/0/passwords?pin=${pin}`;
+  if (hostname !== "" && username !== "" && password !== "") {
+    const url = `https://127.0.0.1:5000/api/v0/device/0/passwords`;
     const body = JSON.stringify({
       hostname: hostname,
       username: username,
@@ -103,6 +96,7 @@ export async function insertNewPassword(
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+      credentials: "same-origin",
       body: body,
     });
     // check if the response is 200; if not throw an error
@@ -117,23 +111,20 @@ export async function updatePassword(
   hostname: string,
   username: string,
   password: string,
-  pin: string,
   requestType?: fetchType
 ) {
   if (
     id !== null &&
     hostname !== "" &&
     username !== "" &&
-    password !== "" &&
-    pin !== ""
+    password !== ""
   ) {
-    const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=${pin}`;
+    const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}`;
     if (
       id != null &&
       hostname != "" &&
       username != "" &&
-      password != "" &&
-      pin != ""
+      password != ""
     ) {
       const res = await fetch(url, {
         method: requestType ? requestType : "PUT",
@@ -147,6 +138,7 @@ export async function updatePassword(
           username: username,
           password: password,
         }),
+        credentials: "same-origin",
       });
       // check if the response is 200; if not throw an error
       if (!res.ok) {
@@ -160,6 +152,7 @@ export async function getDevices(requestType?: fetchType): Promise<devices> {
   const url = `https://127.0.0.1:5000/api/v0/devices`;
   const res = await fetch(url, {
     method: requestType,
+    credentials: "same-origin",
   });
   // check if the response is 200; if not throw an error
   if (!res.ok) {
@@ -172,13 +165,13 @@ export async function getDevices(requestType?: fetchType): Promise<devices> {
 
 export async function deletePassword(
   id: number,
-  pin: string,
   requestType?: fetchType
 ) {
-  if (id !== undefined && pin != "") {
-    const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}?pin=${pin}`;
+  if (id !== undefined) {
+    const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}`;
     const res = await fetch(url, {
       method: requestType ? requestType : "DELETE",
+      credentials: "same-origin",
     });
     // check if the response is 200; if not throw an error
     if (!res.ok) {
@@ -196,24 +189,23 @@ export async function generatePassword(
   special: boolean,
   numbers: boolean,
   length: number,
-  pin: string,
   requestType?: fetchType
 ): Promise<generatedPassword> {
   console.log(upper, numbers, special, length);
   if (
-    pin !== "" &&
     upper !== undefined &&
     special !== undefined &&
     numbers !== undefined &&
     length !== undefined
   ) {
-    const url = `https://127.0.0.1:5000/api/v0/device/0/generate?pin=${pin}&upper=${
+    const url = `https://127.0.0.1:5000/api/v0/device/0/generate?upper=${
       upper ? 1 : 0
     }&special=${special ? 1 : 0}&numbers=${numbers ? 1 : 0}&length=${length}`;
     console.log(url);
 
     const res = await fetch(url, {
       method: requestType,
+      credentials: "same-origin",
     });
     // check if the response is 200; if not throw an error
     if (!res.ok) {
@@ -226,17 +218,13 @@ export async function generatePassword(
 }
 
 export async function login(pin: string): Promise<boolean> {
-  const upper = true;
-  const numbers = true;
-  const special = true;
-  const length = 5;
   if (pin !== "") {
-    const url = `https://127.0.0.1:5000/api/v0/device/0/generate?pin=${pin}&upper=${
-      upper ? 1 : 0
-    }&special=${special ? 1 : 0}&numbers=${numbers ? 1 : 0}&length=${length}`;
-
-    const res = await fetch(url);
+    const url = `https://127.0.0.1:5000/api/v0/device/0/sessions?pin=${pin}`;
+    const res = await fetch(url, {
+      credentials: "same-origin",
+    }) ;
     // check if the response is 200; if not throw an error
+    console.log("api login", res);
     if (!res.ok) {
       return false;
     } else {
@@ -244,7 +232,6 @@ export async function login(pin: string): Promise<boolean> {
     }
   }
 }
-
 
 
 

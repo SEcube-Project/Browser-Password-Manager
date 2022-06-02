@@ -31,7 +31,7 @@ import { pin_lock } from "../popup/components/main";
             );
 
             // Get the username and password from the API
-            getAllPasswordsByHostname(window.location.hostname.replace("www.", ""), pin_lock).then(
+            getAllPasswordsByHostname(window.location.hostname.replace("www.", "")).then(
               (data: ApiBody) => {
                 console.log(data);
                 // get the stored options
@@ -60,7 +60,7 @@ import { pin_lock } from "../popup/components/main";
             );
 
             // Get the username and password from the API
-            getAllPasswordsByHostname(window.location.hostname.replace("www.", ""), pin_lock).then(
+            getAllPasswordsByHostname(window.location.hostname.replace("www.", "")).then(
               (data: ApiBody) => {
                 console.log(data);
                 // get the stored options

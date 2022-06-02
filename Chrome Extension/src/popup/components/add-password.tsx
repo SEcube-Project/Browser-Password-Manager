@@ -66,7 +66,7 @@ export default function AddPasswordElement(props) {
   
     const handleClickVariant = () => () => {
       console.log("url", url, "username", username, "password", password);
-      insertNewPassword(url, username, password, pin, "POST")
+      insertNewPassword(url, username, password, "POST")
       enqueueSnackbar("Password saved correctly", {variant: "success"});
     };
   

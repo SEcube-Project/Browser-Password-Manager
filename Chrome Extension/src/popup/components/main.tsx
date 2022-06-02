@@ -41,7 +41,7 @@ export var pin_lock = "";
 
 
 export default function FixedBottomNavigation(props) {
-  const [state, setState] = useState(0);
+  const [state, setState] = useState(4);
   const [allPasswords, setAllPasswords] = useState<PasswordElement[]>(null);
   const [currentTabPasswords, setCurrentTabPasswords] =
     useState<PasswordElement[]>(null);
@@ -54,7 +54,7 @@ export default function FixedBottomNavigation(props) {
 
   useEffect(() => {
     if (state === 1) {
-      getAllPasswords(pin)
+      getAllPasswords()
         .then((res) => {
           setAllPasswords(res.passwords);
         })
@@ -62,7 +62,7 @@ export default function FixedBottomNavigation(props) {
           console.log(err);
         });
     } else if (state === 0) {
-      getAllPasswordsByHostname(pageHostname, pin)
+      getAllPasswordsByHostname(pageHostname)
         .then((res) => {
           setCurrentTabPasswords(res.passwords);
         })
@@ -111,8 +111,10 @@ export default function FixedBottomNavigation(props) {
     const { enqueueSnackbar } = useSnackbar();
 
     function handleClickVariant(newPassword: string) {
+
+      if (login(newPassword)) {
       // make a call to login function
-      getAllPasswordsByHostname(pageHostname, newPassword)
+      getAllPasswordsByHostname(pageHostname)
         .then((res) => {
           if (res) {
             setState(0);
@@ -132,15 +134,16 @@ export default function FixedBottomNavigation(props) {
             enqueueSnackbar("Login Successful", {
               variant: "success",
             });
-          } else {
-            enqueueSnackbar("Login Failed", {
-              variant: "error",
-            });
           }
         })
         .catch((err) => {
           console.log(err);
         });
+      } else {
+        enqueueSnackbar("Login Failed", {
+          variant: "error",
+        });
+      }
     }
 
     return (

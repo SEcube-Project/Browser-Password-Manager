@@ -28,7 +28,8 @@
     "webNavigation",
     "webRequest",
     "notifications",
-    "identity"
+    "identity",
+    "cookies"
   ],
   "options_page": "options.html",
   "background": {
