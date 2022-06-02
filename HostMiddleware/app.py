@@ -28,7 +28,7 @@ if __name__ == "__main__":
     app.config["SESSION_COOKIE_SECURE"] = True
 
     api = Api(app)
-    CORS(app)
+    CORS(app, supports_credentials=True)
     Session(app)
 
     l0 = L0()
