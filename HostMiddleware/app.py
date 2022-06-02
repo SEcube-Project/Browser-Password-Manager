@@ -2,9 +2,9 @@ import os
 import sys
 import logging
 from flask import Flask
+from flask_session import Session
 from flask_restful import Api
 from flask_cors import CORS
-from flask_session import Session
 
 from L0 import L0
 from L1 import L1
@@ -24,6 +24,8 @@ if __name__ == "__main__":
 
     app.config["SESSION_PERMANENT"] = False
     app.config["SESSION_TYPE"] = "filesystem"
+    app.config["SESSION_COOKIE_SAMESITE"] = "None"
+    app.config["SESSION_COOKIE_SECURE"] = True
 
     api = Api(app)
     CORS(app)
