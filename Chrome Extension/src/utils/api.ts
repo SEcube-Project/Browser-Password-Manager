@@ -1,3 +1,5 @@
+import { getStoredOptions } from "./storage";
+
 export type fetchType = "GET" | "POST" | "PUT" | "DELETE";
 
 export interface PasswordElement {
@@ -219,8 +221,13 @@ export async function generatePassword(
 }
 
 export async function login(pin: string): Promise<boolean> {
+  var timestamp = 0
   if (pin !== "") {
-    const url = `https://127.0.0.1:5000/api/v0/device/0/sessions?pin=${pin}`;
+    getStoredOptions().then((options) => {
+      timestamp = options.end_lock_time;
+    }
+    );
+    const url = `https://127.0.0.1:5000/api/v0/device/0/sessions?pin=${pin}&endtime=${timestamp}`;
     const res = await fetch(url, {
       credentials: "same-origin",
     }) ;
@@ -236,3 +243,16 @@ export async function login(pin: string): Promise<boolean> {
 
 
 
+export async function getNtpTime(): Promise <number> {
+  const url = `https://127.0.0.1:5000/api/v0/time`;
+  const res = await fetch(url, {
+    credentials: "same-origin",
+  });
+  // check if the response is 200; if not throw an error
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  } else {
+    const data: number = await res.json();
+    return data;
+  }
+}

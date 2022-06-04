@@ -14,6 +14,7 @@ import {
   PasswordElement,
   getAllPasswordsByHostname,
   login,
+  getNtpTime,
 } from "../../utils/api";
 import { useEffect, useState } from "react";
 import {
@@ -38,7 +39,6 @@ import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { getStoredOptions, setStoredOptions } from "../../utils/storage";
 
 export var pin_lock = "";
-
 
 export default function FixedBottomNavigation(props) {
   const [state, setState] = useState(0);
@@ -76,8 +76,7 @@ export default function FixedBottomNavigation(props) {
     if (props.hostname) {
       setPageHostname(props.hostname);
     }
-  }
-  , [props.hostname]);
+  }, [props.hostname]);
 
   useEffect(() => {
     if (props.default_state) {
@@ -85,9 +84,6 @@ export default function FixedBottomNavigation(props) {
       setState(props.default_state);
     }
   }, [props.default_state]);
-
-
-
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -111,34 +107,36 @@ export default function FixedBottomNavigation(props) {
     const { enqueueSnackbar } = useSnackbar();
 
     function handleClickVariant(newPassword: string) {
-
       if (login(newPassword)) {
-      // make a call to login function
-      getAllPasswordsByHostname(pageHostname)
-        .then((res) => {
-          if (res) {
-            setState(0);
-            setPin(newPassword);
-            setCurrentTabPasswords(res.passwords);
-            pin_lock = newPassword;
-
-            getStoredOptions().then((options) => {
-              if (options.is_locked) {
-                setStoredOptions({ 
-                  ...options,
-                  is_locked: false,
-                  end_lock_time: Math.round(new Date().getTime() / 1000) + options.lock_after_minutes * 60
-                });
-              }
-            });
-            enqueueSnackbar("Login Successful", {
-              variant: "success",
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        // make a call to login function
+        getAllPasswordsByHostname(pageHostname)
+          .then((res) => {
+            if (res) {
+              setState(0);
+              setPin(newPassword);
+              setCurrentTabPasswords(res.passwords);
+              pin_lock = newPassword;
+              getStoredOptions().then((options) => {
+                if (options.is_locked) {
+                  getNtpTime().then((time) => {
+                    setStoredOptions({
+                      ...options,
+                      is_locked: false,
+                      end_lock_time:
+                        Math.round(time / 1000) +
+                        options.lock_after_minutes * 60,
+                    });
+                  });
+                }
+              });
+              enqueueSnackbar("Login Successful", {
+                variant: "success",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       } else {
         enqueueSnackbar("Login Failed", {
           variant: "error",
@@ -169,10 +167,12 @@ export default function FixedBottomNavigation(props) {
 
   return (
     <Box sx={{ width: 400, height: 500 }}>
-      {state === 0 && <CustomizedList password={currentTabPasswords} pin={pin} />}
+      {state === 0 && (
+        <CustomizedList password={currentTabPasswords} pin={pin} />
+      )}
       {state === 1 && <MyVault password={allPasswords} pin={pin} />}
-      {state === 2 && <GeneratePasswordElement pin={pin}/>}
-      {state === 3 && <AddPasswordElement url={pageHostname} pin={pin}/>}
+      {state === 2 && <GeneratePasswordElement pin={pin} />}
+      {state === 3 && <AddPasswordElement url={pageHostname} pin={pin} />}
       {[0, 1, 2, 3].includes(state) && (
         <Paper
           sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}

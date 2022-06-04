@@ -1,3 +1,4 @@
+import { getNtpTime } from "../utils/api";
 import {
   getStoredOptions,
   LocalStorageOptions,
@@ -35,12 +36,15 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 setInterval(() => {
   getStoredOptions().then((options) => {
     if (options.is_locked === false) {
-      if (options.end_lock_time > Date.now()) {
+      getNtpTime().then((time) => {
+      console.log("time:", time);
+      if (options.end_lock_time > time) {
         setStoredOptions({
           ...options,
           is_locked: true,
         });
       }
+    });
     } else {
       console.log("not locked");
     }
