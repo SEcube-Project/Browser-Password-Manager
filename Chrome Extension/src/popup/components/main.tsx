@@ -40,7 +40,7 @@ import { getStoredOptions, setStoredOptions } from "../../utils/storage";
 export var pin_lock = "";
 
 export default function FixedBottomNavigation(props) {
-  const [state, setState] = useState(0);
+  const [state, setState] = useState(-1);
   const [allPasswords, setAllPasswords] = useState<PasswordElement[]>(null);
   const [currentTabPasswords, setCurrentTabPasswords] =
     useState<PasswordElement[]>(null);
@@ -49,7 +49,13 @@ export default function FixedBottomNavigation(props) {
   const [pageHostname, setPageHostname] = useState("");
   const [pin, setPin] = useState("");
 
-  // receive the message from background.ts and save the value to the pageHostname
+
+  // check the local storage and then change the state if the is_locked is true
+  setInterval(() => {
+    console.log("interval");
+    // setState(3);
+  }, 1000);
+
 
   useEffect(() => {
     if (state === 1) {
@@ -161,13 +167,13 @@ export default function FixedBottomNavigation(props) {
 
   return (
     <Box sx={{ width: 400, height: 500 }}>
-      {state === 0 && (
+      {state === 5 &&
         <CustomizedList password={currentTabPasswords} pin={pin} />
-      )}
+      }
       {state === 1 && <MyVault password={allPasswords} pin={pin} />}
       {state === 2 && <GeneratePasswordElement pin={pin} />}
       {state === 3 && <AddPasswordElement url={pageHostname} pin={pin} />}
-      {[0, 1, 2, 3].includes(state) && (
+      {[5, 1, 2, 3].includes(state) && (
         <Paper
           sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
           elevation={3}

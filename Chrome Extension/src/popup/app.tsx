@@ -5,7 +5,7 @@ import FixedBottomNavigation from "./components/main";
 
 const App: React.FC<{}> = () => {
   const [pageHostname, setPageHostname] = useState("");
-  const [stateValue, setStateValue] = useState(0);
+  const [stateValue, setStateValue] = useState(-1);
 
   useEffect(() => {
     chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
@@ -24,8 +24,10 @@ const App: React.FC<{}> = () => {
       if (options.is_locked) {
         console.log("return: true");
         setStateValue(4)
+        console.log("stateValue:", stateValue);
       } else {
-        setStateValue(0)
+        setStateValue(5)
+        console.log("stateValue:", stateValue);
         console.log("return: false");
       }
     });

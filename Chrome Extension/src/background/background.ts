@@ -13,8 +13,6 @@ chrome.runtime.onInstalled.addListener(() => {
   };
   setStoredOptions(values);
   // console.log(getStoredOptions());
-  chrome.alarms.create("getNtpTime", {
-    periodInMinutes: 1});
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
