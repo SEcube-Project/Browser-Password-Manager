@@ -1,3 +1,4 @@
+from datetime import timedelta
 import logging
 
 from flask import session, request
@@ -37,7 +38,7 @@ class API_DeviceBase(Resource):
         return True
 
     def _dologin(self, pin: str, isAdmin: bool, force: bool):
-        self._logger.info(f"Logging in with PIN {pin}")
+        self._logger.info(f"Logging in with PIN '{pin}'")
         if not self._l1.Login(pin, isAdmin, force):
             self._logger.error(f"Login failed")
             return False
@@ -62,8 +63,17 @@ class API_DeviceBase(Resource):
         if not self._setdev(0):
             return False
 
-        if not self._utils.pinkeystr in session.keys():
+        if not self._utils.pinkeystr in session.keys() or not self._utils.endtimekeystr in session.keys():
             self._logger.error(f"PIN not set. Maybe login not done?")
+            return False
+
+        # checking if endtime has been reached
+        endtime = int(self._utils.decrypt(session[self._utils.endtimekeystr]))
+        actual = int(Utils.NTP_TIME())
+        self._logger.debug(f"endtime: {endtime}, reamining seconds: {timedelta(seconds=endtime - actual - 10)}")
+        if Utils.HAS_EXPIRED(endtime, actual):
+            self._logger.error(f"Session expired")
+            session.pop(self._utils.pinkeystr, None) # remove pin from session
             return False
 
         if not self._dologin(self._utils.decrypt(session[self._utils.pinkeystr]), True, True):

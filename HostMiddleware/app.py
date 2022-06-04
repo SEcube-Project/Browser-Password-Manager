@@ -2,9 +2,9 @@ import os
 import sys
 import logging
 from flask import Flask
+from flask_session import Session
 from flask_restful import Api
 from flask_cors import CORS
-from flask_session import Session
 
 from L0 import L0
 from L1 import L1
