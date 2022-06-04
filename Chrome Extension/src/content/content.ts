@@ -25,15 +25,15 @@ import { pin_lock } from "../popup/components/main";
           let nextInput = nextField();
           if (nextInput.type.toLowerCase() == "password") {
             /* Username + Password fields */
-            console.log(
-              "Found username and password fields for: " +
-                window.location.hostname.replace("www.", "")
-            );
+            // console.log(
+            //   "Found username and password fields for: " +
+            //     window.location.hostname.replace("www.", "")
+            // );
 
             // Get the username and password from the API
             getAllPasswordsByHostname(window.location.hostname.replace("www.", "")).then(
               (data: ApiBody) => {
-                console.log(data);
+                // console.log(data);
                 // get the stored options
                 getStoredOptions().then((options: LocalStorageOptions) => {
                   // if auxtocomplete is enabled and there is only one stored password for the current hostname
@@ -55,14 +55,14 @@ import { pin_lock } from "../popup/components/main";
         } else {
             /* Only password field */
             // Get the element with the type password
-            console.log(
-              "Found only password field for: " + window.location.hostname.replace("www.", "")
-            );
+            // console.log(
+            //   "Found only password field for: " + window.location.hostname.replace("www.", "")
+            // );
 
             // Get the username and password from the API
             getAllPasswordsByHostname(window.location.hostname.replace("www.", "")).then(
               (data: ApiBody) => {
-                console.log(data);
+                // console.log(data);
                 // get the stored options
                 getStoredOptions().then((options: LocalStorageOptions) => {
                   // if autocomplete is enabled and there is only one stored password for the current hostname

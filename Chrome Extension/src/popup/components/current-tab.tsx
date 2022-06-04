@@ -243,7 +243,7 @@ export default function CustomizedList(props) {
           },
         })}
       >
-        {console.log("PasswordData", PasswordData)}
+        {/* {console.log("PasswordData", PasswordData)} */}
         <Paper elevation={0} sx={{ maxWidth: "100%" }}>
           <FireNav component="nav" disablePadding>
             <List

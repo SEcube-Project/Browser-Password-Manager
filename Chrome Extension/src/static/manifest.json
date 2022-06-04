@@ -29,7 +29,8 @@
     "webRequest",
     "notifications",
     "identity",
-    "cookies"
+    "cookies",
+    "alarms"
   ],
   "options_page": "options.html",
   "background": {

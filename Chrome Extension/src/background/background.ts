@@ -1,4 +1,3 @@
-import { getNtpTime } from "../utils/api";
 import {
   getStoredOptions,
   LocalStorageOptions,
@@ -13,11 +12,13 @@ chrome.runtime.onInstalled.addListener(() => {
     end_lock_time: 0,
   };
   setStoredOptions(values);
-  console.log(getStoredOptions());
+  // console.log(getStoredOptions());
+  chrome.alarms.create("getNtpTime", {
+    periodInMinutes: 1});
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  console.log(getStoredOptions());
+  // console.log(getStoredOptions());
   getStoredOptions().then((options) => {
     if (
       changeInfo.status === "complete" &&
@@ -31,22 +32,3 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
   });
 });
-
-// Print hello world every second
-setInterval(() => {
-  getStoredOptions().then((options) => {
-    if (options.is_locked === false) {
-      getNtpTime().then((time) => {
-      console.log("time:", time);
-      if (options.end_lock_time > time) {
-        setStoredOptions({
-          ...options,
-          is_locked: true,
-        });
-      }
-    });
-    } else {
-      console.log("not locked");
-    }
-  });
-}, 1000);

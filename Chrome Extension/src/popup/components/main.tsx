@@ -14,7 +14,6 @@ import {
   PasswordElement,
   getAllPasswordsByHostname,
   login,
-  getNtpTime,
 } from "../../utils/api";
 import { useEffect, useState } from "react";
 import {
@@ -117,18 +116,13 @@ export default function FixedBottomNavigation(props) {
               setCurrentTabPasswords(res.passwords);
               pin_lock = newPassword;
               getStoredOptions().then((options) => {
-                if (options.is_locked) {
-                  getNtpTime().then((time) => {
-                    setStoredOptions({
-                      ...options,
-                      is_locked: false,
-                      end_lock_time:
-                        Math.round(time / 1000) +
-                        options.lock_after_minutes * 60,
-                    });
-                  });
-                }
-              });
+                setStoredOptions({
+                  ...options,
+                  is_locked: false,
+                });
+              }
+              );
+
               enqueueSnackbar("Login Successful", {
                 variant: "success",
               });

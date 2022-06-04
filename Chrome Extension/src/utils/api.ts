@@ -1,5 +1,6 @@
 import { getStoredOptions } from "./storage";
 
+
 export type fetchType = "GET" | "POST" | "PUT" | "DELETE";
 
 export interface PasswordElement {
@@ -38,7 +39,7 @@ export async function getAllPasswords(
     const url = `https://127.0.0.1:5000/api/v0/device/0/passwords`;
     const res = await fetch(url, {
       method: requestType,
-      credentials: "same-origin",
+      credentials: "include",
     });
     // check if the response is 200; if not throw an error
     if (!res.ok) {
@@ -46,7 +47,8 @@ export async function getAllPasswords(
     }
     // Declare data as a ApiBody type to take advantage of the type checking
     const data: ApiBody = await res.json();
-    console.log("password from api", data);
+    // console.log("password from api", data);
+    
     return data;
 }
 
@@ -74,7 +76,7 @@ export async function getAllPasswordsByHostname(
     }
     // Declare data as a ApiBody type to take advantage of the type checking
     const data: ApiBody = await res.json();
-    console.log("password from api hostname", data);
+    // console.log("password from api hostname", data);
     return data;
   }
 }
@@ -92,14 +94,14 @@ export async function insertNewPassword(
       username: username,
       password: password,
     });
-    console.log(body);
+    // console.log(body);
     const res = await fetch(url, {
       method: requestType ? requestType : "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      credentials: "same-origin",
+      credentials: "include",
       body: body,
     });
     // check if the response is 200; if not throw an error
@@ -141,7 +143,7 @@ export async function updatePassword(
           username: username,
           password: password,
         }),
-        credentials: "same-origin",
+        credentials: "include",
       });
       // check if the response is 200; if not throw an error
       if (!res.ok) {
@@ -155,7 +157,7 @@ export async function getDevices(requestType?: fetchType): Promise<devices> {
   const url = `https://127.0.0.1:5000/api/v0/devices`;
   const res = await fetch(url, {
     method: requestType,
-    credentials: "same-origin",
+    credentials: "include",
   });
   // check if the response is 200; if not throw an error
   if (!res.ok) {
@@ -174,7 +176,7 @@ export async function deletePassword(
     const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}`;
     const res = await fetch(url, {
       method: requestType ? requestType : "DELETE",
-      credentials: "same-origin",
+      credentials: "include",
     });
     // check if the response is 200; if not throw an error
     if (!res.ok) {
@@ -194,7 +196,7 @@ export async function generatePassword(
   length: number,
   requestType?: fetchType
 ): Promise<generatedPassword> {
-  console.log(upper, numbers, special, length);
+  // console.log(upper, numbers, special, length);
   if (
     upper !== undefined &&
     special !== undefined &&
@@ -204,11 +206,11 @@ export async function generatePassword(
     const url = `https://127.0.0.1:5000/api/v0/device/0/generate?upper=${
       upper ? 1 : 0
     }&special=${special ? 1 : 0}&numbers=${numbers ? 1 : 0}&length=${length}`;
-    console.log(url);
+    // console.log(url);
 
     const res = await fetch(url, {
       method: requestType,
-      credentials: "same-origin",
+      credentials: "include",
     });
     // check if the response is 200; if not throw an error
     if (!res.ok) {
@@ -221,18 +223,21 @@ export async function generatePassword(
 }
 
 export async function login(pin: string): Promise<boolean> {
-  var timestamp = 0
+  var timestamp = 11234567452345
   if (pin !== "") {
     getStoredOptions().then((options) => {
       timestamp = options.end_lock_time;
+      // console.log(timestamp);
+      // console.log(options.end_lock_time);
     }
     );
     const url = `https://127.0.0.1:5000/api/v0/device/0/sessions?pin=${pin}&endtime=${timestamp}`;
     const res = await fetch(url, {
-      credentials: "same-origin",
+      method: "POST",
+      credentials: "include",
     }) ;
     // check if the response is 200; if not throw an error
-    console.log("api login", res);
+    // console.log("api login", res);
     if (!res.ok) {
       return false;
     } else {
@@ -246,26 +251,12 @@ export async function logout(): Promise<boolean> {
   const url = `https://127.0.0.1:5000/api/v0/device/0/sessions`;
   const res = await fetch(url, {
     method: "DELETE",
-    credentials: "same-origin",
+    credentials: "include",
   });
   // check if the response is 200; if not throw an error
   if (!res.ok) {
     return false;
   } else {
     return true;
-  }
-}
-
-export async function getNtpTime(): Promise <number> {
-  const url = `https://127.0.0.1:5000/api/v0/time`;
-  const res = await fetch(url, {
-    credentials: "same-origin",
-  });
-  // check if the response is 200; if not throw an error
-  if (!res.ok) {
-    throw new Error(res.statusText);
-  } else {
-    const data: number = await res.json();
-    return data;
   }
 }

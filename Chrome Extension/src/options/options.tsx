@@ -40,7 +40,7 @@ const App: React.FC<{}> = () => {
    * @param value - the input string
    */
   const handleLockValueChange = (value: string) => {
-    console.log(value);
+    // console.log(value);
 
     // If value contains NaN, set to 0
     if (isNaN(Number(value))) {
