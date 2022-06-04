@@ -242,6 +242,19 @@ export async function login(pin: string): Promise<boolean> {
 }
 
 
+export async function logout(): Promise<boolean> {
+  const url = `https://127.0.0.1:5000/api/v0/device/0/sessions`;
+  const res = await fetch(url, {
+    method: "DELETE",
+    credentials: "same-origin",
+  });
+  // check if the response is 200; if not throw an error
+  if (!res.ok) {
+    return false;
+  } else {
+    return true;
+  }
+}
 
 export async function getNtpTime(): Promise <number> {
   const url = `https://127.0.0.1:5000/api/v0/time`;
