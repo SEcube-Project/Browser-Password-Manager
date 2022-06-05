@@ -28,12 +28,16 @@ class API_DeviceBase(Resource):
         self._bodyargs_template.add_argument('password', type=str, required=True, help='Password argument required. Must be a string', location='json')
     
     def _setdev(self, indx: int):
-        self._logger.info(f"Selecting device {indx}")
+
+        self._logger.info("Restarting everything..")
+        self._l0.restart()
+        self._l1.restart()
         
         if indx >= self._l0.getDeviceListSize():
             self._logger.error(f"Device {indx} does not exist")
             return False
 
+        self._logger.info(f"Selecting device {indx}")
         self._l1.SelectSECube(indx)
         return True
 
@@ -70,10 +74,11 @@ class API_DeviceBase(Resource):
         # checking if endtime has been reached
         endtime = int(self._utils.decrypt(session[self._utils.endtimekeystr]))
         actual = int(utils.tick)
-        self._logger.debug(f"endtime: {endtime}, reamining seconds: {timedelta(seconds=endtime - actual - 10)}")
+        self._logger.debug(f"Actual: {actual}. Endtime: {endtime}. Reamining seconds: {timedelta(seconds=endtime - actual - 10)}")
         if Utils.HAS_EXPIRED(endtime, actual):
             self._logger.error(f"Session expired")
             session.pop(self._utils.pinkeystr, None) # remove pin from session
+            session.pop(self._utils.endtimekeystr, None) # remove endtime from session
             return False
 
         if not self._dologin(self._utils.decrypt(session[self._utils.pinkeystr]), True, True):

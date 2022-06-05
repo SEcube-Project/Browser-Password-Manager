@@ -31,3 +31,7 @@ class L0:
         ys = [s for s in ly.split("\n")]
 
         return [(i, *x) for i, x, in enumerate([(x, y) for x, y in zip(ps, ys[:len(ps)])])]
+
+    def restart(self):
+        self._c_lib.destroyL0Instance(self._l0inst)
+        self._l0inst = self._c_lib.createL0Instance()
