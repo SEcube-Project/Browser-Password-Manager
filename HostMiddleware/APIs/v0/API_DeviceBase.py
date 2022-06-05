@@ -54,7 +54,7 @@ class API_DeviceBase(Resource):
 
         return True
 
-    def _setdev_checklogin(self, indx: int):
+    def _setdev_checklogin(self, indx: int, utils: Utils):
         
         # self._logger.debug("HEADERS: ")
         # for k, v, in request.headers.items():
@@ -69,7 +69,7 @@ class API_DeviceBase(Resource):
 
         # checking if endtime has been reached
         endtime = int(self._utils.decrypt(session[self._utils.endtimekeystr]))
-        actual = int(Utils.NTP_TIME())
+        actual = int(utils.tick)
         self._logger.debug(f"endtime: {endtime}, reamining seconds: {timedelta(seconds=endtime - actual - 10)}")
         if Utils.HAS_EXPIRED(endtime, actual):
             self._logger.error(f"Session expired")

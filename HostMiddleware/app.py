@@ -49,9 +49,13 @@ if __name__ == "__main__":
         logger.info(f"Found {device_cnt} devices")
 
     api.add_resource(API_Time, "/api/v0/time")
-    api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0])
+    api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0, utils])
     api.add_resource(API_Device_Sessions, "/api/v0/device/<int:indx>/sessions", resource_class_args=[logger, l0, l1, utils])
     api.add_resource(API_Device_Generate, "/api/v0/device/<int:indx>/generate", resource_class_args=[logger, l0, l1, utils])
     api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1, utils])
     api.add_resource(API_Device_Password_ID, "/api/v0/device/<int:indx>/password/<int:id>", resource_class_args=[logger, l0, l1, utils])
     app.run(ssl_context=('cert.pem', 'key.pem'), debug=False, threaded=False)
+
+    print()
+    logger.info("Exiting...")
+    utils.stop_tick()
