@@ -77,6 +77,11 @@ export default function CustomizedList(props) {
     setPin(props.pin);
   }, [props.pin]);
 
+  React.useEffect(() => {
+    setPasswordData(props.password);
+  }, [props.password]);
+
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -160,10 +165,6 @@ export default function CustomizedList(props) {
   ) => {
     event.preventDefault();
   };
-
-  React.useEffect(() => {
-    setPasswordData(props.password);
-  }, [props.password]);
 
   function handleClickOpen(id) {
     setPopup(true);

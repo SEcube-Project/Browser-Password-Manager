@@ -48,7 +48,7 @@ export async function getAllPasswords(
     }
     // Declare data as a ApiBody type to take advantage of the type checking
     const data: ApiBody = await res.json();
-    console.log(data);
+    console.log("password from api", data);
     return data;
   }
 }
@@ -77,6 +77,7 @@ export async function getAllPasswordsByHostname(
     }
     // Declare data as a ApiBody type to take advantage of the type checking
     const data: ApiBody = await res.json();
+    console.log("password from api hostname", data);
     return data;
   }
 }
@@ -243,3 +244,7 @@ export async function login(pin: string): Promise<boolean> {
     }
   }
 }
+
+
+
+

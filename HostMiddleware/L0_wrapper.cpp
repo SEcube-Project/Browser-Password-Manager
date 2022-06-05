@@ -17,6 +17,10 @@ extern "C" void *createL0Instance() {
     return new(std::nothrow) L0;
 }
 
+extern "C" void destroyL0Instance(void *instance) {
+    delete (L0 *)instance;
+}
+
 extern "C" int L0_getDeviceListSize(void *instance) {
 
     L0 *l0 = reinterpret_cast<L0 *>(instance);

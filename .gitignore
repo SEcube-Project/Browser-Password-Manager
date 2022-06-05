@@ -1,4 +1,6 @@
 HostMiddleware/__pycache__/**
+HostMiddleware/APIs/__pycache__/**
+HostMiddleware/APIs/v0/__pycache__/**
 .DS_Store
 *.o
 *.d
@@ -7,3 +9,4 @@ HostMiddleware/__pycache__/**
 init
 HostMiddleware/Makefile
 HostMiddleware/BPMMiddleware
+HostMiddleware/flask_session/**

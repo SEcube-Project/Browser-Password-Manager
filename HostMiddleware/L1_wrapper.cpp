@@ -9,6 +9,10 @@ extern "C" void *createL1Instance() {
     return new(std::nothrow) L1;
 }
 
+extern "C" void destroyL1Instance(void *instance) {
+    delete (L1 *)instance;
+}
+
 extern "C" void L1_SelectSECube_Indx(void *instance, char indx) {
     L1 *l1 = reinterpret_cast<L1 *>(instance);
     l1->L1SelectSEcube(indx);
