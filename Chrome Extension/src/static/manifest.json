@@ -17,7 +17,8 @@
   "host_permissions": [
     "http://*/*",
     "https://*/*",
-    "*://extensions/*"
+    "*://extensions/*",
+    "<all_urls>"
   ],
   "permissions": [
     "storage",
@@ -40,7 +41,8 @@
     {
       "matches": [
         "http://*/*",
-        "https://*/*"
+        "https://*/*",
+        "<all_urls>"
       ],
       "js": [
         "content.js"

@@ -15,12 +15,12 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  // console.log(getStoredOptions());
   getStoredOptions().then((options) => {
+    console.log(options);
     if (
       changeInfo.status === "complete" &&
-      options.is_autocomplete_enabled === true &&
-      options.is_locked === false
+      options.is_autocomplete_enabled &&
+      !options.is_locked
     ) {
       chrome.scripting.executeScript({
         target: { tabId: tabId },
@@ -28,4 +28,5 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       });
     }
   });
-});
+}
+);
