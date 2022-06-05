@@ -9,7 +9,6 @@ chrome.runtime.onInstalled.addListener(() => {
     is_autocomplete_enabled: true,
     lock_after_minutes: 5,
     is_locked: true,
-    end_lock_time: 0,
   };
   setStoredOptions(values);
   // console.log(getStoredOptions());
@@ -20,7 +19,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   getStoredOptions().then((options) => {
     if (
       changeInfo.status === "complete" &&
-      options.is_autocomplete_enabled === false &&
+      options.is_autocomplete_enabled === true &&
       options.is_locked === false
     ) {
       chrome.scripting.executeScript({

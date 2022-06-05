@@ -46,13 +46,27 @@ const App: React.FC<{}> = () => {
     if (isNaN(Number(value))) {
       setOptions({
         ...options,
-        lock_after_minutes: 0,
+        lock_after_minutes: 1,
       });
     } else {
+      if (Number(value) < 1) {
+        setOptions({
+          ...options,
+          lock_after_minutes: 1,
+        });
+      } else {
+        if (Number(value) > 1440) {
+          setOptions({
+            ...options,
+            lock_after_minutes: 1440,
+          });
+        } else {
       setOptions({
         ...options,
         lock_after_minutes: Number(value),
       });
+    }
+    }
     }
   };
 

@@ -15,6 +15,7 @@ import {
   getAllPasswordsByHostname,
   login,
   logout,
+  getTime,
 } from "../../utils/api";
 import { useEffect, useState } from "react";
 import {
@@ -54,7 +55,10 @@ export default function FixedBottomNavigation(props) {
         setState("lock");
       }
     });
-  }, 1000);
+    getTime().then((time) => {
+      console.log(time.time);
+    });
+  }, 5000);
 
   useEffect(() => {
     if (state === "myvault") {
@@ -116,39 +120,42 @@ export default function FixedBottomNavigation(props) {
 
     function handleClickVariant(newPassword: string) {
       console.log("newPassword", newPassword);
-
-      login(newPassword)
-        .then((res) => {
-          if (res === true) {
-            setState("tab");
-            enqueueSnackbar("Login Successful", {
-              variant: "success",
-            });
-            getAllPasswordsByHostname(pageHostname)
-              .then((res) => {
-                if (res) {
-                  setState("tab");
-                  setCurrentTabPasswords(res.passwords);
-                  getStoredOptions().then((options) => {
-                    setStoredOptions({
-                      ...options,
-                      is_locked: false,
-                    });
+      getTime().then((res) => {
+        getStoredOptions().then((options) => {
+          login(newPassword, res.time + options.lock_after_minutes * 60)
+            .then((res) => {
+              if (res === true) {
+                setState("tab");
+                enqueueSnackbar("Login Successful", {
+                  variant: "success",
+                });
+                getAllPasswordsByHostname(pageHostname)
+                  .then((res) => {
+                    if (res) {
+                      setState("tab");
+                      setCurrentTabPasswords(res.passwords);
+                      getStoredOptions().then((options) => {
+                        setStoredOptions({
+                          ...options,
+                          is_locked: false,
+                        });
+                      });
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
                   });
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          } else {
-            enqueueSnackbar("Login Failed", {
-              variant: "error",
+              } else {
+                enqueueSnackbar("Login Failed", {
+                  variant: "error",
+                });
+              }
+            })
+            .catch((err) => {
+              console.log(err);
             });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
         });
+      });
     }
 
     return (
