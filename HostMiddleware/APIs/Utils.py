@@ -1,4 +1,5 @@
 import ntplib
+from threading import Thread, Event
 import rsa
 
 class Utils:
@@ -7,13 +8,23 @@ class Utils:
         self._public_key, self._private_key = rsa.newkeys(2048)
         self._pinkeystr = ''.join('{:02x}'.format(x) for x in self.encrypt("PIN"))
         self._endtimekeystr = ''.join('{:02x}'.format(x) for x in self.encrypt("ENDTIME"))
+        self._tickcnt = 0
+        self._tickth = Thread(target=self._tickth)
+        self._stpevt = Event()
+        self._tickth.start()
 
-    @staticmethod
-    def NTP_TIME():
+    def _tickth(self):
+        
+        while not self._stpevt.is_set():
+            self._tickcnt += 1
+            self._stpevt.wait(1)
 
-        c = ntplib.NTPClient()
-        response = c.request('europe.pool.ntp.org', version=3)
-        return response.tx_time
+    @property
+    def tick(self):
+        return self._tickcnt
+
+    def stop_tick(self):
+        self._stpevt.set()
 
     @staticmethod
     def HAS_EXPIRED(a, b):

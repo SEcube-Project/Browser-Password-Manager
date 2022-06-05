@@ -7,7 +7,7 @@ class API_Device_Sessions(API_DeviceBase):
 
     def get(self, indx: int):
 
-        state = self._setdev_checklogin(indx)
+        state = self._setdev_checklogin(indx, self._utils)
 
         if state:
             self._l1.Logout()
@@ -22,7 +22,7 @@ class API_Device_Sessions(API_DeviceBase):
         parser.add_argument('endtime', type=int, required=True, help='Endtime argument required. Must be a UNIX timestamp', location='args')
 
         args = parser.parse_args()
-        if Utils.HAS_EXPIRED(args["endtime"], self._utils.NTP_TIME()):
+        if Utils.HAS_EXPIRED(args["endtime"], self._utils.tick):
             self._logger.error(f"Endtime is in the past")
             return {'error': 'Endtime is in the past'}, 400
 
@@ -40,7 +40,7 @@ class API_Device_Sessions(API_DeviceBase):
 
     def delete(self, indx: int):
         
-        if not self._setdev_checklogin(indx):
+        if not self._setdev_checklogin(indx, self._utils):
             return {'error': 'Could not logout: wrong pin or device not found'}, 403
 
         session.pop(self._utils.pinkeystr, None)

@@ -2,12 +2,12 @@ from .API_DeviceBase import *
 
 class API_Device_Passwords(API_DeviceBase):
 
-    def init(self, logger, l0: L0, l1: L1):
-        super().__init__(logger, l0, l1)
+    def init(self, logger, l0: L0, l1: L1, utils: Utils):
+        super().__init__(logger, l0, l1, utils)
 
     def get(self, indx: int):
 
-        if not self._setdev_checklogin(indx):
+        if not self._setdev_checklogin(indx, self._utils):
             return {'error': 'Could not login: device not found or invalid login'}, 403
 
         parser = reqparse.RequestParser()
@@ -36,7 +36,7 @@ class API_Device_Passwords(API_DeviceBase):
 
     def post(self, indx: int):
 
-        if not self._setdev_checklogin(indx):
+        if not self._setdev_checklogin(indx, self._utils):
             return {'error': 'Could not login: wrong pin or device not found'}, 403
 
         try:

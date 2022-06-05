@@ -3,10 +3,11 @@ from ..Utils import Utils
 
 class API_Time(Resource):
 
-    def __init__(self) -> None:
+    def init(self, utils: Utils) -> None:
         super().__init__()
+        self._utils = utils
 
     def get(self):
         return {
-            'time': str(Utils.NTP_TIME())
+            'time': str(self._utils.tick)
         }
