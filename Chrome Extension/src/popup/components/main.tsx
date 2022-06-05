@@ -14,6 +14,7 @@ import {
   PasswordElement,
   getAllPasswordsByHostname,
   login,
+  logout,
 } from "../../utils/api";
 import { useEffect, useState } from "react";
 import {
@@ -37,28 +38,26 @@ import Visibility from "@mui/icons-material/Visibility";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { getStoredOptions, setStoredOptions } from "../../utils/storage";
 
-export var pin_lock = "";
-
 export default function FixedBottomNavigation(props) {
-  const [state, setState] = useState(-1);
+  const [state, setState] = useState("");
   const [allPasswords, setAllPasswords] = useState<PasswordElement[]>(null);
   const [currentTabPasswords, setCurrentTabPasswords] =
     useState<PasswordElement[]>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [pageHostname, setPageHostname] = useState("");
-  const [pin, setPin] = useState("");
-
 
   // check the local storage and then change the state if the is_locked is true
   setInterval(() => {
-    console.log("interval");
-    // setState(3);
+    getStoredOptions().then((options) => {
+      if (options.is_locked) {
+        setState("lock");
+      }
+    });
   }, 1000);
 
-
   useEffect(() => {
-    if (state === 1) {
+    if (state === "myvault") {
       getAllPasswords()
         .then((res) => {
           setAllPasswords(res.passwords);
@@ -66,7 +65,7 @@ export default function FixedBottomNavigation(props) {
         .catch((err) => {
           console.log(err);
         });
-    } else if (state === 0) {
+    } else if (state === "tab") {
       getAllPasswordsByHostname(pageHostname)
         .then((res) => {
           setCurrentTabPasswords(res.passwords);
@@ -75,7 +74,7 @@ export default function FixedBottomNavigation(props) {
           console.log(err);
         });
     }
-  }, [state, pageHostname, pin]);
+  }, [state, pageHostname]);
 
   useEffect(() => {
     if (props.hostname) {
@@ -105,43 +104,51 @@ export default function FixedBottomNavigation(props) {
   };
 
   function handleOnClickLock(event: Event) {
-    setState(4);
+    setState("lock");
+    logout();
+    getStoredOptions().then((options) => {
+      setStoredOptions({ ...options, is_locked: true });
+    });
   }
 
   function MyApp() {
     const { enqueueSnackbar } = useSnackbar();
 
     function handleClickVariant(newPassword: string) {
-      if (login(newPassword)) {
-        // make a call to login function
-        getAllPasswordsByHostname(pageHostname)
-          .then((res) => {
-            if (res) {
-              setState(0);
-              setPin(newPassword);
-              setCurrentTabPasswords(res.passwords);
-              pin_lock = newPassword;
-              getStoredOptions().then((options) => {
-                setStoredOptions({
-                  ...options,
-                  is_locked: false,
-                });
-              }
-              );
+      console.log("newPassword", newPassword);
 
-              enqueueSnackbar("Login Successful", {
-                variant: "success",
+      login(newPassword)
+        .then((res) => {
+          if (res === true) {
+            setState("tab");
+            enqueueSnackbar("Login Successful", {
+              variant: "success",
+            });
+            getAllPasswordsByHostname(pageHostname)
+              .then((res) => {
+                if (res) {
+                  setState("tab");
+                  setCurrentTabPasswords(res.passwords);
+                  getStoredOptions().then((options) => {
+                    setStoredOptions({
+                      ...options,
+                      is_locked: false,
+                    });
+                  });
+                }
+              })
+              .catch((err) => {
+                console.log(err);
               });
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else {
-        enqueueSnackbar("Login Failed", {
-          variant: "error",
+          } else {
+            enqueueSnackbar("Login Failed", {
+              variant: "error",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      }
     }
 
     return (
@@ -167,13 +174,11 @@ export default function FixedBottomNavigation(props) {
 
   return (
     <Box sx={{ width: 400, height: 500 }}>
-      {state === 5 &&
-        <CustomizedList password={currentTabPasswords} pin={pin} />
-      }
-      {state === 1 && <MyVault password={allPasswords} pin={pin} />}
-      {state === 2 && <GeneratePasswordElement pin={pin} />}
-      {state === 3 && <AddPasswordElement url={pageHostname} pin={pin} />}
-      {[5, 1, 2, 3].includes(state) && (
+      {state === "tab" && <CustomizedList password={currentTabPasswords} />}
+      {state === "myvault" && <MyVault password={allPasswords} />}
+      {state === "generate" && <GeneratePasswordElement />}
+      {state === "add" && <AddPasswordElement url={pageHostname} />}
+      {["tab", "myvault", "generate", "add"].includes(state) && (
         <Paper
           sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
           elevation={3}
@@ -194,14 +199,30 @@ export default function FixedBottomNavigation(props) {
               setState(newState);
             }}
           >
-            <BottomNavigationAction label="Tab" icon={<TabIcon />} />
-            <BottomNavigationAction label="My Vault" icon={<FolderIcon />} />
-            <BottomNavigationAction label="Generate" icon={<SyncLockIcon />} />
-            <BottomNavigationAction label="Add" icon={<AddCircleIcon />} />
+            <BottomNavigationAction
+              label="Tab"
+              value="tab"
+              icon={<TabIcon />}
+            />
+            <BottomNavigationAction
+              label="My Vault"
+              value="myvault"
+              icon={<FolderIcon />}
+            />
+            <BottomNavigationAction
+              label="Generate"
+              value="generate"
+              icon={<SyncLockIcon />}
+            />
+            <BottomNavigationAction
+              label="Add"
+              value="add"
+              icon={<AddCircleIcon />}
+            />
           </BottomNavigation>
         </Paper>
       )}
-      {state === 4 && (
+      {state === "lock" && (
         <div>
           <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
             <InputLabel htmlFor="outlined-adornment-password">

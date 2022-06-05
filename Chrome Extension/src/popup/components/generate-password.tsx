@@ -26,14 +26,9 @@ import ContentCopy from "@mui/icons-material/ContentCopy";
 import Numbers from "@mui/icons-material/Numbers";
 
 export default function GeneratePasswordElement(props) {
-  const [pin, setPin] = useState("");
 
-  // track the changes on the props.pin with a use effect
-  useEffect(() => {
-    setPin(props.pin);
-  }, [props.pin]);
 
-  return <CheckboxLabels pin={pin}/>;
+  return <CheckboxLabels/>;
 }
 
 function CheckboxLabels(props) {
@@ -45,13 +40,6 @@ function CheckboxLabels(props) {
   const [value, setValue] = React.useState<
     number | string | Array<number | string>
   >(30);
-
-  const [pin, setPin] = useState("");
-
-  // track the changes on the props.pin with a use effect
-  useEffect(() => {
-    setPin(props.pin);
-  }, [props.pin]);
 
   const handleUpperChange = (event) => {
     setUpper(event.target.checked);

@@ -225,12 +225,6 @@ export async function generatePassword(
 export async function login(pin: string): Promise<boolean> {
   var timestamp = 11234567452345
   if (pin !== "") {
-    getStoredOptions().then((options) => {
-      timestamp = options.end_lock_time;
-      // console.log(timestamp);
-      // console.log(options.end_lock_time);
-    }
-    );
     const url = `https://127.0.0.1:5000/api/v0/device/0/sessions?pin=${pin}&endtime=${timestamp}`;
     const res = await fetch(url, {
       method: "POST",
@@ -239,8 +233,10 @@ export async function login(pin: string): Promise<boolean> {
     // check if the response is 200; if not throw an error
     // console.log("api login", res);
     if (!res.ok) {
+      console.log("api login false", res);
       return false;
     } else {
+      console.log("api login true", res);
       return true;
     }
   }

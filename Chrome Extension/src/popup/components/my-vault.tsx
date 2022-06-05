@@ -69,12 +69,6 @@ export default function MyVault(props) {
   const [readOnlyURL, setReadOnlyURL] = React.useState(true);
   const [readOnlyPassword, setReadOnlyPassword] = React.useState(true);
   const [deleteId, setDeleteId] = React.useState(-1);
-  const [pin, setPin] = React.useState("");
-
-  // track the changes on the props.pin with a use effect
-  React.useEffect(() => {
-    setPin(props.pin);
-  }, [props.pin]);
 
 
   const handleClickShowPassword = () => {

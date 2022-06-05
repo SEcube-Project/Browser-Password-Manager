@@ -1,8 +1,6 @@
 import { getAllPasswordsByHostname, ApiBody } from "../utils/api";
 import { getStoredOptions, LocalStorageOptions } from "../utils/storage";
 
-import { pin_lock } from "../popup/components/main";
-
 (() => {
   function nextField() {
     var inputs = document.getElementsByTagName("input");

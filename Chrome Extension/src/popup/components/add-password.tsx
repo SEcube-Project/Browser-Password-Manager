@@ -26,12 +26,7 @@ export default function AddPasswordElement(props) {
   const [password, setPassword] = useState("");
   const [url, setUrl] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [pin, setPin] = useState("");
 
-    // track the changes on the props.pin with a use effect
-    useEffect(() => {
-      setPin(props.pin);
-    }, [props.pin]);
     
 
   const handleClickShowPassword = () => {

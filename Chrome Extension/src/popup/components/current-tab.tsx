@@ -70,13 +70,6 @@ export default function CustomizedList(props) {
   const [readOnlyPassword, setReadOnlyPassword] = React.useState(true);
   const [deleteId, setDeleteId] = React.useState(-1);
 
-  const [pin, setPin] = React.useState("");
-
-  // track the changes on the props.pin with a use effect
-  React.useEffect(() => {
-    setPin(props.pin);
-  }, [props.pin]);
-
   React.useEffect(() => {
     setPasswordData(props.password);
   }, [props.password]);
