@@ -1,5 +1,4 @@
-import { getStoredOptions } from "./storage";
-
+import { getStoredOptions, setStoredOptions } from "./storage";
 
 export type fetchType = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -36,20 +35,20 @@ export interface removePassword {
 export async function getAllPasswords(
   requestType?: fetchType
 ): Promise<ApiBody> {
-    const url = `https://127.0.0.1:5000/api/v0/device/0/passwords`;
-    const res = await fetch(url, {
-      method: requestType,
-      credentials: "include",
-    });
-    // check if the response is 200; if not throw an error
-    if (!res.ok) {
-      throw new Error(res.statusText);
-    }
-    // Declare data as a ApiBody type to take advantage of the type checking
-    const data: ApiBody = await res.json();
-    // console.log("password from api", data);
-    
-    return data;
+  const url = `https://127.0.0.1:5000/api/v0/device/0/passwords`;
+  const res = await fetch(url, {
+    method: requestType,
+    credentials: "include",
+  });
+  // check if the response is 200; if not throw an error
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
+  // Declare data as a ApiBody type to take advantage of the type checking
+  const data: ApiBody = await res.json();
+  // console.log("password from api", data);
+  setIsLockedValue(res)
+  return data;
 }
 
 export async function getAllPasswordsByHostname(
@@ -77,6 +76,7 @@ export async function getAllPasswordsByHostname(
     // Declare data as a ApiBody type to take advantage of the type checking
     const data: ApiBody = await res.json();
     // console.log("password from api hostname", data);
+    setIsLockedValue(res)
     return data;
   }
 }
@@ -108,6 +108,7 @@ export async function insertNewPassword(
     if (!res.ok) {
       throw new Error(res.statusText);
     }
+    setIsLockedValue(res)
   }
 }
 
@@ -118,19 +119,9 @@ export async function updatePassword(
   password: string,
   requestType?: fetchType
 ) {
-  if (
-    id !== null &&
-    hostname !== "" &&
-    username !== "" &&
-    password !== ""
-  ) {
+  if (id !== null && hostname !== "" && username !== "" && password !== "") {
     const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}`;
-    if (
-      id != null &&
-      hostname != "" &&
-      username != "" &&
-      password != ""
-    ) {
+    if (id != null && hostname != "" && username != "" && password != "") {
       const res = await fetch(url, {
         method: requestType ? requestType : "PUT",
         headers: {
@@ -149,6 +140,7 @@ export async function updatePassword(
       if (!res.ok) {
         throw new Error(res.statusText);
       }
+      setIsLockedValue(res)
     }
   }
 }
@@ -165,13 +157,11 @@ export async function getDevices(requestType?: fetchType): Promise<devices> {
   }
   // Declare data as a devices type to take advantage of the type checking
   const data: devices = await res.json();
+  setIsLockedValue(res)
   return data;
 }
 
-export async function deletePassword(
-  id: number,
-  requestType?: fetchType
-) {
+export async function deletePassword(id: number, requestType?: fetchType) {
   if (id !== undefined) {
     const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}`;
     const res = await fetch(url, {
@@ -186,6 +176,7 @@ export async function deletePassword(
     if (!data.success) {
       throw new Error("Success: false");
     }
+    setIsLockedValue(res)
   }
 }
 
@@ -218,30 +209,29 @@ export async function generatePassword(
     }
     // Declare data as a generatedPassword type to take advantage of the type checking
     const data: generatedPassword = await res.json();
+    setIsLockedValue(res)
     return data;
   }
 }
 
 export async function login(pin: string): Promise<boolean> {
-  var timestamp = 11234567452345
+  var timestamp = 11234567452345;
   if (pin !== "") {
     const url = `https://127.0.0.1:5000/api/v0/device/0/sessions?pin=${pin}&endtime=${timestamp}`;
     const res = await fetch(url, {
       method: "POST",
       credentials: "include",
-    }) ;
+    });
     // check if the response is 200; if not throw an error
     // console.log("api login", res);
+    setIsLockedValue(res)
     if (!res.ok) {
-      console.log("api login false", res);
       return false;
     } else {
-      console.log("api login true", res);
       return true;
     }
   }
 }
-
 
 export async function logout(): Promise<boolean> {
   const url = `https://127.0.0.1:5000/api/v0/device/0/sessions`;
@@ -250,9 +240,18 @@ export async function logout(): Promise<boolean> {
     credentials: "include",
   });
   // check if the response is 200; if not throw an error
+  setIsLockedValue(res)
   if (!res.ok) {
     return false;
   } else {
     return true;
+  }
+}
+
+export function setIsLockedValue(res: Response) {
+  if (res.status === 403) {
+    getStoredOptions().then((options) => {
+      setStoredOptions({ ...options, is_locked: true });
+    });
   }
 }
