@@ -3,7 +3,7 @@ from ..Utils import Utils
 
 class API_Time(Resource):
 
-    def init(self, utils: Utils) -> None:
+    def __init__(self, utils: Utils) -> None:
         super().__init__()
         self._utils = utils
 
