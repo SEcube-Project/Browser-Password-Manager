@@ -227,21 +227,21 @@ export async function generatePassword(
 }
 
 export async function login(pin: string, timestamp: number): Promise<boolean> {
-  console.log("pin", pin);
+  // console.log("pin", pin);
   if (pin !== "") {
-      console.log("timestamp", timestamp);
+      // console.log("timestamp", timestamp);
       const url = `https://127.0.0.1:5000/api/v0/device/0/sessions?pin=${pin}&endtime=${timestamp}`;
-      console.log(url);
+      // console.log(url);
       const res = await fetch(url, {
         method: "POST",
         credentials: "include",
       });
       setIsLockedValue(res);
       if (!res.ok) {
-        console.log("failed");
+        // console.log("failed");
         return false;
       } else {
-        console.log("success");
+        // console.log("success");
         return true;
       }
   }
@@ -285,7 +285,7 @@ export function setIsLockedValue(res: Response) {
   if (res.status === 403) {
     getStoredOptions().then((options) => {
       setStoredOptions({ ...options, is_locked: true });
-      console.log(options);
+      // console.log(options);
     });
   }
 }

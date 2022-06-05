@@ -20,15 +20,15 @@ const App: React.FC<{}> = () => {
 
   useEffect(() => {
     getStoredOptions().then((options) => {
-      console.log("app options", options);
+      // console.log("app options", options);
       if (options.is_locked) {
-        console.log("return: true");
+        // console.log("return: true");
         setStateValue("lock")
-        console.log("stateValue:", stateValue);
+        // console.log("stateValue:", stateValue);
       } else {
         setStateValue("tab")
-        console.log("stateValue:", stateValue);
-        console.log("return: false");
+        // console.log("stateValue:", stateValue);
+        // console.log("return: false");
       }
     });
   }, []);

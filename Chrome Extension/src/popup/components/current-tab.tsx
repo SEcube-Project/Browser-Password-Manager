@@ -292,6 +292,7 @@ export default function CustomizedList(props) {
                             </IconButton>
                             <Dialog
                               open={popup}
+                              style={{backgroundColor: "rgba(25, 118, 210, 0.5)"}}
                               onClose={() => handleCloseNoDelete()}
                               aria-labelledby="alert-dialog-title"
                               aria-describedby="alert-dialog-description"

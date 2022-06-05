@@ -55,10 +55,7 @@ export default function FixedBottomNavigation(props) {
         setState("lock");
       }
     });
-    getTime().then((time) => {
-      console.log(time.time);
-    });
-  }, 5000);
+  }, 1000);
 
   useEffect(() => {
     if (state === "myvault") {
@@ -88,7 +85,7 @@ export default function FixedBottomNavigation(props) {
 
   useEffect(() => {
     if (props.default_state) {
-      console.log("props.default_state", props.default_state);
+      // console.log("props.default_state", props.default_state);
       setState(props.default_state);
     }
   }, [props.default_state]);
@@ -119,7 +116,7 @@ export default function FixedBottomNavigation(props) {
     const { enqueueSnackbar } = useSnackbar();
 
     function handleClickVariant(newPassword: string) {
-      console.log("newPassword", newPassword);
+      // console.log("newPassword", newPassword);
       getTime().then((res) => {
         getStoredOptions().then((options) => {
           login(newPassword, res.time + options.lock_after_minutes * 60)
