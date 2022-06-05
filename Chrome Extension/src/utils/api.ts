@@ -73,10 +73,7 @@ export async function getAllPasswordsByHostname(
     const res = await fetch(url, {
       method: requestType,
       headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "*",
-        "Access-Control-Allow-Methods": "*",
-        "Access-Control-Allow-Credentials": "true",
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
       credentials: "include",
