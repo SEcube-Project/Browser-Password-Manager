@@ -61,12 +61,12 @@ const App: React.FC<{}> = () => {
             lock_after_minutes: 1440,
           });
         } else {
-      setOptions({
-        ...options,
-        lock_after_minutes: Number(value),
-      });
-    }
-    }
+          setOptions({
+            ...options,
+            lock_after_minutes: Number(value),
+          });
+        }
+      }
     }
   };
 
@@ -104,7 +104,9 @@ const App: React.FC<{}> = () => {
     );
   }
 
-  function handleAutocompleteChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleAutocompleteChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
     setOptions({
       ...options,
       is_autocomplete_enabled: event.target.checked,
@@ -119,7 +121,12 @@ const App: React.FC<{}> = () => {
           <Grid item>
             <FormGroup>
               <FormControlLabel
-                control={<Switch checked={options?.is_autocomplete_enabled ?? false} onChange={handleAutocompleteChange} />}
+                control={
+                  <Switch
+                    checked={options?.is_autocomplete_enabled ?? false}
+                    onChange={handleAutocompleteChange}
+                  />
+                }
                 label="Autocomplete"
               />
             </FormGroup>
