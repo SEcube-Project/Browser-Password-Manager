@@ -48,8 +48,8 @@ if __name__ == "__main__":
     else:
         logger.info(f"Found {device_cnt} devices")
 
-    api.add_resource(API_Time, "/api/v0/time")
-    api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0, utils])
+    api.add_resource(API_Time, "/api/v0/time", resource_class_args=[utils])
+    api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0])
     api.add_resource(API_Device_Sessions, "/api/v0/device/<int:indx>/sessions", resource_class_args=[logger, l0, l1, utils])
     api.add_resource(API_Device_Generate, "/api/v0/device/<int:indx>/generate", resource_class_args=[logger, l0, l1, utils])
     api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1, utils])
