@@ -304,11 +304,11 @@ export default function MyVault(props) {
                                   aria-labelledby="alert-dialog-title"
                                   aria-describedby="alert-dialog-description"
                                 >
-                                  <DialogTitle id="alert-dialog-title">
+                                  <DialogTitle id="alert-dialog-title" style={{color: "rgba(255,255,255,1)"}}>
                                     {"Delete Password"}
                                   </DialogTitle>
                                   <DialogContent>
-                                    <DialogContentText id="alert-dialog-description">
+                                    <DialogContentText id="alert-dialog-description" style={{color: "rgba(255,255,255,1)"}}>
                                       Are you sure you want to delete this
                                       password?
                                     </DialogContentText>
