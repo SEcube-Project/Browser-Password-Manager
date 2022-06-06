@@ -118,3 +118,7 @@ class L1:
     def _str2charptr(self, s: str):
         ln = len(s)
         return (ln, (ctypes.c_char*ln)(*[ord(c) for c in s]))
+
+    def restart(self):
+        self._c_lib.destroyL1Instance(self._l1inst)
+        self._l1inst = self._c_lib.createL1Instance()

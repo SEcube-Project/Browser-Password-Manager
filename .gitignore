@@ -1,4 +1,6 @@
 HostMiddleware/__pycache__/**
+HostMiddleware/APIs/__pycache__/**
+HostMiddleware/APIs/v0/__pycache__/**
 .DS_Store
 *.o
 *.d
@@ -7,6 +9,7 @@ HostMiddleware/__pycache__/**
 init
 HostMiddleware/Makefile
 HostMiddleware/BPMMiddleware
+<<<<<<< HEAD
 *.aux
 *.log
 *.out
@@ -22,3 +25,6 @@ HostMiddleware/BPMMiddleware
 *.lof
 *.lot
 *.synctex.gz
+=======
+HostMiddleware/flask_session/**
+>>>>>>> a036dc72d37007832f1f4f90588b7847f8fe5c7c
