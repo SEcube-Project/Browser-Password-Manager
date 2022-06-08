@@ -18,9 +18,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   getStoredOptions().then((options) => {
     console.log(options);
     if (
-      changeInfo.status === "complete" &&
-      options.is_autocomplete_enabled &&
-      !options.is_locked
+      changeInfo.status === "complete"
     ) {
       chrome.scripting.executeScript({
         target: { tabId: tabId },
