@@ -40,19 +40,33 @@ const App: React.FC<{}> = () => {
    * @param value - the input string
    */
   const handleLockValueChange = (value: string) => {
-    console.log(value);
+    // console.log(value);
 
     // If value contains NaN, set to 0
     if (isNaN(Number(value))) {
       setOptions({
         ...options,
-        lock_after_minutes: 0,
+        lock_after_minutes: 1,
       });
     } else {
-      setOptions({
-        ...options,
-        lock_after_minutes: Number(value),
-      });
+      if (Number(value) < 1) {
+        setOptions({
+          ...options,
+          lock_after_minutes: 1,
+        });
+      } else {
+        if (Number(value) > 1440) {
+          setOptions({
+            ...options,
+            lock_after_minutes: 1440,
+          });
+        } else {
+          setOptions({
+            ...options,
+            lock_after_minutes: Number(value),
+          });
+        }
+      }
     }
   };
 
@@ -90,7 +104,9 @@ const App: React.FC<{}> = () => {
     );
   }
 
-  function handleAutocompleteChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleAutocompleteChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
     setOptions({
       ...options,
       is_autocomplete_enabled: event.target.checked,
@@ -105,7 +121,12 @@ const App: React.FC<{}> = () => {
           <Grid item>
             <FormGroup>
               <FormControlLabel
-                control={<Switch checked={options?.is_autocomplete_enabled ?? false} onChange={handleAutocompleteChange} />}
+                control={
+                  <Switch
+                    checked={options?.is_autocomplete_enabled ?? false}
+                    onChange={handleAutocompleteChange}
+                  />
+                }
                 label="Autocomplete"
               />
             </FormGroup>

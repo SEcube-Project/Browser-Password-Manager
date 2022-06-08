@@ -26,12 +26,7 @@ export default function AddPasswordElement(props) {
   const [password, setPassword] = useState("");
   const [url, setUrl] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [pin, setPin] = useState("");
 
-    // track the changes on the props.pin with a use effect
-    useEffect(() => {
-      setPin(props.pin);
-    }, [props.pin]);
     
 
   const handleClickShowPassword = () => {
@@ -65,8 +60,8 @@ export default function AddPasswordElement(props) {
     const { enqueueSnackbar } = useSnackbar();
   
     const handleClickVariant = () => () => {
-      console.log("url", url, "username", username, "password", password);
-      insertNewPassword(url, username, password, pin, "POST")
+      // console.log("url", url, "username", username, "password", password);
+      insertNewPassword(url, username, password, "POST")
       enqueueSnackbar("Password saved correctly", {variant: "success"});
     };
   

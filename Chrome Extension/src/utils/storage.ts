@@ -6,7 +6,6 @@ export interface LocalStorageOptions {
   is_autocomplete_enabled: boolean;
   lock_after_minutes: number;
   is_locked: boolean;
-  end_lock_time: number;
 }
 
 export type LocalStorageKeys = keyof LocalStorage;
@@ -34,7 +33,7 @@ export function getStoredOptions(): Promise<LocalStorageOptions> {
         reject(chrome.runtime.lastError);
       } else {
         resolve(res.options);
-        console.log(res.options);
+        // console.log(res.options);
       }
     });
   });

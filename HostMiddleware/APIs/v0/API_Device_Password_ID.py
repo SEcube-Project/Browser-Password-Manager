@@ -32,7 +32,7 @@ class API_Device_Password_ID(API_DeviceBase):
 
     def put(self, indx: int, id: int):
 
-        if not self._setdev_checklogin(indx):
+        if not self._setdev_checklogin(indx,self._utils):
             return {'error': 'Could not login: wrong pin or device not found'}, 403
 
         try:
