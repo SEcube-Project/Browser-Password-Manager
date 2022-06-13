@@ -329,7 +329,7 @@ int main(){
 		l1->L1SEGetAllPasswords(passList);
 		for(se3Pass elem : passList){
 			if(l1->L1SEDeletePassword(elem.id)){
-				printf("Deleted pass %d: \n", elem.id);
+				printf("Deleted pass %d \n", elem.id);
 			} else {
 				printf("ERROR: Unable to delete pass %d: \n", elem.id);
 				exitWithError();
@@ -354,8 +354,40 @@ int main(){
 			exitWithError();
 		}
 
-		if(l1->L1SEGenerateRandomPassword(100, true, true, true, pass)){
+		if(l1->L1SEGenerateRandomPassword(10, false, false, false, pass)){
 			printf("\n\nNew generated password: ");
+			printArray(pass.get(),  10);
+		} else {
+			printf("\n\nERROR: Unable to generated password");
+			exitWithError();
+		}
+
+		if(l1->L1SEGenerateRandomPassword(10, true, false, false, pass)){
+			printf("\nNew generated password: ");
+			printArray(pass.get(),  10);
+		} else {
+			printf("\nERROR: Unable to generated password");
+			exitWithError();
+		}
+
+		if(l1->L1SEGenerateRandomPassword(10, true, true, false, pass)){
+			printf("\nNew generated password: ");
+			printArray(pass.get(),  10);
+		} else {
+			printf("\n\nERROR: Unable to generated password");
+			exitWithError();
+		}
+
+		if(l1->L1SEGenerateRandomPassword(10, true, true, true, pass)){
+			printf("\nNew generated password: ");
+			printArray(pass.get(),  10);
+		} else {
+			printf("\n\nERROR: Unable to generated password");
+			exitWithError();
+		}
+
+		if(l1->L1SEGenerateRandomPassword(100, true, true, true, pass)){
+			printf("\nNew generated password: ");
 			printArray(pass.get(),  100);
 		} else {
 			printf("\n\nERROR: Unable to generated password");

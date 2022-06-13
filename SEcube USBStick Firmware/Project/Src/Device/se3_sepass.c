@@ -38,10 +38,17 @@ se3_flash_it pass_iterator = { .addr = NULL }; /**< Global variable required by 
 /* Support structure for random password generation with custom configuration
  * like uppercase, numbers and special characters
  * */
+const uint8_t characters_num = 26;
 const uint8_t lowercase_chars[26] = "abcdefghijklmnopqrstuvwxyz";
 const uint8_t uppercase_chars[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const uint8_t numbers_num = 10;
 const uint8_t numbers_chars[10] = "1234567890";
+const uint8_t special_num = 13;
 const uint8_t special_chars[13] = "-_.:;,?&%$!@#";
+typedef struct {
+	uint8_t* set;
+	uint8_t len;
+} CharacterSet;
 
 
 /**
@@ -401,48 +408,62 @@ uint16_t generate_random_password(uint16_t req_size, const uint8_t* req, uint16_
 	memcpy(&numbers, req + 3, 1);
 	memcpy(&special_char, req + 4, 1);
 
-	uint8_t* all_usable = (uint8_t*)malloc(numbers*10 + special_char*13 + uppercase*26 + 26);
-	uint8_t all_usable_count = 26;
-
-	// Construct support array for the selected mode and size
-	memcpy(all_usable, lowercase_chars, 26);
-	if(uppercase == 1) {
-		memcpy(all_usable + all_usable_count, uppercase_chars, 26);
-		all_usable_count+=26;
-	}
-	if(numbers == 1) {
-		memcpy(all_usable + all_usable_count, numbers_chars, 10);
-		all_usable_count+=10;
-	}
-	if(special_char == 1) {
-		memcpy(all_usable + all_usable_count, special_chars, 13);
-		all_usable_count+=13;
-	}
-
 	if(pass_len > 1024){
 		return SE3_ERR_MEMORY;
 	}
 
+	uint8_t set_number = 1 + numbers + special_char + uppercase;
+	CharacterSet* all_usable = malloc(set_number*sizeof *all_usable);
+
+	// Construct support array for the selected mode and size
+	CharacterSet base_set;
+	base_set.set = (uint8_t*)&lowercase_chars;
+	base_set.len = characters_num;
+	all_usable[0] = base_set;
+
+	uint8_t idx = 1;
+	if(uppercase == 1) {
+		CharacterSet upper_set;
+		upper_set.set = (uint8_t*)&uppercase_chars;
+		upper_set.len = characters_num;
+		all_usable[idx++] = upper_set;
+	}
+	if(numbers == 1) {
+		CharacterSet number_set;
+		number_set.set = (uint8_t*)&numbers_chars;
+		number_set.len = numbers_num;
+		all_usable[idx++] = number_set;
+	}
+	if(special_char == 1) {
+		CharacterSet special_set;
+		special_set.set = (uint8_t*)&special_chars;
+		special_set.len = special_num;
+		all_usable[idx++] = special_set;
+	}
+
+
 	// Allocate space for the key content
 	uint8_t *key_data = NULL;
-	key_data = (uint8_t*)malloc(pass_len);
+	key_data = (uint8_t*)malloc(pass_len*2);
 	if(key_data == NULL){
 		if(all_usable != NULL){ free(all_usable); }
 		return SE3_ERR_MEMORY;
 	} else {
-		memset(key_data, 0, pass_len);
+		memset(key_data, 0, pass_len*2);
 	}
 
 	// Generate the random key
-	if(se3_rand(pass_len, key_data) != pass_len){
+	if(se3_rand(2*pass_len, key_data) != 2*pass_len){
 		if(key_data != NULL){ free(key_data);	}
 		if(all_usable != NULL){ free(all_usable); }
 		return SE3_ERR_HW;
 	}
 
 	// Map the random values into the selected characters
+	CharacterSet tmp;
 	for (int i = 0; i < pass_len; i++){
-		resp[i] = all_usable[((uint8_t)key_data[i]) % all_usable_count];
+		tmp = all_usable[((uint8_t)key_data[i*2]) % set_number];
+		resp[i] = tmp.set[((uint8_t)key_data[i*2+1]) % tmp.len];
 	}
 
 	*resp_size = pass_len;
