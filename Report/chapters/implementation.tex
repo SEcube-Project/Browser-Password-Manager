@@ -1,2 +1,25 @@
 \chapter{Implementation Details}
 This is where you explain what you have implemented and how you have implemented it. Place here all the details that you consider important, organize the chapter in sections and subsections to explain the development and your workflow.\\Given the self-explicative title of the chapter, readers usually skip it. This is ok, because this entire chapter is simply meant to describe the details of your work so that people that are very interested (such as people who have to evaluate your work or people who have to build something more complex starting from what you did) can fully understand what you developed or implemented.\\Don't worry about placing too many details in this chapter, the only essential thing is that you keep everything tidy, without mixing too much information (so make use of sections, subsections, lists, etc.). As usual, pictures are helpful.
+
+\section{Host Middleware}
+
+The Host Middleware is a software intended to run in the user's PC (for example as a daemon on Linux or as a service on Windows) and to provide a secure connection between the user's PC and the SECube board. This means that it acts as a bridge between the Chromium Extension (the frontend for the user) and the board, thus the Middleware is developed with security in mind.\\
+
+It's main job is to serve some HTTP requests. In fact, it provides REST APIs to allow the Chromium Extension to interact with the features exposed by the SECube's firmware. This means that it acts as a web server with HTTPs support in order to provide a secure connections.
+
+\subsection{The web server}
+HTTPs is a secure protocol that uses a TLS connection to provide a secure connection between two endpoints, and it's a replacement for the HTTP protocol. This means that HTTPs provides the following benefits:
+
+\begin{itemize}
+    \item Authentication
+    \item Privacy: the connection is encrypted and the data is encrypted
+    \item Integrity: the data is signed and the signature is verified
+\end{itemize}
+
+Thus, HTTPs helps to avoid the risk of eavesdropping, which is a risk that can be exploited by an attacker to intercept the data and modify it. More in general, it avoids \textit{Man In The Middle} attacks. 
+
+The middleware is developed mainly in Python. To implement the web server, Flask is used as module. It natively supports HTTPs and a self-signed certificate is used, generated with \textit{openssl}.\\
+
+\subsection{The REST APIs}
+The exposed APIs are completely complaint to the REST principles. It uses cookies to authenticate the user, and it uses JSON as exchange data format. 
+
