@@ -9,19 +9,16 @@ chrome.runtime.onInstalled.addListener(() => {
     is_autocomplete_enabled: true,
     lock_after_minutes: 5,
     is_locked: true,
-    end_lock_time: 0,
   };
   setStoredOptions(values);
-  console.log(getStoredOptions());
+  // console.log(getStoredOptions());
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  console.log(getStoredOptions());
   getStoredOptions().then((options) => {
-    console.log(options.is_autocomplete_enabled);
+    console.log(options);
     if (
-      changeInfo.status === "complete" &&
-      options.is_autocomplete_enabled === false
+      changeInfo.status === "complete"
     ) {
       chrome.scripting.executeScript({
         target: { tabId: tabId },
@@ -29,20 +26,5 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       });
     }
   });
-});
-
-// Print hello world every second
-setInterval(() => {
-  getStoredOptions().then((options) => {
-    if (options.is_locked === false) {
-      if (options.end_lock_time > Date.now()) {
-        setStoredOptions({
-          ...options,
-          is_locked: true,
-        });
-      }
-    } else {
-      console.log("not locked");
-    }
-  });
-}, 1000);
+}
+);

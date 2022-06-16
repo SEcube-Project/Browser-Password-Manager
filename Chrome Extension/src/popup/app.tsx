@@ -4,10 +4,9 @@ import { getStoredOptions } from "../utils/storage";
 import FixedBottomNavigation from "./components/main";
 
 const App: React.FC<{}> = () => {
-
   const [pageHostname, setPageHostname] = useState("");
-  var value = 0;
-  
+  const [stateValue, setStateValue] = useState("");
+
   useEffect(() => {
     chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
       var full_url = tabs[0].url;
@@ -19,36 +18,33 @@ const App: React.FC<{}> = () => {
     });
   }, []);
 
-
-  function checkIsLocked(): boolean {
+  useEffect(() => {
     getStoredOptions().then((options) => {
-      console.log("app options", options);
-      if(options.is_locked){
-        console.log("return: true")
-        value = 4
-        return true;
+      // console.log("app options", options);
+      if (options.is_locked) {
+        // console.log("return: true");
+        setStateValue("lock")
+        // console.log("stateValue:", stateValue);
       } else {
-        value = 0
-        console.log("return: false")
-        return false;
+        setStateValue("tab")
+        // console.log("stateValue:", stateValue);
+        // console.log("return: false");
       }
-    }
-    );
-    console.log("arrivato qua");
-    return false;
-  }
-
-
+    });
+  }, []);
 
   return (
     <div>
-      <Box sx={{maxWidth: "100%", maxHeight: "100%"}}>
-        {checkIsLocked() && <FixedBottomNavigation hostname={pageHostname} default_state={4}/>}
-        {!checkIsLocked() && <FixedBottomNavigation hostname={pageHostname} default_state={0}/>}
+      <Box sx={{ maxWidth: "100%", maxHeight: "100%" }}>
+        {
+          <FixedBottomNavigation
+            hostname={pageHostname}
+            default_state={stateValue}
+          />
+        }
       </Box>
     </div>
   );
 };
-
 
 export default App;

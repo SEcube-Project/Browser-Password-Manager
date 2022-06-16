@@ -17,7 +17,8 @@
   "host_permissions": [
     "http://*/*",
     "https://*/*",
-    "*://extensions/*"
+    "*://extensions/*",
+    "<all_urls>"
   ],
   "permissions": [
     "storage",
@@ -28,7 +29,9 @@
     "webNavigation",
     "webRequest",
     "notifications",
-    "identity"
+    "identity",
+    "cookies",
+    "alarms"
   ],
   "options_page": "options.html",
   "background": {
@@ -38,7 +41,8 @@
     {
       "matches": [
         "http://*/*",
-        "https://*/*"
+        "https://*/*",
+        "<all_urls>"
       ],
       "js": [
         "content.js"

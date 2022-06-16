@@ -69,12 +69,6 @@ export default function MyVault(props) {
   const [readOnlyURL, setReadOnlyURL] = React.useState(true);
   const [readOnlyPassword, setReadOnlyPassword] = React.useState(true);
   const [deleteId, setDeleteId] = React.useState(-1);
-  const [pin, setPin] = React.useState("");
-
-  // track the changes on the props.pin with a use effect
-  React.useEffect(() => {
-    setPin(props.pin);
-  }, [props.pin]);
 
 
   const handleClickShowPassword = () => {
@@ -116,7 +110,7 @@ export default function MyVault(props) {
       for (let index = 0; index < PasswordData.length; index++) {
         if (PasswordData[index].id === item.id) {
           PasswordData[index] = newItem;
-          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password, pin);
+          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password);
           break;
         }
       }
@@ -131,7 +125,7 @@ export default function MyVault(props) {
       for (let index = 0; index < PasswordData.length; index++) {
         if (PasswordData[index].id === item.id) {
           PasswordData[index] = newItem;
-          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password, pin);
+          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password);
           break;
         }
       }
@@ -146,7 +140,7 @@ export default function MyVault(props) {
       for (let index = 0; index < PasswordData.length; index++) {
         if (PasswordData[index].id === item.id) {
           PasswordData[index] = newItem;
-          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password, pin);
+          updatePassword(newItem.id, newItem.hostname, newItem.username, newItem.password);
           break;
         }
       }
@@ -175,7 +169,7 @@ export default function MyVault(props) {
   function handleCloseYesDelete() {
     const newPasswordData = PasswordData.filter((item) => item.id !== deleteId);
     setPasswordData(newPasswordData);
-    deletePassword(deleteId, pin);
+    deletePassword(deleteId);
     setPopup(false);
   }
 
@@ -234,7 +228,7 @@ export default function MyVault(props) {
           },
         })}
       >
-        {console.log("PasswordData", PasswordData)}
+        {/* {console.log("PasswordData", PasswordData)} */}
         <Paper elevation={0} sx={{ maxWidth: "100%" }}>
           <FireNav component="nav" disablePadding>
             <List
@@ -305,15 +299,16 @@ export default function MyVault(props) {
                                 </IconButton>
                                 <Dialog
                                   open={popup}
+                                  style={{backgroundColor: "rgba(25, 118, 210, 0.5)"}}
                                   onClose={() => handleCloseNoDelete()}
                                   aria-labelledby="alert-dialog-title"
                                   aria-describedby="alert-dialog-description"
                                 >
-                                  <DialogTitle id="alert-dialog-title">
+                                  <DialogTitle id="alert-dialog-title" style={{color: "rgba(255,255,255,1)"}}>
                                     {"Delete Password"}
                                   </DialogTitle>
                                   <DialogContent>
-                                    <DialogContentText id="alert-dialog-description">
+                                    <DialogContentText id="alert-dialog-description" style={{color: "rgba(255,255,255,1)"}}>
                                       Are you sure you want to delete this
                                       password?
                                     </DialogContentText>

@@ -6,6 +6,7 @@ HostMiddleware/APIs/v0/__pycache__/**
 *.d
 *.so
 */.vscode/**
+*.zip
 init
 HostMiddleware/Makefile
 HostMiddleware/BPMMiddleware

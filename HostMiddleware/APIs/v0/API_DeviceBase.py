@@ -1,7 +1,7 @@
 from datetime import timedelta
 import logging
 
-from flask import session
+from flask import session, request
 from flask_restful import Resource, reqparse
 from werkzeug.exceptions import BadRequest
 
