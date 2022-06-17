@@ -157,5 +157,41 @@ The Add section is shown in image \ref{fig:add}
 
 \subsection{Options}
 
+The options are kept as simple as possible. In fact there are only two of them:
+
+\begin{enumerate}
+    \item \textbf{Autocomplete}:it allows to autocomplete the login form when the page is uploaded
+    \item \textbf{Lock After}: it allows to specify the minutes after which the extension will be locked and ask again the password.
+\end{enumerate}
+
+In order to retrieve the options when the users reopens the extension, the local storage is used. Since the options are not sensible data, it is not important that the data are encrypted, and in fact the local storage was the correct choice. In a future implementation, since Chome support by default the sync storage, the options can be stored in the sync storage so that each Chrome browser connected to the same Google account will have the same options. This uses the Google sync API and it can be taken as it is, supposing it is secure out of the box. 
+
+% insert image
+
 \subsection{Expandable Menu and Buttons}
 
+In the section of the extension where we have the entries with the password, there always is a expandable menu. When expanded, the entry shows the username, the password and the URL. The expanded menu is shown in % insert the image
+
+To improve security, the password is hidden by default. This rule applies to all field where there is a password. However, if the user wants to see the password, there is an eye button at the end of the password field, that allows to show the password.
+
+When the menu is expanded, near each field there are two buttons:
+
+\begin{enumerate}
+    \item \textbf{Edit}: it allows to edit the field
+    \item \textbf{Copy}: it copies the content of the field to the clipboard.
+\end{enumerate}
+
+In addition to the expandable menu there is also a button that allows to delete the password. When the button is clicked, the user is prompted with a confirmation dialog. The button of the confirmation dialog are colored in a way such that the delete button is red, and the keep button is green.
+
+
+\section{Autocomplete}
+
+This feature is a key part of the extension, since it improves drastically the user experience and usability. The extension is able to autocomplete the login form when the page is loaded. 
+The idea behind the autocomplete is the following: when the page is loaded, the extension retrieves the username and password text fields. Then, the extension, knowing the current website, makes a request to the Middleware to retrieve the username and password of the website. If the username and password are found, the extension automatically fills the fields. Otherwise, nothing happens.
+
+The autocomplete feature works in conjunction with the lock after. In fact, if the extension is locked, the autocomplete feature is disabled. Indeed, if the extension is unlocked, the autocomplete feature follows what the user set in the options.
+\section{Lock After}
+
+This feature is very important from two points of view: first, it allows the user to keep the extension unlocked for a certain period of time avoiding the need to enter the password every time the extension is opened. Second, it allows the user to lock the extension after a certain period of time, and ask again the password. So it touches both usability and security, finding a balance between the two. The is balance stands is the customizability; in fact the time, in minutes, after which the extension will be locked is configurable in the options. 
+
+The implementation is pretty straightforward. When the user unlocks the extension, a timestamp is sent to the Middleware, that saves it. After that, at every request, the Middleware checks if the current timestamp is greater than the saved timestamp. If it is, the Middleware returns 403, and so the extension is locked. Otherwise, the Middleware returns the asked data. 
