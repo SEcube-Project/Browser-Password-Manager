@@ -73,7 +73,7 @@ class L1:
 
     def GetAllPasswords(self, hostname: str = None, llen: int = -1):
 
-        lh, ph = self._str2charptr(hostname) if isinstance(hostname, str) else (0, 0x0)
+        lh, ph = self._str2charptr(hostname) if isinstance(hostname, str) else self._str2charptr("")
         
         hostsize = (ctypes.c_uint16)()
         usersize = (ctypes.c_uint16)()
