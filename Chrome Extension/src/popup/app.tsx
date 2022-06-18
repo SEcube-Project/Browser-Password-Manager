@@ -6,6 +6,7 @@ import FixedBottomNavigation from "./components/main";
 const App: React.FC<{}> = () => {
   const [pageHostname, setPageHostname] = useState("");
   const [stateValue, setStateValue] = useState("");
+  const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
     chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
@@ -20,13 +21,17 @@ const App: React.FC<{}> = () => {
 
   useEffect(() => {
     getStoredOptions().then((options) => {
-      // console.log("app options", options);
+      console.log("app options", options);
       if (options.is_locked) {
         // console.log("return: true");
         setStateValue("lock")
+        setIsLogin(true)
+        // console.log("app:", isLogin)
         // console.log("stateValue:", stateValue);
       } else {
         setStateValue("tab")
+        setIsLogin(false)
+        // console.log("app:", isLogin)
         // console.log("stateValue:", stateValue);
         // console.log("return: false");
       }
@@ -35,11 +40,13 @@ const App: React.FC<{}> = () => {
 
   return (
     <div>
+      {/* {console.log("app", isLogin)} */}
       <Box sx={{ maxWidth: "100%", maxHeight: "100%" }}>
         {
           <FixedBottomNavigation
             hostname={pageHostname}
             default_state={stateValue}
+            is_login={isLogin}
           />
         }
       </Box>
