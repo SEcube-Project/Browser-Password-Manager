@@ -4,15 +4,6 @@
 #include <sstream>
 #include "../Host Password Manager/sources/L0/L0.h"
 
-float cmult(float a, int times) {
-    float c;
-    
-    c = a * (float)times;
-    // std::cout << "#CC: a: %.1f, b: %d, c: %.1f" a, times, c << std::endl;
-
-    return c;
-}
-
 extern "C" void *createL0Instance() {
     return new(std::nothrow) L0;
 }

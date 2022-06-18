@@ -6,6 +6,55 @@ class L1:
     def __init__(self):
         self._libname = f"{pathlib.Path().absolute()}/lib.so"
         self._c_lib = ctypes.CDLL(self._libname)
+
+        # Create L1 instance
+        self._c_lib.createL1Instance.argtypes = []
+        self._c_lib.createL1Instance.restype = ctypes.c_void_p
+
+        # Destroy L1 instance
+        self._c_lib.destroyL1Instance.argtypes = [ctypes.c_void_p]
+        self._c_lib.destroyL1Instance.restype = None
+
+        # L1_SelectSECube_Indx
+        self._c_lib.L1_SelectSECube_Indx.argtypes = [ctypes.c_void_p, ctypes.c_char]
+        self._c_lib.L1_SelectSECube_Indx.restype = None
+
+        # L1_Login
+        self._c_lib.L1_Login.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint8, ctypes.c_uint8]
+        self._c_lib.L1_Login.restype = ctypes.c_int
+
+        # L1_Logout
+        self._c_lib.L1_Logout.argtypes = [ctypes.c_void_p]
+        self._c_lib.L1_Logout.restype = ctypes.c_int
+
+        # L1_GetPasswords_Sizes
+        self._c_lib.L1_GetPasswords_Sizes.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.c_char_p, ctypes.c_uint16]
+        self._c_lib.L1_GetPasswords_Sizes.restype = None
+
+        # L1_GetPasswords
+        self._c_lib.L1_GetPasswords.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint32), ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char), ctypes.c_char_p, ctypes.c_uint16]
+        self._c_lib.L1_GetPasswords.restype = ctypes.c_int
+
+        # L1_AddPassword
+        self._c_lib.L1_AddPassword.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint16]
+        self._c_lib.L1_AddPassword.restype = ctypes.c_int
+
+        # L1_ModifyPassword
+        self._c_lib.L1_ModifyPassword.argtypes = [ctypes.c_void_p, ctypes.c_uint32, ctypes.c_char_p, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint16]
+        self._c_lib.L1_ModifyPassword.restype = ctypes.c_int
+
+        # L1_GetPasswordByID
+        self._c_lib.L1_GetPasswordByID.argtypes = [ctypes.c_void_p, ctypes.c_uint32, ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char), ctypes.c_char_p, ctypes.c_uint16]
+        self._c_lib.L1_GetPasswordByID.restype = ctypes.c_int
+
+        # L1_DeletePassword
+        self._c_lib.L1_DeletePassword.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+        self._c_lib.L1_DeletePassword.restype = ctypes.c_int
+
+        # L1_GeneratePassword
+        self._c_lib.L1_GeneratePassword.argtypes = [ctypes.c_void_p, ctypes.c_uint16, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_char_p]
+        self._c_lib.L1_GeneratePassword.restype = ctypes.c_int
+
         self._l1inst = self._c_lib.createL1Instance()
 
     def SelectSECube(self, indx: int):
