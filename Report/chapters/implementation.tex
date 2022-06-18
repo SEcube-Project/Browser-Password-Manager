@@ -212,9 +212,140 @@ During the early development of this project, it was proposed to implement a del
 
 
 \subsection{Flash the firmware}
-This tutorial implies that a working version of Eclipse for C/C++ and the AC6 Tools are available.
-Once the SECube has been connected to the Host computer via both the ST-Link/v2 programmer and the USB connection, the firmware can be flashed.
+This tutorial needs a working version of Eclipse for C/C++ and the AC6 Tools are properly installed in order to build the firmware and flash it to the SECube device. The configuration describes uses the following configuration:
+\begin{itemize}
+	\item ST-Link/v2 programmer
+	\item Eclipse IDE for C/C++ Developers (includes Incubating components) Version: 2022-03 (4.23.0) Build id: 20220310-1457
+	\item Ubuntu 18.04 5.4.0-117-generic
+\end{itemize}
 
-The latest firmware version has been already compiled and available at ``\textit{SEcube USBStick Firmware/Project/Eclipse/USBStick/Debug/USBStick.elf}" but it is possible to import the project into Eclipse and recompile it.
+\subsubsection{Hardware and Compiler setup}
+In this Section are reported the instructions you need to follow to properly connect the SEcube DevKit to the Host PC and to Programmer/debugger, refer to Figure \ref{fig:setup2}. A more detailed configuration tutorial is available via the  \href{https://github.com/SEcube-Project/SEcube-SDK/blob/master/wiki/wiki_rel_012.pdf}{official SECube Wiki}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.42\linewidth]{images/firmware/setup_2}
+	\caption{Connection between the STLink/v2 programmer and the SEcube DevKit}
+	\label{fig:setup2}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.35\linewidth]{images/firmware/setup_4}
+	\caption{System Architecture}
+	\label{fig:setup4}
+\end{figure}
+
+
+Assembling is composed of the following two steps in order to obtain the situation that is available at Figure \ref{fig:setup4}:
+\begin{enumerate}
+	\item Connect the SEcube DevKit with the programmer by means of the JTAG/SWD cable: the
+	cable should be inserted on the JTAG docks on both the programmer (in this case the orientation of the plug is forced from the dock) and the DevKit (in this case you must pay
+	attention in inserting the plug on top of both lines of connectors and with its protrusion
+	oriented towards the inner side of the DevKit).
+	\item Connect the ST-Link/v2 with the PC by means of the USB cable.
+\end{enumerate}
+The system assembled is shown in Figure \ref{fig:setup2}, while a close-up on the JTAG connection is in Figure \ref{fig:setup3}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.35\linewidth]{images/firmware/setup_3}
+	\caption{Connection between the STLink/v2 programmer and the SEcubeTM DevKit, close-up (highlighted in red) on the JTAG connector orientation}
+	\label{fig:setup3}
+\end{figure}
+
+
+In order to be able to build and flash the firmware, the AC6 Tools must be installed via Eclipse. The AC6 Tool will install the GNU Embedded Toolchain for ARM, which is a ready-to-use, open
+source suite of tools for C, C++ and Assembly programming targeting ARM Cortex-M and Cortex-R
+family of processors. It includes the GNU Compiler (GCC) and is available free of charge directly
+from ARM for embedded so ware development on both Windows and Linux operating systems.
+The reference platform for this document is the System Workbench for STM32 (SW4STM32) Eclipse
+plugin.
+
+SW4STM32 is an integrated environment that includes:
+\begin{itemize}
+	\item Building tools (GCC-based ARM cross compiler, assembler and linker);
+	\item OpenOCD and GDB debugging tools;
+	\item Flash programming tools
+\end{itemize}
+
+To install SW4STM32 as an Eclipse plugin:
+\begin{enumerate}
+	\item launch Eclipse IDE
+	\item on the toolbar, click «Help » Install New Software...»
+	\item in the Available Software window, click «Add»
+	\item in the Add Repository window, set Name and Location fields as follows, and then click «OK»:
+	\begin{itemize}
+		\item Name: System Workbench for STM32 - Bare Machine edition
+		\item Locaton: http://www.ac6-tools.com/Eclipse-updates/org.openstm32.system-workbench.site
+	\end{itemize}
+	\item select OpenSTM32 Tools and click «Next»
+	\item accept the license agreement and click «Finish» to start the plugin installation, continue the installation also if a warning for incompatible or unsigned components is prompted
+	\item restart Eclipse
+\end{enumerate}
+
+
+
+\subsubsection{Firmware flashing}
+Once the SECube has been connected to the Host computer via both the ST-Link/v2 programmer and the USB connection, the firmware can be imported, compiled and flashed. 
+
+The latest firmware version has been already compiled and available at ``\textit{SEcube USBStick Firmware/Project/Eclipse/USBStick/Release/USBStick.elf}" but it is possible to import the project into Eclipse and recompile it. If you want to use the pre-compiled version, you can skip the following sections and go to Section \ref{sec:firm_configure}.
+
+In order to import the firmware and the software for performing the init, you need to click «File» and then «Import...», as in Figure \ref{fig:setup6}. At this point after having selected «Existing Projects into Workspace» (Figure \ref{fig:setup7}), the first two projects must be imported (Figure \ref{fig:setup8}).
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.35\linewidth]{images/firmware/setup_6}
+	\caption{Project import in Eclipse}
+	\label{fig:setup6}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.55\linewidth]{images/firmware/setup_7}
+	\caption{Import of projects}
+	\label{fig:setup7}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.55\linewidth]{images/firmware/setup_8}
+	\caption{USBStick firmware and Host Password Manager for Initilization}
+	\label{fig:setup8}
+\end{figure}
+
+The first project will be used during configuration of the device while the second one is the firmware itself.
+
+At this point, on the right you should have two projects, you have to Right click over the ``USBStick" one and select ``Build Project" (refer to Figure \ref{fig:setup10}).
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.55\linewidth]{images/firmware/setup_10}
+	\caption{Build the firmware}
+	\label{fig:setup10}
+\end{figure}
+
+\subsubsection{Configuring the device}
+\label{sec:firm_configure}
+Once the firmware, you have to first of all to erase the chip in order to remove the previous pin configuration, by doing a Right click on the project and then ``Target" and then ``Erase Chip...". Once it has finished, you can flash the firmware into to the device by clicking ``Target" and then ``Program Chip..." (refer to Figure \ref{fig:setup11}). In the next window you have to select the ``Release" version and flag the ``Reset after program" before clicking ``OK".
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.55\linewidth]{images/firmware/setup_11}
+	\caption{Flash the firmware}
+	\label{fig:setup11}
+\end{figure}
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.55\linewidth]{images/firmware/setup_11}
+	\caption{Firmware Release version selection}
+	\label{fig:setup12}
+\end{figure}
+
+At this point, once the firmware has been flash, you need to configure the device by setting a pin. Now it's the turn of the second project called ``Host Password Manager".\newline\newline
+You have to open the \texttt{device\_init.cpp} file and check that the name of the first method is set to \texttt{main}. At this point, you can perform the compilation and run the program. This allows to initialize the device and set the master password for the Secure Password Manager (at line 49 it's possible to change the pin). From now, the device is ready to receive commands by the Host Middleware application in order to manage all passwords features.
+
+
+
+
 
 
