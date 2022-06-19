@@ -409,12 +409,15 @@ bool contains_all_characters(uint8_t* pass, uint16_t pass_len, uint8_t uppercase
 		if(symbols == 1 && contains_array(special_chars, 13, pass[i]))		{ set_presence[3] = true; }
 	}
 
-	if(set_presence != NULL){ free(set_presence);	}
 
-	return set_presence[0] &&
+	bool status = set_presence[0] &&
 			(uppercase == 1 ? set_presence[1] : true) &&
 			(number == 1 ? set_presence[2] : true) &&
 			(symbols == 1 ? set_presence[3] : true);
+
+	if(set_presence != NULL){ free(set_presence);	}
+
+	return status;
 }
 
 uint16_t generate_random_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
