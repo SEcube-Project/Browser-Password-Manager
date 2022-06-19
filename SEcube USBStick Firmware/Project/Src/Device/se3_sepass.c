@@ -389,6 +389,34 @@ uint16_t get_all_passwords(uint16_t req_size, const uint8_t* req, uint16_t* resp
 	return SE3_OK;
 }
 
+bool contains_array(const uint8_t* array, uint16_t size, uint8_t character){
+	for (uint16_t i = 0; i < size; i++)
+	{
+		if(array[i] == character)
+			return true;
+	}
+	return false;
+}
+
+bool contains_all_characters(uint8_t* pass, uint16_t pass_len, uint8_t uppercase, uint8_t number, uint8_t symbols){
+	bool* set_presence = (bool*)malloc(4);
+	memset(set_presence, 0, 4);
+	for (uint16_t i = 0; i < pass_len; i++)
+	{
+		if(contains_array(lowercase_chars, 26, pass[i]))					{ set_presence[0] = true; }
+		if(uppercase == 1 && contains_array(uppercase_chars, 26, pass[i]))	{ set_presence[1] = true; }
+		if(number == 1 && contains_array(numbers_chars, 10, pass[i]))		{ set_presence[2] = true; }
+		if(symbols == 1 && contains_array(special_chars, 13, pass[i]))		{ set_presence[3] = true; }
+	}
+
+	if(set_presence != NULL){ free(set_presence);	}
+
+	return set_presence[0] &&
+			(uppercase == 1 ? set_presence[1] : true) &&
+			(number == 1 ? set_presence[2] : true) &&
+			(symbols == 1 ? set_presence[3] : true);
+}
+
 uint16_t generate_random_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_size, uint8_t* resp){
 	uint16_t pass_len = 0;
 	uint8_t special_char = 0;
@@ -432,22 +460,35 @@ uint16_t generate_random_password(uint16_t req_size, const uint8_t* req, uint16_
 		memset(key_data, 0, pass_len);
 	}
 
-	// Generate the random key
-	if(se3_rand(pass_len, key_data) != pass_len){
-		if(key_data != NULL){ free(key_data);	}
-		if(all_usable != NULL){ free(all_usable); }
-		return SE3_ERR_HW;
-	}
+	bool contains_all_sets = true;
+	uint8_t iteration = 0;
+	do{
 
-	// Map the random values into the selected characters
-	for (int i = 0; i < pass_len; i++){
-		resp[i] = all_usable[((uint8_t)key_data[i]) % all_usable_count];
-	}
+		// Generate the random key
+		if(se3_rand(pass_len, key_data) != pass_len){
+			if(key_data != NULL){ free(key_data);	}
+			if(all_usable != NULL){ free(all_usable); }
+			return SE3_ERR_HW;
+		}
 
-	*resp_size = pass_len;
+		// Map the random values into the selected characters
+		for (int i = 0; i < pass_len; i++){
+			resp[i] = all_usable[((uint8_t)key_data[i]) % all_usable_count];
+		}
+
+		*resp_size = pass_len;
+
+		contains_all_sets = contains_all_characters(resp, pass_len, uppercase, numbers, special_char);
+		iteration++;
+	} while(contains_all_sets == false && iteration < 100);
+
 
 	if(key_data != NULL){ free(key_data);	}
 	if(all_usable != NULL){ free(all_usable); }
+
+	if(contains_all_sets == false){
+		return SE3_ERR_MEMORY;
+	}
 
 	return SE3_OK;
 }
