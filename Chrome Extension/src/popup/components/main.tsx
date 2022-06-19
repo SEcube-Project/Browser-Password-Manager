@@ -49,7 +49,7 @@ export default function FixedBottomNavigation(props) {
   const [pageHostname, setPageHostname] = useState("");
   const [isLogin, setIsLogin] = useState<boolean>(false);
   // check the local storage and then change the state if the is_locked is true
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       getStoredOptions().then((options) => {
@@ -61,7 +61,6 @@ export default function FixedBottomNavigation(props) {
     }, 1000);
     return () => clearInterval(interval);
   }, [isLogin]);
-
 
   useEffect(() => {
     if (state === "myvault") {
@@ -90,13 +89,13 @@ export default function FixedBottomNavigation(props) {
   }, [props.hostname]);
 
   useEffect(() => {
-    console.log(props.is_login)
-    if (props.is_login){
-      setIsLogin(true)
+    console.log(props.is_login);
+    if (props.is_login) {
+      setIsLogin(true);
     } else {
-      setIsLogin(false)
+      setIsLogin(false);
     }
-  }, [props.is_login])
+  }, [props.is_login]);
 
   useEffect(() => {
     if (props.default_state) {
@@ -116,12 +115,12 @@ export default function FixedBottomNavigation(props) {
   };
 
   const handlePasswordChange = (event) => {
-    setIsLogin(true)
+    setIsLogin(true);
     setPassword(event.target.value);
   };
 
   function handleOnClickLock(event: Event) {
-    setIsLogin(true)
+    setIsLogin(true);
     setState("lock");
     logout();
     getStoredOptions().then((options) => {
@@ -158,7 +157,7 @@ export default function FixedBottomNavigation(props) {
                   .catch((err) => {
                     console.log(err);
                   });
-                  setState("tab")
+                setState("tab");
               } else {
                 enqueueSnackbar("Login Failed", {
                   variant: "error",
@@ -272,6 +271,22 @@ export default function FixedBottomNavigation(props) {
           <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
             <IntegrationNotistack />
           </FormControl>
+          <div>
+            {" "}
+            {" "}
+            {" "}
+            {" "}
+            {" "}
+            {" "}
+            {" "}
+            <p style={{color: "grey", position: "fixed", bottom: "0px", left: "10px", right: "10px", textAlign: "center"}}>
+              Tesing version: if you are not able to login go to{" "}
+              <a href="https://127.0.0.1:5000/" target="_blank">
+                https://127.0.0.1:5000/
+              </a>{" "}
+              and accept the certificate
+            </p>
+          </div>
         </div>
       )}
     </Box>
