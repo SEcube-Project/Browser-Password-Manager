@@ -3,4 +3,8 @@ In this chapter we expect you to list and explain all the results that you have 
 \section{Known Issues}
 If there is any known issue, limitation, error, problem, etc...explain it in this section. Use a specific subsection for each known issue. Issues can be related to many things, including design issues.
 \section{Future Work}
-Adding a section about how to improve the project is not mandatory but it is useful to show that you actually understood the topics of the project and have ideas for improvements.
+\label{sec:future_work}
+
+The firmware function used to generate a random password, refer to Section \ref{sec:se3_sepass.c}, is based on randomly select $N$ characters from the enabled sets (alphabet, numbers and symbols). The current implementation, being totally random, can generate passwords that do not include all the selected characters. This has been done consciously, since it is the desired behaviour to keep the generation as random as possible. In fact, this feature can be seen as ``generate using some of the enable characters" and this does not implies that at least one of them must be present.
+
+A future work could be related to this, by evaluating the needs of the users and if requested, modify the function to generate a password with at least one character from all the enabled sets. This obviously implies a non-trivial implementation, due to the positions of the mandatory characters and possible weakness.
