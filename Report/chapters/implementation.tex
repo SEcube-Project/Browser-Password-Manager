@@ -192,7 +192,8 @@ This solution has been choose to avoid the problem of a non-uniform distribution
 	Pr(X = A) = $100 \cdot \frac{1}{26+26+10+13} = 1.3 \%$
 \end{center}
 
-Further considerations about the implementation has been done at the Future Work Section \ref{sec:future_work}.
+The firmware function used to generate a random password is based on randomly select $N$ characters from the enabled sets (alphabet lowercase and uppercase, numbers and symbols). The current implementation, is totally random but is able to ensure that at least one character from all the enabled sets is selected. This has been implemented by performing a loop over the just generated password, if it does not contains at least one character for each enabled set, the computation is repeated. In order to avoid an infinite loop, the upper limit of the number of iterations has been set to 100.
+
 
 \subsection{Possible weakness}
 \label{sec:weakness}
