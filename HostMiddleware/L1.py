@@ -3,8 +3,8 @@ import pathlib
 
 class L1:
 
-    def __init__(self):
-        self._libname = f"{pathlib.Path().absolute()}/lib.so"
+    def __init__(self, path_lib: str):
+        self._libname = path_lib
         self._c_lib = ctypes.CDLL(self._libname)
 
         # Create L1 instance
