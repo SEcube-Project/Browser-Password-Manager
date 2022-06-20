@@ -34,10 +34,6 @@ if __name__ == "__main__":
         logger.info("Found running in a clear env")
         application_path = os.path.dirname(os.path.abspath(__file__))
 
-    print(application_path)
-    for f in os.listdir(application_path):
-        print(f)
-
     # remove flask_session directory if it exists
     if os.path.exists("flask_session"):
         for f in os.listdir("flask_session"):
@@ -57,7 +53,7 @@ if __name__ == "__main__":
     if os.name == 'nt':
         path_lib = ".\\high_quality_engineering_lib.dll"
     else:
-        path_lib = f"{pathlib.Path.absolute()}/lib.so"
+        path_lib = f"{os.getcwd()}/lib.so"
     
     path_lib = os.path.join(application_path, path_lib)
     l0 = L0(path_lib=path_lib)
