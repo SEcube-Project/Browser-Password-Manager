@@ -168,7 +168,7 @@ extern "C" int L1_DeletePassword(void *instance, uint32_t id) {
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 
     auto res = l1->L1SEDeletePassword(id);
-    std::cout << "#CC: L1_DeletePassword: " << res << std::endl;
+    // std::cout << "#CC: L1_DeletePassword: " << res << std::endl;
     return res ? 1 : 0;
 }
 
