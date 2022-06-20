@@ -38,15 +38,15 @@ class L1:
         self._c_lib.L1_GetPasswords.restype = ctypes.c_int
 
         # L1_AddPassword
-        self._c_lib.L1_AddPassword.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint16]
+        self._c_lib.L1_AddPassword.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint16, ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint16, ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint16]
         self._c_lib.L1_AddPassword.restype = ctypes.c_int
 
         # L1_ModifyPassword
-        self._c_lib.L1_ModifyPassword.argtypes = [ctypes.c_void_p, ctypes.c_uint32, ctypes.c_char_p, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint16]
+        self._c_lib.L1_ModifyPassword.argtypes = [ctypes.c_void_p, ctypes.c_uint32, ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint16, ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint16, ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint16]
         self._c_lib.L1_ModifyPassword.restype = ctypes.c_int
 
         # L1_GetPasswordByID
-        self._c_lib.L1_GetPasswordByID.argtypes = [ctypes.c_void_p, ctypes.c_uint32, ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char), ctypes.c_char_p, ctypes.c_uint16]
+        self._c_lib.L1_GetPasswordByID.argtypes = [ctypes.c_void_p, ctypes.c_uint32, ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.POINTER(ctypes.c_uint16), ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p]
         self._c_lib.L1_GetPasswordByID.restype = ctypes.c_int
 
         # L1_DeletePassword
