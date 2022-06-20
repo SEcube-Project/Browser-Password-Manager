@@ -3,22 +3,24 @@
 #include <iterator>
 #include <iostream>
 #include <algorithm>
+#include <array>
 #include "../Host Password Manager/sources/L1/L1.h"
+#include "wrapper.hpp"
 
-extern "C" void *createL1Instance() {
+EXPORT_FUNC(void, *createL1Instance)() {
     return new(std::nothrow) L1;
 }
 
-extern "C" void destroyL1Instance(void *instance) {
+EXPORT_FUNC(void, destroyL1Instance)(void *instance) {
     delete (L1 *)instance;
 }
 
-extern "C" void L1_SelectSECube_Indx(void *instance, char indx) {
+EXPORT_FUNC(void, L1_SelectSECube_Indx)(void *instance, char indx) {
     L1 *l1 = reinterpret_cast<L1 *>(instance);
     l1->L1SelectSEcube(indx);
 }
 
-extern "C" int L1_Login(void *instance, uint8_t pin[32], uint8_t is_admin, uint8_t do_force) {
+EXPORT_FUNC(int, L1_Login)(void *instance, uint8_t pin[32], uint8_t is_admin, uint8_t do_force) {
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 
@@ -34,7 +36,7 @@ extern "C" int L1_Login(void *instance, uint8_t pin[32], uint8_t is_admin, uint8
     return l1->L1GetSessionLoggedIn();
 }
 
-extern "C" int L1_Logout(void *instance) {
+EXPORT_FUNC(int, L1_Logout)(void *instance) {
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
     l1->L1Logout();
@@ -42,7 +44,7 @@ extern "C" int L1_Logout(void *instance) {
     return !l1->L1GetSessionLoggedIn();
 }
 
-extern "C" void L1_GetPasswords_Sizes(void *instance, uint16_t *maxHostSize, uint16_t *maxUserSize, uint16_t *maxPassSize, uint16_t *totallen, char *hostfilter, uint16_t hostfilterlen) {
+EXPORT_FUNC(void, L1_GetPasswords_Sizes)(void *instance, uint16_t *maxHostSize, uint16_t *maxUserSize, uint16_t *maxPassSize, uint16_t *totallen, char *hostfilter, uint16_t hostfilterlen) {
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 
@@ -75,7 +77,7 @@ extern "C" void L1_GetPasswords_Sizes(void *instance, uint16_t *maxHostSize, uin
 
 }
 
-extern "C" int L1_GetPasswords(void *instance, uint32_t *ids, uint16_t *hostSizes, uint16_t *userSizes, uint16_t *passSizes, char *hosts, char *users, char *passwords, char *hostfilter, uint16_t hostfilterlen) {
+EXPORT_FUNC(int, L1_GetPasswords)(void *instance, uint32_t *ids, uint16_t *hostSizes, uint16_t *userSizes, uint16_t *passSizes, char *hosts, char *users, char *passwords, char *hostfilter, uint16_t hostfilterlen) {
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 
@@ -110,7 +112,7 @@ extern "C" int L1_GetPasswords(void *instance, uint32_t *ids, uint16_t *hostSize
     return res ? 1 : 0;
 }
 
-extern "C" int L1_AddPassword(void *instance, uint8_t *host_data, uint16_t host_len, uint8_t *user_data, uint16_t user_len, uint8_t *pass_data, uint16_t pass_len) {
+EXPORT_FUNC(int, L1_AddPassword)(void *instance, uint8_t *host_data, uint16_t host_len, uint8_t *user_data, uint16_t user_len, uint8_t *pass_data, uint16_t pass_len) {
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 
@@ -135,7 +137,7 @@ extern "C" int L1_AddPassword(void *instance, uint8_t *host_data, uint16_t host_
     return res ? 1 : 0;
 }
 
-extern "C" int L1_ModifyPassword(void *instance, uint32_t id, uint8_t *host_data, uint16_t host_len, uint8_t *user_data, uint16_t user_len, uint8_t *pass_data, uint16_t pass_len) {
+EXPORT_FUNC(int, L1_ModifyPassword)(void *instance, uint32_t id, uint8_t *host_data, uint16_t host_len, uint8_t *user_data, uint16_t user_len, uint8_t *pass_data, uint16_t pass_len) {
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 
@@ -145,7 +147,7 @@ extern "C" int L1_ModifyPassword(void *instance, uint32_t id, uint8_t *host_data
     return res ? 1 : 0;
 }
 
-extern "C" int L1_GetPasswordByID(void *instance, uint32_t id, uint16_t *hostSize, uint16_t *userSize, uint16_t *passSize, char *host, char *user, char *pass) {
+EXPORT_FUNC(int, L1_GetPasswordByID)(void *instance, uint32_t id, uint16_t *hostSize, uint16_t *userSize, uint16_t *passSize, char *host, char *user, char *pass) {
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 
@@ -163,7 +165,7 @@ extern "C" int L1_GetPasswordByID(void *instance, uint32_t id, uint16_t *hostSiz
     return res ? 1 : 0;
 }
 
-extern "C" int L1_DeletePassword(void *instance, uint32_t id) {
+EXPORT_FUNC(int, L1_DeletePassword)(void *instance, uint32_t id) {
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 
@@ -172,7 +174,7 @@ extern "C" int L1_DeletePassword(void *instance, uint32_t id) {
     return res ? 1 : 0;
 }
 
-extern "C" int L1_GeneratePassword(void *instance, uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, uint8_t enable_numbers_chars, char *generated) {
+EXPORT_FUNC(int, L1_GeneratePassword)(void *instance, uint16_t pass_len, uint8_t enable_upper_case, uint8_t enable_special_chars, uint8_t enable_numbers_chars, char *generated) {
 
     L1 *l1 = reinterpret_cast<L1 *>(instance);
 

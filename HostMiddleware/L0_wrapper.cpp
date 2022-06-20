@@ -3,16 +3,17 @@
 #include <string>
 #include <sstream>
 #include "../Host Password Manager/sources/L0/L0.h"
+#include "wrapper.hpp"
 
-extern "C" void *createL0Instance() {
+EXPORT_FUNC(void *, createL0Instance)() {
     return new(std::nothrow) L0;
 }
 
-extern "C" void destroyL0Instance(void *instance) {
+EXPORT_FUNC(void, destroyL0Instance)(void *instance) {
     delete (L0 *)instance;
 }
 
-extern "C" int L0_getDeviceListSize(void *instance) {
+EXPORT_FUNC(int, L0_getDeviceListSize)(void *instance) {
 
     L0 *l0 = reinterpret_cast<L0 *>(instance);
 
@@ -22,7 +23,7 @@ extern "C" int L0_getDeviceListSize(void *instance) {
     return devicelist.size();
 }
 
-extern "C" int L0_get_DevicePathSize(void *instance) {
+EXPORT_FUNC(int, L0_get_DevicePathSize)(void *instance) {
 
     L0 *l0 = reinterpret_cast<L0 *>(instance);
 
@@ -38,7 +39,7 @@ extern "C" int L0_get_DevicePathSize(void *instance) {
     return maxlen;
 }
 
-extern "C" void L0_getDeviceList(void *instance, char *devicepath, char *serialno, int size) {
+EXPORT_FUNC(void, L0_getDeviceList)(void *instance, char *devicepath, char *serialno, int size) {
 
     L0 *l0 = reinterpret_cast<L0 *>(instance);
     std::vector<std::pair<std::string, std::string>> devicelist;

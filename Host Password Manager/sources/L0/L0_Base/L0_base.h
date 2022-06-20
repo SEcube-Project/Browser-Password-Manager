@@ -37,6 +37,12 @@
 
 #ifdef _WIN32
 	#include "Windows.h"
+
+	#ifdef _WIN32_HATE
+	#include <string>
+	#include <array>
+	#endif
+
 #else
 	#include <sys/types.h>
 	#include <sys/stat.h>

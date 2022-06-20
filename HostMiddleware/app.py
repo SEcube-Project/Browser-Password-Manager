@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import pathlib
 from flask import Flask
 from flask_session import Session
 from flask_restful import Api
@@ -14,6 +15,24 @@ from APIs import Utils
 from APIs.v0 import API_Time, API_Devices, API_Device_Generate, API_Device_Password_ID, API_Device_Sessions, API_Device_Passwords
 
 if __name__ == "__main__":
+
+    logger = logging.getLogger("main")
+    logger.setLevel(logging.DEBUG)
+    c_handler = logging.StreamHandler(stream=sys.stdout)
+    c_handler.setFormatter(CustomFormatter())
+    c_handler.setLevel(logging.DEBUG)
+    logger.addHandler(c_handler)
+
+    # determine if application is a script file or frozen exe
+    if getattr(sys, 'frozen', False):
+        logger.info("Found running in a frozen env")
+        # If the application is run as a bundle, the PyInstaller bootloader
+        # extends the sys module by a flag frozen=True and sets the app 
+        # path into variable _MEIPASS'.
+        application_path = sys._MEIPASS
+    else:
+        logger.info("Found running in a clear env")
+        application_path = os.path.dirname(os.path.abspath(__file__))
 
     # remove flask_session directory if it exists
     if os.path.exists("flask_session"):
@@ -31,16 +50,15 @@ if __name__ == "__main__":
     CORS(app, supports_credentials=True)
     Session(app)
 
-    l0 = L0()
-    l1 = L1()
+    if os.name == 'nt':
+        path_lib = ".\\high_quality_engineering_lib.dll"
+    else:
+        path_lib = f"{os.getcwd()}/lib.so"
+    
+    path_lib = os.path.join(application_path, path_lib)
+    l0 = L0(path_lib=path_lib)
+    l1 = L1(path_lib=path_lib)
     utils = Utils()
-
-    logger = logging.getLogger("main")
-    logger.setLevel(logging.DEBUG)
-    c_handler = logging.StreamHandler(stream=sys.stdout)
-    c_handler.setFormatter(CustomFormatter())
-    c_handler.setLevel(logging.DEBUG)
-    logger.addHandler(c_handler)
 
     device_cnt = l0.getDeviceListSize()
     if not device_cnt > 0:
@@ -54,7 +72,10 @@ if __name__ == "__main__":
     api.add_resource(API_Device_Generate, "/api/v0/device/<int:indx>/generate", resource_class_args=[logger, l0, l1, utils])
     api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1, utils])
     api.add_resource(API_Device_Password_ID, "/api/v0/device/<int:indx>/password/<int:id>", resource_class_args=[logger, l0, l1, utils])
-    app.run(ssl_context=('cert.pem', 'key.pem'), debug=False, threaded=False)
+
+    certpath = os.path.join(application_path, "cert.pem")
+    keypath = os.path.join(application_path, "key.pem")
+    app.run(ssl_context=(certpath, keypath), debug=False, threaded=False)
 
     print()
     logger.info("Exiting...")
