@@ -26,6 +26,7 @@ HostMiddleware/BPMMiddleware
 *.lot
 *.synctex.gz
 HostMiddleware/flask_session/**
+<<<<<<< HEAD
 HostMiddleware/flask_session
 
 HostMiddleware/build
@@ -33,3 +34,5 @@ HostMiddleware/dist
 HostMiddleware/*.dll
 HostMiddleware/BPMMiddleware.exe
 HostMiddleware/__pycache__
+=======
+>>>>>>> origin/wip_pollo_report

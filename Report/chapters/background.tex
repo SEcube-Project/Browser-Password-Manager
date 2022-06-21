@@ -1,2 +1,50 @@
 \chapter{Background}
-In the background chapter you should provide all the information required to acquire a sufficient knowledge to understand other chapters of the report. Suppose the reader is not familiar with the topic; so, for instance, if your project was focused on implementing a VPN, explain what it is and how it works. This chapter is supposed to work kind of like a "State of the Art" chapter of a thesis.\\ Organize the chapter in multiple sections and subsections depending on how much background information you want to include. It does not make any sense to mix background information about several topics, so you can split the topics in multple sections.\\Assume that the reader does not know anything about the topics and the tecnologies, so include in this chapter all the relevant information. Despite this, we are not asking you to write 20 pages in this chapter. Half a page, a page, or 2 pages (if you have a lot of information) for each `topic`(i.e. FreeRTOS, the SEcube, VPNs, Cryptomator, PUFs, Threat Monitoring....thinking about some of the projects...).
+%In the background chapter you should provide all the information required to acquire a sufficient knowledge to understand other chapters of the report. Suppose the reader is not familiar with the topic; so, for instance, if your project was focused on implementing a VPN, explain what it is and how it works. This chapter is supposed to work kind of like a "State of the Art" chapter of a thesis.\\ Organize the chapter in multiple sections and subsections depending on how much background information you want to include. It does not make any sense to mix background information about several topics, so you can split the topics in multple sections.\\Assume that the reader does not know anything about the topics and the tecnologies, so include in this chapter all the relevant information. Despite this, we are not asking you to write 20 pages in this chapter. Half a page, a page, or 2 pages (if you have a lot of information) for each `topic`(i.e. FreeRTOS, the SEcube, VPNs, Cryptomator, PUFs, Threat Monitoring....thinking about some of the projects...).
+
+\subsection*{Password Manager}
+
+A password manager is a computer program that allows users to store, generate, and manage their passwords for local applications and online services.
+A password manager assists in generating and retrieving complex passwords, storing such passwords in an encrypted database, or calculating them on demand.
+
+Types of password managers include:
+
+\begin{itemize}
+    \item locally installed software applications
+    \item online services accessed through website portals
+    \item locally accessed hardware devices that serve as keys
+\end{itemize}
+
+Depending on the type of password manager used and on the functionality offered by its developers, the encrypted database is either stored locally on the user's device or stored remotely through an online file-hosting service. Password managers typically require a user to generate and remember one "master" password to unlock and access any information stored in their databases. Many password manager applications offer additional capabilities that enhance both convenience and security such as storage of credit card and frequent flyer information and autofill functionality.
+
+\subsection*{Locally Installed Software Applications}
+Password managers commonly reside on the user's personal computer or mobile device, in the form of a locally installed software application. These applications can be offline, wherein the password database is stored independently and locally on the same device as the password manager software. Alternatively, password managers may offer or require a cloud-based approach, wherein the password database is dependent on an online file hosting service and stored remotely, but handled by password management software installed on the user's device.
+
+Some offline password managers do not require Internet permission, so there is no leakage of data due to the network. To some extent, a fully offline password manager is more secure, but may be much weaker in convenience and functionality than an online one.
+
+
+\subsection*{Online Services Accessed Through Website Portals}
+
+An online password manager is a website that securely stores login details. They are a web-based version of more conventional desktop-based password manager.
+
+The advantages of online password managers over desktop-based versions are portability (they can generally be used on any computer with a web browser and a network connection, without having to install software), and a reduced risk of losing passwords through theft from or damage to a single PC although the same risk is present for the server that is used to store the users passwords on. In both cases this risk can be prevented by ensuring secure backups are taken.
+
+The major disadvantages of online password managers are the requirements that the user trusts the hosting site and that there is no keylogger on the computer they are using. With servers and the cloud being a focus of cyber attacks, how one authenticates into the online service and whether the passwords stored there are encrypted with a user defined key are just as important. Another important factor is whether one- or two-way encryption is used.
+
+Some online password management systems, such as Bitwarden, are open source, where the source code can be independently audited, or hosted on a user's own machine, rather than relying on the service's cloud.
+
+The use of a web-based password manager is an alternative to single sign-on techniques, such as OpenID or Microsoft's Microsoft account (previously Microsoft Wallet, Microsoft Passport, .NET Passport, Microsoft Passport Network, and Windows Live ID) scheme, or may serve as a stop-gap measure pending adoption of a better method.
+
+\subsection*{Locally Accessed Hardware Devices That Serve as Keys}
+
+Token-based password managers need to have a security token mechanism, wherein a locally-accessible hardware device, such as smart cards or secure USB flash devices, is used to authenticate a user in lieu of or in addition to a traditional text-based password or other two-factor authentication system. The data stored in the token is usually encrypted to prevent probing and unauthorized reading of the data. Some token systems still require software loaded on the PC along with hardware (smart card reader) and drivers to properly read and decode the data.
+
+Credentials are protected using a security token, thus typically offering multi-factor authentication by combining
+something the user has such as a mobile application that generates rolling a Token similar to virtual smart card, smart card and USB stick,
+something the user knows (PIN or password), and/or
+something the user is like biometrics such as a fingerprint, hand, retina, or face scanner.
+There are a few companies that make specific third-party authentication devices, with one of the most popular being YubiKey. But only a few third-party password managers can integrate with these hardware devices. While this may seem like a problem, most password managers have other acceptable two-step verification options, integrating with apps like Google Authenticator and in-built TOTP generators. While third-party token devices are useful in heightening security, they are only considered extra measures for security and convenience, and they are not considered to be essential nor are they critical to the proper functioning of a password manager.
+
+\subsection*{Chrome Extension}
+
+A browser extension is a small software module for customizing a web browser. Browsers typically allow a variety of extensions, including user interface modifications, cookie management, ad blocking, and the custom scripting and styling of web pages.
+The extension to allows the user to interact with the board has been developed using Chrome's WebExtension API, since Google Chrome is the most popular browser in the world. However, since the extension is not embedded in the browser, it can be installed on any browser that is Chromium-based.
