@@ -1,3 +1,69 @@
 \chapter{API}
 \label{api}
-If you developed some source code that is supposed to be used by other software in order to perform some action, it is very likely that you have implemented an API. Use this appendix to describe each function of the API (prototype, parameters, returned values, purpose of the function, etc).
+
+\section*{Middleware HTTPs' API}
+
+\subsection{/api/v0/time}
+Used to work with the timestamp. The timestamp is an integer in seconds. The supported HTTP methods are:
+
+\begin{itemize}
+    \item \texttt{GET}: returns the current timestamp.
+\end{itemize}
+
+\subsection{/api/v0/devices}
+Used to work with the devices. It allows to obtain all the connected boards, in particular for each device the ID, Name and Serial are returned. The API is currently not used by the Extension because it' supposed that only one device at a time is connected. The supported HTTP methods are:
+
+\begin{itemize}
+    \item \texttt{GET}: returns the list of devices.
+\end{itemize}
+
+\subsection{/api/v0/device/\{id\}/sessions}
+Used to manage sessions. The supported HTTP methods are:
+
+\begin{itemize}
+    \item \texttt{GET}: allow to know if the cookie attached to the request represents a valid session or not.
+    \item \texttt{POST}: creates a new session. The \textit{PIN} and the \textit{timestamp} parameters are mandatory. The \textit{timestamp} parameter is an integer in seconds.
+    \item \texttt{DELETE}: forces to invalidate the session attached to the cookie.
+\end{itemize}
+
+\subsection{/api/v0/device/\{id\}/generate}
+Used to generate a new password using the exposed funcionality of the board. The supported HTTP methods are:
+
+\begin{itemize}
+    \item \texttt{GET}: allows to obtain a new randomly generated password. The optional parameters are:
+        \subitem \texttt{length}: the length of the password. The default value is 64.
+        \subitem \texttt{upper}: boolean value that indicates if the password must contain uppercase letters. The default value is 1. Can be 0.
+        \subitem \texttt{special}: boolean value that indicates if the password must contain special characters. The default value is 1. Can be 0.
+        \subitem \texttt{numbers}: boolean value that indicates if the password must contain numeric characters. The default value is 1. Can be 0.
+\end{itemize}
+
+\subsection{/api/v0/device/\{id\}/passwords}
+Used to manage passwords. The supported HTTP methods are:
+
+\begin{itemize}
+    \item \texttt{GET}: allows to obtain the list of passwords. It supports the \texttt{hostname} parameter to filter the list of passwords by hostname. The \texttt{hostname} parameter is a string and it can be partial or complete. For example, if the \texttt{hostname} parameter is \texttt{mple.com}, then the list of passwords will contain passwords that have as hostname \texttt{www.example.com} or similar ones. Each password is represented by a JSON object with the following fields:
+        \subitem \texttt{hostname}: the hostname of the password.
+        \subitem \texttt{password}: the password.
+        \subitem \texttt{username}: the username.
+        \subitem \texttt{id}: the ID of the password.
+    \item \texttt{POST}: allows to add and store in the board a new password. The parameters must be passed via the body in the form of a JSON object. The mandatory parameters are:
+        \subitem \texttt{hostname}: the hostname of the password.
+        \subitem \texttt{password}: the password.
+        \subitem \texttt{username}: the username.
+\end{itemize}
+
+\subsection{/api/v0/device/\{id\}/password/\{id\}}
+Allows to manage a single password. The supported HTTP methods are:
+
+\begin{itemize}
+    \item \texttt{GET}: allows to obtain the password record. The password is represented by a JSON object with the following fields:
+        \subitem \texttt{hostname}: the hostname of the password.
+        \subitem \texttt{password}: the password.
+        \subitem \texttt{username}: the username.
+        \subitem \texttt{id}: the ID of the password.
+    \item \texttt{DELETE}: allows to delete the password.
+    \item \texttt{PUT}: allows to update the password. The parameters must be passed via the body in the form of a JSON object, as the one to add a new password. The mandatory parameters are:
+        \subitem \texttt{hostname}: the hostname of the password.
+        \subitem \texttt{password}: the password.
+        \subitem \texttt{username}: the username.
+\end{itemize}
