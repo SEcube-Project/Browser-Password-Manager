@@ -59,4 +59,52 @@ At each request, the middleware:
 \subsection{How to interface Python with C++?}
 As mentioned above, the middleware is developed in Python. However, the HOST libraries used to communicate with the board are written in C++. This means that the Python code needs to be able to interface with the C++ libraries. In order to do that, the middleware ues the \textit{Ctypes} module. It's a builtin module that allows to interface with C libraries.\\
 
-The first thing .....
+The actual implementation sees some wrappers (both for the \textit{L0} and \textit{L1} libraries). Those wrappers are C functions that uses only C's primitive types as arguments and as return values, because of the way ctypes works. An example of function wrapper is the following one, used to initialize the \textit{L0} library:
+
+\begin{lstlisting}[style=CStyle]
+#ifdef _WIN32
+#include <Windows.h>
+#define __MODIFIER __declspec(dllexport)
+#else
+#define __MODIFIER 
+#endif
+
+#define EXPORT_FUNC(_type, _name) extern "C" __MODIFIER _type _name
+
+EXPORT_FUNC(void *, createL0Instance)() {
+    return new(std::nothrow) L0;
+}
+
+\end{lstlisting}
+
+Once C wrappers are all defined and implemented, all the code needs to be compiled. In this case there is no \textit{main} function, so there is no an executable file to run. Because those functions are meant to be called from the external (i.e. the Python code), the code is compiled as a shared library. On linux, they are compiled as \textit{.so} files. On Windows, they are compiled as \textit{.dll} files. The shared library is then loaded by the Python code.\\
+
+With ctypes, the function wrapper is easily invoked. The first thing that is done is to tell to ctypes what are the arguments and return types of the function, then the function can be called. Because this procedure must be done for each function, a python class has been created to encapsulate the functions. There is a class both for the \textit{L0} and \textit{L1} libraries, and this is an example:
+
+\begin{lstlisting}[style=PyStyle]
+class L0:
+    def __init__(self, path_lib: str):
+        self._libname = path_lib
+        self._c_lib = ctypes.CDLL(self._libname)
+
+        # Create L0 instance
+        self._c_lib.createL0Instance.argtypes = []
+        self._c_lib.createL0Instance.restype = ctypes.c_void_p
+
+        self._l0inst = self._c_lib.createL0Instance()
+\end{lstlisting}
+
+\subsection{How to secure Python code?}
+The python code is not secure. While the C code is compiled into executable code and it's a very difficult job to reverse engineer, the Python code is directly interpreted on the fly, so there is no compilation and the code is in clear. Moreover, it can suffer from \textit{code injection} attacks, so the code must be protected against those attacks.\\
+
+In order to achieve this, a python library is used, called \textit{pyarmor}. Its first job is to obfuscate the code, so write the code in such a way it can't be understood easily by an human. This protects against \textit{code injection} and reverse engineering. The resulting obfuscated script is something like this:
+
+\begin{lstlisting}[style=PyStyle]
+from pytransform import pyarmor_runtime
+pyarmor_runtime()
+__pyarmor__(__name__, __file__, b'\x06\x0f...')
+\end{lstlisting}
+
+Moreover, the original python code (that now is obfuscated) is wrapped with functions that insert timers to prevent debugging and to prevent old stack traces dump. This is done by letting the python code run normally and at the end of each function call (where each function call creates a new stack frame), the frame is cleared. \\
+
+Finally, the last precaution is to wrap everything into a single executable. The middleware is mainly composed of different python files, the shared library and the private and public keys. Using a library called \textit{pyinstaller}, the middleware is packed into a single executable. What \textit{pyinstaller} does is to create an executable that when is executed it creates a temporary folder and extract from itself all the files together with a standalone version of the python interpreter. This is done so that the middleware can be executed without the need to install the python interpreter and without the library installed. Moreover, it protects by possible \textit{code injection} attacks done at the interpreter level. The final job of pyinstaller is to encrypt the content of the executable. Beucase the executable needs to know the key to decrypt it when it's requested by the user, the key is hardcoded into the executable itself, so it's relatively easy to obtain the key but a malicious user needs to do some reverse engineering of the executable itself so it's an increase of time spent on trying to attack the middleware. 
