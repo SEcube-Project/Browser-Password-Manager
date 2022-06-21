@@ -47,15 +47,20 @@ export default function FixedBottomNavigation(props) {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [pageHostname, setPageHostname] = useState("");
-
+  const [isLogin, setIsLogin] = useState<boolean>(false);
   // check the local storage and then change the state if the is_locked is true
-  setInterval(() => {
-    getStoredOptions().then((options) => {
-      if (options.is_locked) {
-        setState("lock");
-      }
-    });
-  }, 1000);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getStoredOptions().then((options) => {
+        console.log("main:", isLogin);
+        if (options.is_locked && !isLogin) {
+          setState("lock");
+        }
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isLogin]);
 
   useEffect(() => {
     if (state === "myvault") {
@@ -84,6 +89,15 @@ export default function FixedBottomNavigation(props) {
   }, [props.hostname]);
 
   useEffect(() => {
+    console.log(props.is_login);
+    if (props.is_login) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
+  }, [props.is_login]);
+
+  useEffect(() => {
     if (props.default_state) {
       // console.log("props.default_state", props.default_state);
       setState(props.default_state);
@@ -101,10 +115,12 @@ export default function FixedBottomNavigation(props) {
   };
 
   const handlePasswordChange = (event) => {
+    setIsLogin(true);
     setPassword(event.target.value);
   };
 
   function handleOnClickLock(event: Event) {
+    setIsLogin(true);
     setState("lock");
     logout();
     getStoredOptions().then((options) => {
@@ -122,14 +138,13 @@ export default function FixedBottomNavigation(props) {
           login(newPassword, res.time + options.lock_after_minutes * 60)
             .then((res) => {
               if (res === true) {
-                setState("tab");
+                setIsLogin(false);
                 enqueueSnackbar("Login Successful", {
                   variant: "success",
                 });
                 getAllPasswordsByHostname(pageHostname)
                   .then((res) => {
                     if (res) {
-                      setState("tab");
                       setCurrentTabPasswords(res.passwords);
                       getStoredOptions().then((options) => {
                         setStoredOptions({
@@ -142,6 +157,7 @@ export default function FixedBottomNavigation(props) {
                   .catch((err) => {
                     console.log(err);
                   });
+                setState("tab");
               } else {
                 enqueueSnackbar("Login Failed", {
                   variant: "error",
@@ -255,6 +271,22 @@ export default function FixedBottomNavigation(props) {
           <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
             <IntegrationNotistack />
           </FormControl>
+          <div>
+            {" "}
+            {" "}
+            {" "}
+            {" "}
+            {" "}
+            {" "}
+            {" "}
+            <p style={{color: "grey", position: "fixed", bottom: "0px", left: "10px", right: "10px", textAlign: "center"}}>
+              Tesing version: if you are not able to login go to{" "}
+              <a href="https://127.0.0.1:5000/" target="_blank">
+                https://127.0.0.1:5000/
+              </a>{" "}
+              and accept the certificate
+            </p>
+          </div>
         </div>
       )}
     </Box>
