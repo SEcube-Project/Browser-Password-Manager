@@ -10,6 +10,13 @@ CPP_SRCS += \
 ../sources/L1/L1_sekey.cpp \
 ../sources/L1/L1_sepass.cpp 
 
+O_SRCS += \
+../sources/L1/L1.o \
+../sources/L1/L1_login_logout.o \
+../sources/L1/L1_security.o \
+../sources/L1/L1_sekey.o \
+../sources/L1/L1_sepass.o 
+
 CPP_DEPS += \
 ./sources/L1/L1.d \
 ./sources/L1/L1_login_logout.d \

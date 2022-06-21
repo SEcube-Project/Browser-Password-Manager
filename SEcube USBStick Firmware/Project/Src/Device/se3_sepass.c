@@ -130,6 +130,9 @@ uint16_t modify_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_s
 		}
 	} else {
 		// If not found
+		if(host != NULL){ free(host);	}
+		if(user != NULL){ free(user);	}
+		if(pass != NULL){ free(pass);	}
 		return SE3_ERR_PARAMS;
 	}
 
@@ -209,6 +212,9 @@ uint16_t add_new_password(uint16_t req_size, const uint8_t* req, uint16_t* resp_
 	// Search in the flash memory if a password with the same ID or same hostname
 	if (se3_pass_equal(&password, &it)) {
 		// Try to delete the record
+		if(host != NULL){ free(host);	}
+		if(user != NULL){ free(user);	}
+		if(pass != NULL){ free(pass);	}
 		return SE3_ERR_PARAMS;
 	}
 
