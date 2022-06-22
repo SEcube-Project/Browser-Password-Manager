@@ -369,7 +369,7 @@ Webpack is a free and open-source module bundler for JavaScript. It is made prim
 % insert image
 \begin{figure}[h!]
     \vspace{0.5cm}
-    \includegraphics[width=\textwidth]{images/webpack-bundle.png}
+    \includegraphics[width=\textwidth]{images/extension/webpack-bundle.png}
     \caption{webpack workflow}
     \label{fig:webpack-bundle} % this is the image label, with which you can refer to the image in any document location.
 \end{figure}
@@ -392,6 +392,26 @@ The main advantages of material UI are:
 
 In this section all design choices are explained. For each key part of the extension there is an image showing it and there is a complete explanation.
 
+\subsection{Login}
+
+The first page of the extension is the login page. Here there is a simple text field, in which you can enter your master password. In addition to that there is a button, to trigger the login action. If the password is correct the extension will show the main page.
+The login page is shown in \autoref{fig:login}.
+
+When clicking the login, if nothing happens, the reason is because the certificate is not trusted. In fact, on the bottom of the extension there is a text, giving brief instruction to trust the certificate. 
+For a better understanding of the process of trusting the certificate, everything is explained is \autoref{sec:accept_certificate}.
+This process is necessary only in the testing process, because in a real world usage, the certificate will be issued by a trusted Certificate Authroity.
+
+
+% insert image
+\begin{figure}[h!]
+    \centering
+    \vspace{0.5cm}
+    \includegraphics[width=0.5\textwidth]{images/extension/login.png}
+    \caption{Login page}
+    \label{fig:login} % this is the image label, with which you can refer to the image in any document location.
+\end{figure}
+
+
 \subsection {Popup and Tab Navigation}
 
 The two key elements of the extension are the popup and the tab navigation. The popup is the main window of the extension and the tab navigation is the bottom part of the popup, in which there are the tabs that are used to navigate between the different sections of the extension. The four tabs are:
@@ -413,7 +433,7 @@ The whole popup with the component just described is shown in image \ref*{fig:po
 \begin{figure}[h!]
     \centering
     \vspace{0.5cm}
-    \includegraphics[width=0.5\textwidth]{images/popup-lock-tab.png}
+    \includegraphics[width=0.5\textwidth]{images/extension/popup-lock-tab.png}
     \caption{Popup, lock button and tabs}
     \label{fig:popup-lock-tab} % this is the image label, with which you can refer to the image in any document location.
 \end{figure}
@@ -431,7 +451,7 @@ The My Vault section is shown in image \ref{fig:my-vault}. It's visible that whe
 \begin{figure}[h!]
     \centering
     \vspace{0.5cm}
-    \includegraphics[width=0.5\textwidth]{images/my-vault.png}
+    \includegraphics[width=0.5\textwidth]{images/extension/my-vault.png}
     \caption{My Vault section of the extension}
     \label{fig:my-vault} % this is the image label, with which you can refer to the image in any document location.
 \end{figure}
@@ -442,7 +462,7 @@ The My Vault section is shown in image \ref{fig:my-vault}. It's visible that whe
 \begin{figure}[h!]
     \centering
     \vspace{0.5cm}
-    \includegraphics[width=0.5\textwidth]{images/generate.png}
+    \includegraphics[width=0.5\textwidth]{images/extension/generate.png}
     \caption{Generate section of the extension}
     \label{fig:generate} % this is the image label, with which you can refer to the image in any document location.
 \end{figure}
@@ -466,7 +486,7 @@ The Add section is shown in image \ref{fig:add}
 \begin{figure}[h!]
     \centering
     \vspace{0.5cm}
-    \includegraphics[width=0.5\textwidth]{images/add.png}
+    \includegraphics[width=0.5\textwidth]{images/extension/add.png}
     \caption{Add section of the extension}
     \label{fig:add} % this is the image label, with which you can refer to the image in any document location.
 \end{figure}

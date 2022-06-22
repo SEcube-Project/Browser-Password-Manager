@@ -1,7 +1,27 @@
 \chapter{Results}
 In this chapter we expect you to list and explain all the results that you have achieved. Pictures can be useful to explain the results. Think about this chapter as something similar to the demo of the oral presentation. You can also include pictures about use-cases (you can also decide to add use cases to the high level overview chapter).
 \section{Known Issues}
-If there is any known issue, limitation, error, problem, etc...explain it in this section. Use a specific subsection for each known issue. Issues can be related to many things, including design issues.
+
+\subsection{Extension}
+\label{sec:extension}
+A possible flaw of the extension is the use of the local storage. In fact, as stated by Google
+\begin{quote}
+    \textit{    Confidential user information should not be stored! The storage area isn't encrypted.
+    }
+\end{quote}
+This may cause some problems regarding privacy. However, to avoid explicit flaws, only the extension options are store in local storage. No sensible information are stored.
 \section{Future Work}
 \label{sec:future_work}
+
+\subsection{Extension}
+\subsubsection{Local Storage}
+Starting from what is explained in \autoref{sec:extension}, a possible improvement is to use a secure storage. For example these data can be encrypted and saved in a secure place. However, this won't allow any kind of synchronization between Google devices, since the local storage can be extended to sync storage, in which data are synced in a place accessible by all chrome devices connected to the same Google account.
+
+\subsubsection{Autocomplete}
+The autocomplete feature is working properly on some websites but not on others. In fact, since all web pages are different, the used algorithm is not suitable for all websites. A possible improvement is to use a more general algorithm, which is able to handle all websites.
+
+\subsubsection{Adding and Modifying Notification}
+Popular password manager, such as Bitwarden, have two amazing features called \textbf{Login Notification} and \textbf{Change Password Notification}. These features are very useful for the user to automatically track password changes or new accounts.
+A possible future work would be to add a notification to ask the user if the username and the password of the new account needs to be saved. By doing this, the user does not have to manually add the new account to My Vault.
+The same idea can be applied to the change of password. If the user change the password of an account, the extension can automatically ask the user if the password needs to be updated.
 
