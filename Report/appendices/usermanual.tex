@@ -1,11 +1,14 @@
 \chapter{User Manual}
 \label{usermanual}
 
+<<<<<<< HEAD
 
 
 In the user manual you should explain, step-by-step, how to reproduce the demo that you showed in the oral presentation or the results you mentioned in the previous chapters.\\ If it is necessary to install some toolchain that is already well described in the original documentation (i.e., Espressif's toolchain for ESP32 boards or the SEcube toolchain) just insert a reference to the original documentation (and remember to clearly specify which version of the original documentation must be used). There is no need to copy and paste step-by-step guides that are already well-written and available.\\The user manual must explain how to re-create what you did in the project, no matter if it is low-level code (i..e VHDL on SEcube's FPGA), high-level code (i.e., a GUI) or something more heterogeneous (i.e. a bunch of ESP32 or Raspberry Pi communicating among them and interacting with other devices).
 
 
+=======
+>>>>>>> origin/master
 \subsection{Firmware}
 This tutorial needs a working version of Eclipse for C/C++ and the AC6 Tools are properly installed in order to build the firmware and flash it to the SECube device. The configuration describes uses the following configuration:
 \begin{itemize}
@@ -139,16 +142,12 @@ Once the firmware, you have to first of all to erase the chip in order to remove
 At this point, once the firmware has been flash, you need to configure the device by setting a pin. Now it is the turn of the second project called ``Host Password Manager".\newline\newline
 You have to open the \texttt{device\_init.cpp} file and check that the name of the first method is set to \texttt{main}. At this point, you can perform the compilation and run the program. This allows to initialize the device and set the master password for the Secure Password Manager (at line 49 it is possible to change the pin). From now, the device is ready to receive commands by the Host Middleware application in order to manage all passwords features.
 
-
-
-
-
 \section{Host Middleware}
 
-In this section, we will describe how to build and run the host middleware, both on Linux and Windows. The build process is not necessary because a ready-to-run executable will be provided both for Linux and Windows. However, if there are problems in executing them, the build process can be used to try to launch the executable.
+This section will describe how to build and run the host middleware, both on Linux and Windows. The build process is not necessary because a ready-to-run executable will be provided for the two opearting systems. However, if there are problems in executing them, the build process can be used as a workaround.
 
 \begin{warning}
-	Because of all the dependencies and operations to do to build, some problems may occurr. This section will try to indicate all the necessary software that is required, but unfortunately the successful build of the host middleware is not guaranteed because of the heterogeneous nature of our computers.
+Because of all the dependencies and operations to achieve a build, some problems may occurr. This section will try to indicate all the necessary eoftware that are required, but unfortunately the successful build of the host middleware is not guaranteed because of the heterogeneous nature of computers.
 \end{warning}
 
 \subsection{Linux}
@@ -192,10 +191,13 @@ Unfortunately, on Windows there is a lot more work to do.
 Python 3.9.x is needed. If you are not sure it's installed on your system, try to launch a Powershell console and type \texttt{python --version}. If you get \texttt{Python 3.9.0} or similar means that Python is installed. Otherwise, you need to install it. \\
 
 \begin{warning}
-	\textbf{ATTENTION}: if the Windows Store opens up, close it! You need to install it in the \textit{classic way} otherwise strange things will happens later one. In the same way, if you installed python from the Windows Store, unistall it and download it from \href{https://www.python.org/downloads/release/python-390/}{the official Python webpage}.
+\textbf{ATTENTION}: if the Windows Store opens up, close it! You need to install it in the \textit{classic way} otherwise strange things will happens later one. 
 \end{warning}
 
-\newpage
+\begin{warning}
+\textbf{ATTENTION}: if you installed Python from the Windows Store, unistall and download it from \href{https://www.python.org/downloads/release/python-390/}{the official Python webpage}.
+\end{warning}
+
 \begin{warning}
 	\textbf{ATTENTION}: if python is not available from the Powershell after manual installation, try to reboot. If it's still not available, you need to manually specify the Python's executable path. Start menù, type Python, right-click and select "Open File location". Most likely it will head you to the Start Menu Shortcuts, so right-click again on the Python 3.9 folder and click on "Open file location". Select the path and copy in the clipboard.
 
@@ -205,7 +207,7 @@ Python 3.9.x is needed. If you are not sure it's installed on your system, try t
 \end{warning}
 
 \subsubsection{C++ Compiler - Buildtools}
-Head to the start menù and look for \texttt{x64 Native Tools Command Prompt for VS 2022} (if you are on a 32 bit system, look for \texttt{x64 Native Tools Command Prompt for VS 2022}). Open it, and a terminal emulator will show up. Type \texttt{cl}. If you get \textit{'cl' is not recognized as an internal or external program...} means that something is missing, otherwise you will get the following message and it means that the compiler is installed. Same reasoning must undergo with the \texttt{link} command.
+Head to the start menù and look for \texttt{x64 Native Tools Command Prompt for VS 2022} (if you are on a 32 bit system, look for \texttt{x86 Native Tools Command Prompt for VS 2022}). Open it, and a terminal emulator will show up. Type \texttt{cl}. If you get \textit{'cl' is not recognized as an internal or external program...} means that something is missing, otherwise you will get the following message and it means that the compiler is installed. Same reasoning must undergo with the \texttt{link} command.
 
 \begin{lstlisting}[language=bash,caption={bash version}]
 C:\Program Files\Microsoft Visual Studio\2022\Community>cl
@@ -264,8 +266,11 @@ If something is missing (or the Visual Studio's Command Prompt Tool is not avail
 Repeat from the beginning, be sure that the \textit{Visual Studio's Command Prompt} is installed and the compiler is available.
 
 \subsubsection{How to build}
-Now everything should be installed. Open the Visual Studio's Command Prompt, head to the HostMiddleware folder (with the CD command) and type \texttt{compile\_win.bat}. It will compile everything and pack into a single BPMMiddleware.exe executable that eventually you can run, if everything went fine.
+Now everything should be installed. Open the Visual Studio's Command Prompt, head to the HostMiddleware folder (with the CD command) and type \texttt{compile\_win.bat}. It will compile everything and pack into a single BPMMiddleware.exe executable that eventually you can run, if everything went fine.\\
 
+Pay attention to antivirus software, it may block the executable. If it does, you can try to disable the antivirus temporarily. Pay attention to use the right Visual Studio's Command Prompt version: if you are on a 64 bit system, use \texttt{x64} instead of \texttt{x86}.\\
+
+If there are problems in packing the executable, you can always try to run directly the python code as-is (under the condition that the dll has been compiled correctly): run \texttt{python app.py}.
 
 \subsection{Extension}
 
