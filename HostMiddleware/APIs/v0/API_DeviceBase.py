@@ -41,7 +41,7 @@ class API_DeviceBase(Resource):
         return True
 
     def _dologin(self, pin: str, isAdmin: bool, force: bool):
-        self._logger.info(f"Logging in with PIN '{pin}'")
+        # self._logger.info(f"Logging in with PIN '{pin}'")
         if not self._l1.Login(pin, isAdmin, force):
             self._logger.error(f"Login failed")
             return False
@@ -64,7 +64,7 @@ class API_DeviceBase(Resource):
         # for k, v, in request.headers.items():
         #     self._logger.debug(f"    {k}: {v}")
 
-        if not self._setdev(0):
+        if not self._setdev(indx):
             return False
 
         if not self._utils.pinkeystr in session.keys() or not self._utils.endtimekeystr in session.keys():

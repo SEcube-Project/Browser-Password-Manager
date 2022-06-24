@@ -1,5 +1,4 @@
 import ctypes
-import pathlib
 
 class L1:
 
