@@ -1,2 +1,13 @@
 \chapter{Conclusions}
-This final chapter is used to recap what you did in the project. No detail, just a high-level summary of your project (1 page or a bit less is usually enough, but it depends on the specific project).
+\label{sec:conclusions}
+%This final chapter is used to recap what you did in the project. No detail, just a high-level summary of your project (1 page or a bit less is usually enough, but it depends on the specific project).
+
+This project has been developed to provide the user a secure platform, called Secure Password Manager, in which store and generate passwords via a simple user interface. The entire architecture has been developed following the based principle in order to provide the highest possible level of security but at the same time to not mitigate and reduce the overall usability.\newline\newline
+The project is divided into three different modules:
+\begin{enumerate}
+	\item The SECube provides the secure hardware in which the \textbf{firmware} is running and provides the basic APIs to be handled indirectly from the browser extension but directly from the Host Middleware. It basically provide the functionality to store, retrieve and generate passwords in a secure manner;
+	\item In order to allow the extension to communicate with the SECube device, an host \textbf{Middleware} has been developed to expose RESTful APIs in HTTPs in C++ and Python. This allowed to create an obfuscated executable both for Windows and Linux;
+	\item The last component is the \textbf{Chrome extension} iteself that allows the user to directly manage all Secure Password Manager functionality; this solution adopts all the needed easy-to-use UI approaches
+\end{enumerate}
+The system is complete and usable from the user point of view, refer to Section \ref{sec:know_issues} and \ref{sec:future_work} for possible known issues and future work related tasks. All initial and proposed functionalities have been implemented and extensively test to avoid problem visible at the user. 
+
