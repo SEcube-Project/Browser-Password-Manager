@@ -1,8 +1,10 @@
 import os
+import re
 import sys
 import logging
 import pathlib
-from flask import Flask
+from urllib.parse import urlparse
+from flask import Flask, Response
 from flask_session import Session
 from flask_restful import Api
 from flask_cors import CORS
@@ -13,6 +15,7 @@ from CustomFormatter import CustomFormatter
 
 from APIs import Utils
 from APIs.v0 import API_Time, API_Devices, API_Device_Generate, API_Device_Password_ID, API_Device_Sessions, API_Device_Passwords
+from APIs.v0 import Middleware as APIV0_Middleware
 
 if __name__ == "__main__":
 
@@ -40,6 +43,7 @@ if __name__ == "__main__":
             os.remove(os.path.join("flask_session", f))
     
     app = Flask(__name__)
+    app.wsgi_app = APIV0_Middleware(app.wsgi_app, logger)
 
     app.config["SESSION_PERMANENT"] = False
     app.config["SESSION_TYPE"] = "filesystem"

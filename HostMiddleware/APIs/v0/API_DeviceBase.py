@@ -1,6 +1,5 @@
 from datetime import timedelta
 import logging
-
 from flask import session, request
 from flask_restful import Resource, reqparse
 from werkzeug.exceptions import BadRequest
@@ -50,6 +49,7 @@ class API_DeviceBase(Resource):
         return True
 
     def _setdev_login(self, indx: int, pin: str, isAdmin: bool, force: bool):
+
         if not self._setdev(indx):
             return False
 
