@@ -25,7 +25,7 @@ class Middleware:
         self._logger.debug(f"Request: {requ}")
 
         if orig is not None:
-            orig_hname = urlparse(orig).hostname
+            orig_hname = urlparse(orig).hostname.replace("www.", "")
             
             # allowed paths: tuple (allowed_endpoint, allowed_origin, is_regex)
             allowed_paths = [
