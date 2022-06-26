@@ -41,7 +41,7 @@ Used to generate a new password using the exposed funcionality of the board. The
 Used to manage passwords. The supported HTTP methods are:
 
 \begin{itemize}
-    \item \texttt{GET}: allows to obtain the list of passwords. It supports the \texttt{hostname} parameter to filter the list of passwords by hostname. The \texttt{hostname} parameter is a string and it can be partial or complete. For example, if the \texttt{hostname} parameter is \texttt{mple.com}, then the list of passwords will contain passwords that have as hostname \texttt{www.example.com} or similar ones. Each password is represented by a JSON object with the following fields:
+    \item \texttt{GET}: allows to obtain the list of passwords. It supports the \texttt{hostname} parameter to filter the list of passwords by hostname. The \texttt{hostname} parameter is a string. Each password is represented by a JSON object with the following fields:
         \subitem \texttt{hostname}: the hostname of the password.
         \subitem \texttt{password}: the password.
         \subitem \texttt{username}: the username.

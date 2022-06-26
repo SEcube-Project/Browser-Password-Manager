@@ -1,7 +1,7 @@
 \chapter{User Manual}
 \label{usermanual}
 
-In the user manual you should explain, step-by-step, how to reproduce the demo that you showed in the oral presentation or the results you mentioned in the previous chapters.\\ If it is necessary to install some toolchain that is already well described in the original documentation (i.e., Espressif's toolchain for ESP32 boards or the SEcube toolchain) just insert a reference to the original documentation (and remember to clearly specify which version of the original documentation must be used). There is no need to copy and paste step-by-step guides that are already well-written and available.\\The user manual must explain how to re-create what you did in the project, no matter if it is low-level code (i..e VHDL on SEcube's FPGA), high-level code (i.e., a GUI) or something more heterogeneous (i.e. a bunch of ESP32 or Raspberry Pi communicating among them and interacting with other devices).
+% In the user manual you should explain, step-by-step, how to reproduce the demo that you showed in the oral presentation or the results you mentioned in the previous chapters.\\ If it is necessary to install some toolchain that is already well described in the original documentation (i.e., Espressif's toolchain for ESP32 boards or the SEcube toolchain) just insert a reference to the original documentation (and remember to clearly specify which version of the original documentation must be used). There is no need to copy and paste step-by-step guides that are already well-written and available.\\The user manual must explain how to re-create what you did in the project, no matter if it is low-level code (i..e VHDL on SEcube's FPGA), high-level code (i.e., a GUI) or something more heterogeneous (i.e. a bunch of ESP32 or Raspberry Pi communicating among them and interacting with other devices).
 
 \subsection{Firmware}
 This tutorial needs a working version of Eclipse for C/C++ and the AC6 Tools are properly installed in order to build the firmware and flash it to the SECube device. The configuration describes uses the following configuration:
@@ -141,7 +141,7 @@ You have to open the \texttt{device\_init.cpp} file and check that the name of t
 This section will describe how to build and run the host middleware, both on Linux and Windows. The build process is not necessary because a ready-to-run executable will be provided for the two opearting systems. However, if there are problems in executing them, the build process can be used as a workaround.
 
 \begin{warning}
-Because of all the dependencies and operations to achieve a build, some problems may occurr. This section will try to indicate all the necessary eoftware that are required, but unfortunately the successful build of the host middleware is not guaranteed because of the heterogeneous nature of computers.
+\textbf{ATTENTION}: because of all the dependencies and operations to perform to achieve a working build, \textbf{many problems may occurr}. This section will try to indicate all the necessary software that are required, but unfortunately the successful build of the host middleware is not guaranteed because of the heterogeneous nature of computers.
 \end{warning}
 
 \subsection{Linux}
