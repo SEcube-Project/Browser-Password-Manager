@@ -8,7 +8,7 @@ HostMiddleware/APIs/v0/__pycache__/**
 */.vscode/**
 *.zip
 init
-HostMiddleware/Makefile
+# HostMiddleware/Makefile
 HostMiddleware/BPMMiddleware
 *.aux
 *.log
