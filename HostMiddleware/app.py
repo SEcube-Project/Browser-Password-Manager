@@ -2,7 +2,8 @@ import os
 import sys
 import logging
 import pathlib
-from flask import Flask
+from urllib.parse import urlparse
+from flask import Flask, Response
 from flask_session import Session
 from flask_restful import Api
 from flask_cors import CORS
@@ -13,6 +14,12 @@ from CustomFormatter import CustomFormatter
 
 from APIs import Utils
 from APIs.v0 import API_Time, API_Devices, API_Device_Generate, API_Device_Password_ID, API_Device_Sessions, API_Device_Passwords
+from APIs.v0 import Middleware as APIV0_Middleware
+
+def wipe_out():
+    if os.path.exists("flask_session"):
+        for f in os.listdir("flask_session"):
+            os.remove(os.path.join("flask_session", f))
 
 if __name__ == "__main__":
 
@@ -35,11 +42,10 @@ if __name__ == "__main__":
         application_path = os.path.dirname(os.path.abspath(__file__))
 
     # remove flask_session directory if it exists
-    if os.path.exists("flask_session"):
-        for f in os.listdir("flask_session"):
-            os.remove(os.path.join("flask_session", f))
+    wipe_out()
     
     app = Flask(__name__)
+    app.wsgi_app = APIV0_Middleware(app.wsgi_app, logger)
 
     app.config["SESSION_PERMANENT"] = False
     app.config["SESSION_TYPE"] = "filesystem"
@@ -80,3 +86,4 @@ if __name__ == "__main__":
     print()
     logger.info("Exiting...")
     utils.stop_tick()
+    wipe_out()

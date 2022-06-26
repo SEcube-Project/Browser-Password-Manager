@@ -1,5 +1,4 @@
 import ctypes
-import pathlib
 
 class L1:
 
@@ -117,18 +116,18 @@ class L1:
 
     def AddPassword(self, hostname:str , username:str , password:str):
 
-        ln, ph = self._str2charptr(hostname)
-        lu, pu = self._str2charptr(username)
-        lp, pp = self._str2charptr(password)
+        ln, ph = self._str2charptr(hostname, type=ctypes.c_uint8)
+        lu, pu = self._str2charptr(username, type=ctypes.c_uint8)
+        lp, pp = self._str2charptr(password, type=ctypes.c_uint8)
 
         res = self._c_lib.L1_AddPassword(self._l1inst, ph, ln, pu, lu, pp, lp)
         return res == 1
 
     def ModifyPassword(self, id: int, hostname:str , username:str , password:str):
 
-        ln, ph = self._str2charptr(hostname)
-        lu, pu = self._str2charptr(username)
-        lp, pp = self._str2charptr(password)
+        ln, ph = self._str2charptr(hostname, type=ctypes.c_uint8)
+        lu, pu = self._str2charptr(username, type=ctypes.c_uint8)
+        lp, pp = self._str2charptr(password, type=ctypes.c_uint8)
 
         res = self._c_lib.L1_ModifyPassword(self._l1inst, ctypes.c_uint32(id), ph, ln, pu, lu, pp, lp)
         return res == 1
@@ -166,9 +165,9 @@ class L1:
     def _bool2uint8(self, b: bool):
         return ctypes.c_uint8(1 if b else 0)
 
-    def _str2charptr(self, s: str):
+    def _str2charptr(self, s: str, type = ctypes.c_char):
         ln = len(s)
-        return (ln, (ctypes.c_char*ln)(*[ord(c) for c in s]))
+        return (ln, (type*ln)(*[ord(c) for c in s]))
 
     def restart(self):
         self._c_lib.destroyL1Instance(self._l1inst)
