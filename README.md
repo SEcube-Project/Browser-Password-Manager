@@ -1,221 +1,25 @@
 # Browser Password Manager
 
-## Host specs
-- We want to use the pin as master password for unlocking the extension, this implies that at each command sent from the extension, the pin must be sent
-- The master password corresponds to the user pin in the FW
-- The admin in the FW can reset the user password in case of loss; the admin pin must be managed only by the cybersecurity team of the company. Is it ok to suppose this?
-- The API rest must be HTTPS? Yes,no problem for sending pin at each command
-- Everytime the logout is automatically done at each tab change + timeout + esplicit user request
+Passwords are a key part of everyday life and to be secure they must be complex. But this complexity is in conflict with the ability to remember them. Another problem arises if we think about a secure place where to store our passwords. Is a server safe enough? Better a text file? What about a database?
+The best solution to this critical problem is for sure a password manager. A physical password manager is even better! This is the motivation that led to the creation of this project.
 
-## Extension specs 
-- Master password at the beginning ( the same wtr the user pin of the FW )
-- Logout
+The main focus is security, followed by user experience (exploiting UX and UI). The project is aimed at the development of a password manager that can be used by any user, regardless of his or her experience with the software. The development is done from scratch, starting from the firmware, going through the host middleware and finally to the extension
 
-### Generate a new password
-- Select number of characters
-- Enable/disable spec characters, upper/lower case, numbers
-- Copy password
+## Implementation overview
 
-### Manage saved password
-- Modify the password with a new generated one (random generated at the moment or inserted by user)
-- List with all the saved pass (icon + hostname + (username + password (hidden by default but visible if 'eye button' is clicked)))
-- Add new password
-- Delete
+The goal is to develop a secure Password Manager, where passwords are stored in a secure and removable USB device, that is based on SECube. Different challenges need to be solved in order to achieve this goal: from the SECube's firmware to the development of a Chromium Extension. 
 
-### Import/Export
-- Exported file encrypted with password
+The main problem is the communication between the Chromium Browser and the SECube: due to the high level of restrictions imposed by any modern web browser, indeed they act as a big and complex sandboxes for good reasons, it's nearly impossible to have a direct connection between the Extension and any physical device connected to the Host PC. 
 
-### Enable/Disable automatic fill
-- Autocomplete if possible? Only if specified by user
-- Always list the corresponding password in the extension tab (like BitWarden)
+Because of this, a third actor needs to be introduced: a middleware that is capable of being both interfaced with any (Chromium-based) browser and able to communicate with the SECube device. Thus, the middleware is a third software that is intended to be installed and run on the host PC continuously (like a service on Windows or a daemon on Linux, or executed by the user when he needs it, as he prefers).
 
 
-## Host Endpoint for Extension (REST API)
-- addPassword(hostname, username, password)
-- addPassword(hostname, password) ????
-- deletePassword(hostname, username)
-- deletePassword(id)
-- generateRandomPassword(n_char, special_char, ....)
-- getPassword(hostname)
-- getAllPassword() // return only the hostname + username if present. Passwords are not returned.
-- exportEncryptedFile(file, pass)
-- importEncryptedFile(file, pass)
 
-Update is done by deleting and re-adding. Master password sent at every REST call.
+Due to all these actors, developing a secure Password Manager becomes very complicated. It is very important, in cases like this, to be pretty organized and try to be systematic in developing all the needed software, without trying to reinvent the wheel. 
 
-## FW endpoint for Host application
-- exportEncryptedPassword(pass) : byte[]
-- importEncryptedPassword(pass) : byte[]
-- addPassword(hostname, username, password)
-- addPassword(hostname, password) ????
-- deletePassword(hostname, username)
-- deletePassword(id)
-- generateRandomPassword(n_char, special_char, ....)
-- getPassword(hostname)
-- getAllPassword() // return only the hostname + username if present. Passwords are not returned.
+The three components have been developed completely independent from others one, trying to move all the possible logic and sensitive data to the lowest level (i.e. the Host Middleware and the SECube): this is due to the fact that these two actors are the most secure while the Extension is the most exposed one to possible threats. 
 
-+ Flash management
-
-### REST APIs details
-
-- Retrieval of all the connected devices
-```
-GET /api/v0/devices
-```
-```json
-{
-  "count": 1,
-  "devices": [
-    {
-      "index": 0,
-      "path": "/media/gabriele97/9016-4EF8/",
-      "serial": "SEcube12340000000000000000000000"
-    }
-  ]
-}
-```
-
-- Retrieval of all stored passwords
-```
-GET /api/v0/device/<device_id>/passwords?pin=<device_pin>
-```
-```json
-{
-  "count": 6,
-  "passwords": [
-    {
-      "id": 1,
-      "hostname": "test.com",
-      "username": "test",
-      "password": "1234"
-    },
-    {
-      "id": 2,
-      "hostname": "test.com",
-      "username": "test",
-      "password": "1234"
-    },
-    {
-      "id": 3,
-      "hostname": "test.com",
-      "username": "test",
-      "password": "1234"
-    },
-    {
-      "id": 4,
-      "hostname": "test.com",
-      "username": "test",
-      "password": "1234"
-    },
-    {
-      "id": 5,
-      "hostname": "facebook.com",
-      "username": "2",
-      "password": "marco"
-    },
-    {
-      "id": 6,
-      "hostname": "facebook.com",
-      "username": "zucca",
-      "password": "marco"
-    }
-  ]
-}
-```
-
-- Retrieval of all stored passwords with **hostname filter**
-```
-GET /api/v0/device/<device_id>/passwords?pin=<device_pin>&hostname=<filter>
-GET /api/v0/device/<device_id>/passwords?pin=<device_pin>&hostname=fac
-```
-```json
-{
-  "count": 2,
-  "passwords": [
-    {
-      "id": 5,
-      "hostname": "facebook.com",
-      "username": "2",
-      "password": "marco"
-    },
-    {
-      "id": 6,
-      "hostname": "facebook.com",
-      "username": "zucca",
-      "password": "marco"
-    }
-  ]
-}
-```
-
-- Insertion of a new password
-```
-POST /api/v0/device/<device_id>/passwords?pin=<device_pin>
-```
-
-*BODY REQUEST:*
-```json
-{
-  "hostname": "facebook.com",
-  "username": "zucca",
-  "password": "marco"
-}
-```
-
-- Details of a single password 
-```
-GET /api/v0/device/<device_id>/password/<password_id>?pin=<device_pin>
-```
-
-```json
-{
-  "id": 3,
-  "hostname": "test.com",
-  "username": "test",
-  "password": "1234"
-}
-```
-
-- Update of a single password 
-```
-PUT /api/v0/device/<device_id>/password/<password_id>?pin=<device_pin>
-```
-
-*BODY REQUEST:*
-```json
-{
-  "id": 3,
-  "hostname": "test.com",
-  "username": "test",
-  "password": "1234"
-}
-```
-
-- Removal of a single password 
-```
-DELETE /api/v0/device/<device_id>/password/<password_id>?pin=<device_pin>
-```
-
-```json
-{
-  "success": true
-}
-```
-
-- Password Generation
-
-```
-GET /api/v0/device/<device_id>/generate?pin=<device_pin>&upper=[0,1]&special=[0,1]&numbers=[0,1]&length=<password_length>
-```
-
-```json
-{
-  "generated": "m2hWwQBdyODd?tnWgPq@fFO8McmbB:;g6ViOC9oosSZ5AamhnTghjVmd$aBRnvOx"
-}
-```
+The communication between the Extension and the Middleware happens by means of HTTPs: it is a secure version of HTTP based on TLS, allowing to have a complete communication between the two parties. The communication between the Middleware and the SECube happens by means of a USB connection, and the communication is encrypted. 
 
 
-# Work distribution
-Matteo: FW
-Gabriele: Host
-Giovanni: Chrome ext
+
