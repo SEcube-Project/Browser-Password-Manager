@@ -81,9 +81,9 @@ To install SW4STM32 as an Eclipse plugin:
 \subsubsection{Firmware flashing}
 Once the SECube has been connected to the Host computer via both the ST-Link/v2 programmer and the USB connection, the firmware can be imported, compiled and flashed.
 
-The latest firmware version has been already compiled and available at ``\textit{SEcube USBStick Firmware/Project/Eclipse/USBStick/Release/USBStick.elf}" but it is possible to import the project into Eclipse and recompile it. If you want to use the pre-compiled version, you can skip the following sections and go to Section \ref{sec:firm_configure}.
+The latest firmware version has been already compiled and available as asset in the the last Release of the GitHub project at \href{https://github.com/SEcube-Project/Browser-Password-Manager/releases}{Assets}. The \textit{.elf} file can be moved into the ``\textit{SEcube USBStick Firmware/Project/Eclipse/USBStick/Release/}" folder but it is possible to import the project into Eclipse and recompile it. If you want to use the pre-compiled version, you can skip the following sections and go to Section \ref{sec:firm_configure}.
 
-In order to import the firmware and the software for performing the init, you need to click «File» and then «Import...», as in Figure \ref{fig:setup6}. At this point after having selected «Existing Projects into Workspace» (Figure \ref{fig:setup7}), the first two projects must be imported (Figure \ref{fig:setup8}).
+In order to import the firmware and the software for performing the init, you need to click ``File" and then ``Import...", as in Figure \ref{fig:setup6}. At this point after having selected ``Existing Projects into Workspace" (Figure \ref{fig:setup7}), the first two projects must be imported (Figure \ref{fig:setup8}).
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.45\linewidth]{images/firmware/setup_6}
@@ -116,7 +116,7 @@ At this point, on the right you should have two projects, you have to Right clic
 
 \subsubsection{Configuring the device}
 \label{sec:firm_configure}
-Once the firmware, you have to first of all to erase the chip in order to remove the previous pin configuration, by doing a Right click on the project and then ``Target" and then ``Erase Chip...". Once it has finished, you can flash the firmware into to the device by clicking ``Target" and then ``Program Chip..." (refer to Figure \ref{fig:setup11}). In the next window you have to select the ``Release" version and flag the ``Reset after program" before clicking ``OK".
+Once the firmware has been built, you have to erase the chip in order to remove the previous pin configuration, by doing a Right click on the project and then ``Target" and then ``Erase Chip...". Once it has finished, you can flash the firmware into to the device by clicking ``Target" and then ``Program Chip..." (refer to Figure \ref{fig:setup11}). In the next window you have to select the ``Release" version and flag the ``Reset after program" before clicking ``OK".
 
 \begin{figure}[H]
 	\centering
@@ -134,11 +134,11 @@ Once the firmware, you have to first of all to erase the chip in order to remove
 \end{figure}
 
 At this point, once the firmware has been flash, you need to configure the device by setting a pin. Now it is the turn of the second project called ``Host Password Manager".\newline\newline
-You have to open the \texttt{device\_init.cpp} file and check that the name of the first method is set to \texttt{main}. At this point, you can perform the compilation and run the program. This allows to initialize the device and set the master password for the Secure Password Manager (at line 49 it is possible to change the pin). From now, the device is ready to receive commands by the Host Middleware application in order to manage all passwords features.
+You have to open the \texttt{device\_init.cpp} file and check that the name of the first method is set to \texttt{main}. At this point, you can perform the compilation and run the program. This allows to initialize the device and set the master password for the Secure Password Manager (at line 49 it is possible to change the pin). From now, the device is ready to receive commands by the Host Middleware application in order to manage all passwords features. If the password has not been changed, the default value is: \textit{test}.
 
 \section{Host Middleware}
 
-This section will describe how to build and run the host middleware, both on Linux and Windows. The build process is not necessary because a ready-to-run executable will be provided for the two opearting systems. However, if there are problems in executing them, the build process can be used as a workaround.
+This section will describe how to build and run the host middleware, both on Linux and Windows. The build process is not necessary because a ready-to-run executable is provided for the two opearting systems. However, if there are problems in executing them, the build process can be used as a workaround.
 
 \begin{warning}
 \textbf{ATTENTION}: because of all the dependencies and operations to perform to achieve a working build, \textbf{many problems may occurr}. This section will try to indicate all the necessary software that are required, but unfortunately the successful build of the host middleware is not guaranteed because of the heterogeneous nature of computers.
@@ -193,7 +193,7 @@ Python 3.9.x is needed. If you are not sure it's installed on your system, try t
 \end{warning}
 
 \begin{warning}
-	\textbf{ATTENTION}: if python is not available from the Powershell after manual installation, try to reboot. If it's still not available, you need to manually specify the Python's executable path. Start menù, type Python, right-click and select "Open File location". Most likely it will head you to the Start Menu Shortcuts, so right-click again on the Python 3.9 folder and click on "Open file location". Select the path and copy in the clipboard.
+	\textbf{ATTENTION}: if python is not available from the Powershell after manual installation, try to reboot. If it's still not available, you need to manually specify the Python's executable path. Start menu, type Python, right-click and select "Open File location". Most likely it will head you to the Start Menu Shortcuts, so right-click again on the Python 3.9 folder and click on "Open file location". Select the path and copy in the clipboard.
 
 	In the start menu, search for "environment" and click "Edit the system environment variable". Click on "environment variables" button, select "Path", click "Edit", click "New" and paste the path you previously copied.
 
@@ -201,7 +201,7 @@ Python 3.9.x is needed. If you are not sure it's installed on your system, try t
 \end{warning}
 
 \subsubsection{C++ Compiler - Buildtools}
-Head to the start menù and look for \texttt{x64 Native Tools Command Prompt for VS 2022} (if you are on a 32 bit system, look for \texttt{x86 Native Tools Command Prompt for VS 2022}). Open it, and a terminal emulator will show up. Type \texttt{cl}. If you get \textit{'cl' is not recognized as an internal or external program...} means that something is missing, otherwise you will get the following message and it means that the compiler is installed. Same reasoning must undergo with the \texttt{link} command.
+Head to the start menu and look for \texttt{x64 Native Tools Command Prompt for VS 2022} (if you are on a 32 bit system, look for \texttt{x86 Native Tools Command Prompt for VS 2022}). Open it, and a terminal emulator will show up. Type \texttt{cl}. If you get \textit{'cl' is not recognized as an internal or external program...} means that something is missing, otherwise you will get the following message and it means that the compiler is installed. Same reasoning must undergo with the \texttt{link} command.
 
 \begin{lstlisting}[language=bash,caption={bash version}]
 C:\Program Files\Microsoft Visual Studio\2022\Community>cl
@@ -267,6 +267,7 @@ Pay attention to antivirus software, it may block the executable. If it does, yo
 If there are problems in packing the executable, you can always try to run directly the python code as-is (under the condition that the dll has been compiled correctly): run \texttt{python app.py}.
 
 \subsection{Extension}
+The chrome extension has been already packed into a \textit{.zip} file, available at \href{https://github.com/SEcube-Project/Browser-Password-Manager/releases}{Assets}, that can be simply imported into the Chrome Extension page.
 
 In this section it is described how to build (and eventually modify on your needs) and run the extension. This process is the same on all platforms.
 The build process is not necessary because a ready to run extension will be provided.
@@ -277,9 +278,9 @@ The whole extension is built thanks to node packages. So it is important to inst
 \begin{warning}
 	\textbf{ATTENTION}: it is important to install at least Node \textbf{16.x.x} Using an older version may cause some error building the extension.
 \end{warning}
-To check the node version, type \texttt{node --version}. 
+To check the node version, type \texttt{node --version} in a terminal. 
 
-The next step is to enable the \texttt{Developer mode} in order to able to load the extension to the browser. For these tutorial we will use Google Chrome, but the process is the same on all Chromium based browsers (Microsoft Edge Chromium, Brave etc.. ).
+The next step is to enable the \texttt{Developer mode} in order to be able to load the extension to the browser. For these tutorial we will use Google Chrome, but the process is the same on all Chromium based browsers (Microsoft Edge Chromium, Brave etc.. ).
 
 Open the Browser, go to the three vertical dots in the top right corner of the browser, click them, then hover on the \textit{More Tools} menu. A submenu will open, click on \textit{Extensions}.
 
@@ -306,6 +307,8 @@ Now you can go back to the browser and click the button \textbf{Load Unpacked}. 
 	\label{fig:load_unpacked}
 \end{figure}
 The folder to be selected is the \texttt{dist} folder. 
+
+Note that if you have downloaded the already packed .zip, you can simply load it instead of the \textit{dist} folder.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=0.8\textwidth]{images/extension/dist.png}
