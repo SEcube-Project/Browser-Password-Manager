@@ -294,7 +294,7 @@ As shown in the \autoref{fig:developer_mode} below, you will find a toggle butto
 	\label{fig:developer_mode}
 \end{figure}
 
-\subsubsection{Build the extension}
+\subsubsection{Build the extension on Unix systems}
 
 Building the extension is very easy. Just open a terminal and go in the \texttt{Chrome Extensions} folder. Type \texttt{npm i} and wait for the installation to finish. With this command all packages are installed. If, for any reason, you want to modify the extension and you need new packages, just add them to the \texttt{package.json} file.
 When the installation of the packages is finished you can start building the extension. Type \texttt{npm start} and wait for the build to finish. After this command you will see a new folder called \texttt{dist}.
@@ -315,6 +315,13 @@ Note that if you have downloaded the already packed .zip, you can simply load it
 	\caption{Folder to load in the browser for the extension}
 	\label{fig:dist}
 \end{figure}
+
+\subsubsection{Build the extension on Windows}
+
+To build the extension on Windows, you need to install the Windows version of Node that you can find on the \href{https://nodejs.org/}{Nodejs webpage}. 
+To actually start the build process, open \texttt{PowerShell} as administrator, go in the directory of the Chrome Extensions folder and type \texttt{npm i}. Then type \texttt{npm start}.
+
+At this point you will see a new folder called \texttt{dist}, that you can load in the browser, as explained in the previous section.
 
 \subsubsection{Accepting the certificate}
 \label{sec:accept_certificate}
