@@ -43,11 +43,11 @@ More precisely, data are stored in the Flash memory using as few bits as possibl
 		\hline
 		\texttt{id} & 4 & Id to univocally identify a password, using 32 bits\\ 
 		\hline
-		\texttt{host\_size} & 2 & Number of character is the \texttt{host} \\  
+		\texttt{host\_size} & 2 & Number of characters in the \texttt{host} \\  
 		\hline
-		\texttt{user\_size} & 2 &  Number of character is the \texttt{user} \\  
+		\texttt{user\_size} & 2 &  Number of characters in the \texttt{user} \\  
 		\hline
-		\texttt{pass\_size} & 2 &  Number of character is the \texttt{pass} \\  
+		\texttt{pass\_size} & 2 &  Number of characters in the \texttt{pass} \\  
 		\hline
 		\texttt{host} & \texttt{host\_size} & Hostname of the password record \\  
 		\hline
@@ -220,7 +220,7 @@ HTTPs is a secure protocol that uses a TLS connection to provide a secure connec
 
 \begin{itemize}
     \item Authentication
-    \item Privacy: the connection is encrypted and the data is encrypted
+    \item Confidentiality: the connection is encrypted and the data is encrypted
     \item Integrity: the data is signed and the signature is verified
 \end{itemize}
 
@@ -229,16 +229,16 @@ Thus, HTTPs helps to avoid the risk of eavesdropping, which is a risk that can b
 The middleware is developed mainly in Python. To implement the web server, Flask is used as module. It natively supports HTTPs and a self-signed certificate is used, generated with \textit{openssl}.\\
 
 \subsection{The REST APIs}
-The exposed APIs are totally complaint to the REST principles. It uses cookies to authenticate the user, and it uses JSON as exchange data format. \\
+The exposed APIs are totally complaint to the REST principles. It uses cookies to authenticate the user, and JSON as exchange data format. \\
 
 The main API is the one the allows to create a session. Once a session is created (via a successful authentication), a cookie is generated and sent to the browser. The browser will then store securely the cookie and the extension will automatically attach it to each request. In the end, the cookie is strictly needed to interact with all other APIs.\\
 
-The endpoint to create a session is \texttt{POST /api/v0/device/0/session?pin=<pin>\&enditme=<endt>}. The \texttt{pin} parameter is the PIN code of the board, used to unlock it, while the \texttt{endtime} parameter is the time in seconds until the session expires. When the session expires, the middleware will automatically invalidate it and each subseguent request will result in \texttt{403 Unauthorized}. The \texttt{endtime} parameter is a timestamp in seconds, and it's relative to the middleware's one. The middleware is capable of generating it internally and the current timestamp can be obtained via \texttt{GET /api/v0/time}. For a more complete description of the API, see the appendix \ref{api}.
+The endpoint to create a session is \texttt{POST /api/v0/device/0/session?pin=<pin>\&enditme=<endt>}. The \texttt{pin} parameter is the PIN code of the board, used to unlock it, while the \texttt{endtime} parameter is the time in seconds until the session expires. When the session expires, the middleware will automatically invalidate it and each subsequent request will result in \texttt{403 Unauthorized}. The \texttt{endtime} parameter is a timestamp in seconds, and it's relative to the middleware's one. The middleware is capable of generating it internally and the current timestamp can be obtained via \texttt{GET /api/v0/time}. For a more complete description of the API, see the appendix \ref{api}.
 
 \subsection{CORS Support}
 One of the main issues is the enable of the Cross Origin Requests support from all the origins and to allow the session cookie to be used from any website (flag same-site set to False). The cookie alone is not a problem because the ID is a valid data only if used by the Middleware, so there is no leakage outside. \bigskip
 
-Both the Cookie and the CORS support (so APIs are allowed to be used from external web sites with a hostname different from 127.0.0.1) expose the Middleware to some attacks (like Cross-Site Forge Requests) even if the browser should theoretically block all requests from external web sites to the localhost. CORS are required because of some APIs that will be used to enable password auto-completition, thus the request will be done by the Extension by means of the website the user is browsing in, doing a kind of code injection in the web site itself (a secure code injection because the browser allows it and the user thrust the Secure Password Manager extension). \bigskip
+Both the Cookie and the CORS support (so APIs are allowed to be used from external web sites with a hostname different from 127.0.0.1) expose the Middleware to some attacks (like Cross-Site Forge Requests) even if the browser should theoretically block all requests from external web sites to the localhost. CORS is required because of some APIs that will be used to enable password auto-completition, thus the request will be done by the Extension by means of the website the user is browsing in, doing a kind of code injection in the web site itself (a secure code injection because the browser allows it and the user thrust the Secure Password Manager extension). \bigskip
 
 To achieve both auto-completition support (with CORS enabled) and high level of security from this point of view, the middleware is developed adding a filter to the requests that are done: the filter is based on the HTTP origin header. \bigskip
 
@@ -413,7 +413,7 @@ The login page is shown in \autoref{fig:login}.
 
 When clicking the login, if nothing happens, the reason is because the certificate is not trusted. In fact, on the bottom of the extension there is a text, giving brief instruction to trust the certificate. 
 For a better understanding of the process of trusting the certificate, everything is explained is \autoref{sec:accept_certificate}.
-This process is necessary only in the testing process, because in a real world usage, the certificate will be issued by a trusted Certificate Authroity.
+This process is necessary only in the testing process, because in a real world usage, the certificate will be issued by a trusted Certificate Authority.
 
 
 % insert image
@@ -521,7 +521,7 @@ In order to retrieve the options when the users reopens the extension, the local
 
 \subsection{Expandable Menu and Buttons}
 
-In the section of the extension where we have the entries with the password, there always is a expandable menu. When expanded, the entry shows the username, the password and the URL. The expanded menu is shown in % insert the image
+In the section of the extension where we have the entries with the password, there always is a expandable menu. When expanded, the entry shows the username, the password and the URL. 
 
 To improve security, the password is hidden by default. This rule applies to all field where there is a password. However, if the user wants to see the password, there is an eye button at the end of the password field, that allows to show the password.
 

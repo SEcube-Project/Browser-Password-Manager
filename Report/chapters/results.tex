@@ -2,31 +2,31 @@
 \label{sec:results}
 
 The Secure Password Manager has born as a simple solution to enhance the user experience when managing passwords. With the constant increasing of cyber-attacks and the continuous spreading of services provided by Internet makes the password management a complex and risky task. It not so rare that who needs to remember a password writes it in a piece of paper stored under the keyboard.\newline\newline
-This project is based on multiple challenges that have been solved
+This project is based on multiple challenges that have been solved:
 \begin{itemize}
 	\item All users are able to store passwords in a secure way and retrieve them in an easy manner when needed;
-	\item Not only, the application is simple an intuitive while hiding all the security solutions adopted. Moreover, the storing and retrieving process of passwords is fast, in order to not mitigate the user experience during the browser usage;
+	\item The application is simple an intuitive while hiding all the security solutions adopted. Moreover, the storing and retrieving process of passwords is fast, in order to not mitigate the user experience during the browser usage;
 	\item From the point of view of the security, all these aspects have been combined in order to obtain a profitable solution, exploiting the SECube.
 \end{itemize}
 
-Ideally, the user will be able to directly used the system by simply plugging in the SECube via the USB port. The user will be able to buy the device already enclosed into a custom plastic package with the firmware ready and flashed. At the first usage, he will be able to setup the master password that will be used to authenticate a manage the passwords via the Chrome extension. The SECube has been the enable device because, thanks to all its security related feature, allows to create a secure environment in which run the application and store the password.\newline\newline
-One non-trivial aspect about this project was the heterogeneity of the Operating System (OS). In fact, the middleware, that is the software that connects to the SECube once connected, has been developed and obfuscated for both Windows and Linux OS. So, independently from the operating system, the user is able to use the Secure Password Manager. Not only, the connection to the SECube device is based on a secure channel in which the authentication is based on challenges from both parties. From the point of view of the storage usage, no sensible information have been stored there and the session is encrypted on the fly with an RSA 2048 to increase the security. 
+Ideally, the user will be able to directly use the system by simply plugging in the SECube via the USB port. Ideally in the future, the user will be able to buy the device already enclosed into a custom plastic package with the firmware ready and flashed. At the first usage, he will be able to setup the master password that will be used to authenticate a manage the passwords via the Chrome extension. The SECube has been the enable device because, thanks to all its security related feature, allowed to create a secure environment in which run the application and store the password.\newline\newline
+One non-trivial aspect about this project was the heterogeneity of the Operating System (OS). In fact, the middleware, that is the software that connects to the SECube, has been developed and obfuscated for both Windows and Linux OS. So, independently from the operating system, the user is able to use the Secure Password Manager. Not only, the connection to the SECube device is based on a secure channel in which the authentication is based on challenges from both parties. From the point of view of the storage usage, no sensible information have been stored there and the session is encrypted on the fly with an RSA 2048 to increase the security. 
 
 
-In order to avoid the reverse engineering of the code of the Middleware code, the compiled executable has been obfuscated. This mitigate possible attacks that aim to directly reverse engineering the code by de-compiling the application.
+In order to avoid the reverse engineering of the code of the Middleware and Extension code, the compiled executable has been obfuscated. This mitigate possible attacks that aim to directly reverse engineering the code by de-compiling the application.
 
 
-Not only this, but the Middleware provides RestFul APIs to the Chrome Extension in a secure manner via HTTPs, using a certificate. For the moment, the certificate is self-signed (refer to Section \ref{sec:know_issues} about Known Issues).\newline\newline
+Not only this, but the Middleware provides RESTFul APIs to the Chrome Extension in a secure manner via HTTPs, using a self-signed certificate. For the moment, the certificate is self-signed (refer to Section \ref{sec:know_issues} about Known Issues).\newline\newline
 The last component in the chain is the Chrome Extension that, as anticipated before, is able to provide a simplified access and abstract over the complexity of the Secure Password Manager functions via a simple UI. The extension is able to enable the user to:
 \begin{itemize}
 	\item Login to the extension
 	\item Force a logout by blocking the extension
 	\item Reading all stored passwords: the list will be available alphabetically only after the authentication but the password field is not visible but default. This is an important feature, because this extension allows to copy the password to the clipboard even without showing it.
 	
-	This feature, if correctly used, allows to protect against \textit{piggybacking} attacks.
-	\item Manage all password: modify and delete
+	This feature, if correctly used, allows to protect against \textit{piggyback} attacks.
+	\item Manage all passwords: modify and delete
 	\item Create a new password record: by default the new record will set the hostname of the website in order to reduce possible user errors
-	\item Password generation: one of the most important feature is the generation of random password using a TRNG, which is able to generate true random sequences of bytes that are encoded in the desired characters. Moreover, a character is selected, it must be present in the generated set.
+	\item Password generation: one of the most important feature is the generation of random password using a TRNG, which is able to generate true random sequences of bytes that are encoded in the desired characters. Moreover, a character is selected, it must be present in the final password.
 \end{itemize}
 One of the most important aspect about the autocomplete functionality is that, it not only increase the usability of the system by automatically setting the username and password of a known site, but allows to disable this feature after a defined amount of time in order to increase the security. This is important because:
 \begin{itemize}
@@ -35,11 +35,11 @@ One of the most important aspect about the autocomplete functionality is that, i
 \end{itemize}
 
 \subsection{Usecases}
-This is a small set of use cases:
+This is a small set of use cases in which the Secure Password Manage can be used:
 \begin{enumerate}
 	\item \textbf{Password generation}
 	Luca is a student from Politecnico di Torino and due to all online services that he needs to use for his courses, he is using always the same password. He saw his friend Mike very upset because his password was disclosed in the last password breach of a famous Social Network. Luca, that is using the same password for all his accounts, is nervous about the fact that, if disclosed, its password allows to enter not only his Politecnico Portal but also his Online Payment service.\newline
-	For this reason, he has installed the Secure Password Manager and one by one, has updated the passwords with new ones generated via the function available on the Chrome extension. Not only, due to the complexity, he has stored them directly into the application and enabled the autocomplete feature to even not worry about to search them.
+	For this reason, he has installed the Secure Password Manager and has updated the passwords with new ones generated via the function available on the Chrome extension. Not only, due to the complexity, he has stored them directly into the application and enabled the autocomplete feature to even not worry about to search them.
 	\begin{figure}[H]
 		\centering
 		\begin{subfigure}{.5\textwidth}
@@ -83,7 +83,7 @@ This is a small set of use cases:
 \label{sec:know_issues}
 
 \subsection{Host Middleware}
-The current certificate has been self signed. In a complete implementation, the certificate must be correctly signed by a certification authority in order to increase the security, that allows the user to not manually accept the certificate the first time the Host Middleware is run.
+The current certificate has been self signed. In a final implementation, the certificate must be correctly signed by a Certification Authority in order to increase the security, that allows the user to not manually accept the certificate the first time the Host Middleware is run.
 
 
 \subsection{Extension}
@@ -103,7 +103,7 @@ The random password generation is based on the direct mapping from the output of
 
 
 \subsection{Host Middleware}
-Since now the Middleware application is available for both Windows and Linux. One possible future work is related to the porting to the computer proprietary Operating Systems of Apple (macOS). Being the system completely different, it is based on Unix, which can mitigate the complexity of the porting. The feasibility evaluation of this process is still missing.
+Since now the Middleware application is available for both Windows and Linux. One possible future work is related to the porting to the computer proprietary Operating Systems of Apple (macOS). Being the system completely different, but still based on Unix, which can mitigate the complexity of the porting. The feasibility evaluation of this process is still missing.
 
 \subsection{Extension}
 \subsubsection{Local Storage}
