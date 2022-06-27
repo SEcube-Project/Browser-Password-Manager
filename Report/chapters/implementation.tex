@@ -339,13 +339,13 @@ Extensions are made of different, but cohesive, components. Components can inclu
 In this project the extension was build with the following tools:
 
 \begin{itemize}
-    \item HTML
-    \item CSS
-    \item Typescript
-    \item Node
-    \item React
-    \item Webpack
-    \item Material-UI
+    \item HTML \cite{html}
+    \item CSS \cite{css}
+    \item Typescript \cite{ts}
+    \item Node \cite{node}
+    \item React \cite{react}
+    \item Webpack \cite{webpack}
+    \item Material-UI \cite{mui}
 \end{itemize}
 
 Let's see in the details each of these tools.
@@ -359,7 +359,7 @@ In this project, HTML does not have a central role, since it is managed automati
 
 CSS, Cascading Style Sheets, is another web development technology. In this project, CSS is lightly used to style the extension's UI. The majority of the styling part is done through React and Material-UI. However, it's important to mention CSS, since it heavily used and is a key part of the web development workflow.
 
-\subsubsection {Typescript}
+\subsubsection {TypeScript}
 
 Typescript is a web development technology that is used to write code in a more readable and easy to understand way. In this project, Typescript is used to write the extension's logic.
 Typescript is a syntactic superset of Javascript and adds optional static typing to the language. Another difference compared to Javascript is that Typescript is compiled and not interpreted. This means that the extension will not run unless it is compiled. The reason behind the creation of Typescript was the maintenance of large-scale applications. So the decision of using Typescript was made to make the extension's code more maintainable.
@@ -543,6 +543,6 @@ The idea behind the autocomplete is the following: when the page is loaded, the 
 The autocomplete feature works in conjunction with the lock after. In fact, if the extension is locked, the autocomplete feature is disabled. Indeed, if the extension is unlocked, the autocomplete feature follows what the user set in the options.
 \subsection{Lock After}
 
-This feature is very important from two points of view: first, it allows the user to keep the extension unlocked for a certain period of time avoiding the need to enter the password every time the extension is opened. Second, it allows the user to lock the extension after a certain period of time, and ask again the password. So it touches both usability and security, finding a balance between the two. The is balance stands is the customizability; in fact the time, in minutes, after which the extension will be locked is configurable in the options. 
+This feature is very important from two points of view: first, it allows the user to keep the extension unlocked for a certain period of time avoiding the need to enter the password every time the extension is opened. Second, it allows the user to lock the extension after a certain period of time, and ask again the password. So it touches both usability and security, finding a balance between the two. The balance stands is the customizability; in fact the time, in minutes, after which the extension will be locked is configurable in the options. 
 
 The implementation is pretty straightforward. When the user unlocks the extension, a timestamp is sent to the Middleware, that saves it. After that, at every request, the Middleware checks if the current timestamp is greater than the saved timestamp. If it is, the Middleware returns 403, and so the extension is locked. Otherwise, the Middleware returns the asked data. 

@@ -10,7 +10,7 @@ This project is based on multiple challenges that have been solved
 \end{itemize}
 
 Ideally, the user will be able to directly used the system by simply plugging in the SECube via the USB port. The user will be able to buy the device already enclosed into a custom plastic package with the firmware ready and flashed. At the first usage, he will be able to setup the master password that will be used to authenticate a manage the passwords via the Chrome extension. The SECube has been the enable device because, thanks to all its security related feature, allows to create a secure environment in which run the application and store the password.\newline\newline
-One non-trivial aspect about this project was the heterogeneity of the Operating System (OS). In fact, the middleware, that is the software that connects to the SECube once connected, has been developed and obfuscated for both Windows and Linux OS. So, independently from the operating system, the user is able to use the Secure Password Manager. Not only, the connection the SECube device is based on a secure channel in which the authentication is based on challenges from both parties. From the point of view of the storage usage, no sensible information have been stored there and the session is encrypted on the fly with an RSA 2048 to increase the security. 
+One non-trivial aspect about this project was the heterogeneity of the Operating System (OS). In fact, the middleware, that is the software that connects to the SECube once connected, has been developed and obfuscated for both Windows and Linux OS. So, independently from the operating system, the user is able to use the Secure Password Manager. Not only, the connection to the SECube device is based on a secure channel in which the authentication is based on challenges from both parties. From the point of view of the storage usage, no sensible information have been stored there and the session is encrypted on the fly with an RSA 2048 to increase the security. 
 
 
 In order to avoid the reverse engineering of the code of the Middleware code, the compiled executable has been obfuscated. This mitigate possible attacks that aim to directly reverse engineering the code by de-compiling the application.
@@ -90,7 +90,7 @@ The current certificate has been self signed. In a complete implementation, the 
 \label{sec:extension}
 A possible flaw of the extension is the use of the local storage. In fact, as stated by Google
 \begin{quote}
-    \textit{    Confidential user information should not be stored! The storage area isn't encrypted.
+    \textit{    Confidential user information should not be stored! The storage area is not encrypted.
     }
 \end{quote}
 This may cause some problems regarding privacy. However, to avoid explicit flaws, only the extension options are store in local storage. No sensible information are stored.
