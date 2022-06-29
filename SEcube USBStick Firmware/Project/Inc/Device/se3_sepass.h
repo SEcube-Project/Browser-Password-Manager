@@ -31,14 +31,14 @@
 #include "se3_security_core.h"
 
 enum{
-	SE3_SEPASS_OP_ADD = 1, 				/**< Add password */
+	SE3_SEPASS_OP_ADD = 1, 				    /**< Add password */
 	SE3_SEPASS_OP_MODIFY = 2, 				/**< Add password */
-	SE3_SEPASS_OP_DELETE = 3, 			/**< Delete password */
-	SE3_SEPASS_OP_GET_BY_ID = 4, 		/**< Get password by id */
-	SE3_SEPASS_OP_GETALL = 5, 			/**< Get all password items */
+	SE3_SEPASS_OP_DELETE = 3, 			  /**< Delete password */
+	SE3_SEPASS_OP_GET_BY_ID = 4, 		  /**< Get password by id */
+	SE3_SEPASS_OP_GETALL = 5, 			  /**< Get all password items */
 	SE3_SEPASS_OP_GENERATE_RANDOM = 6, 	/**< Generate Random Password */
-	SE3_SEPASS_OP_EXPORT = 7, 			/**< Export Passwords - TODO */
-	SE3_SEPASS_OP_IMPORT = 8, 			/**< Import Passwords - TODO */
+	SE3_SEPASS_OP_EXPORT = 7, 		  	/**< Export Passwords - TODO */
+	SE3_SEPASS_OP_IMPORT = 8, 			  /**< Import Passwords - TODO */
 };
 
 enum{

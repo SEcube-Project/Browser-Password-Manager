@@ -29,9 +29,11 @@ bool se3_pass_find(uint32_t id, se3_flash_it* it)
     uint32_t password_id = 0;
 	se3_flash_it_init(it);
 	while (se3_flash_it_next(it)) {
+		// If it is of type SE3_TYPE_PASS
 		if (it->type == SE3_TYPE_PASS) {
             SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, password_id);
 			if (password_id == id) {
+				// The password id used
 				return true;
 			}
 		}
@@ -47,7 +49,8 @@ bool is_str_eq(uint8_t* orig, uint16_t lorig, uint8_t* val, uint16_t lval)
 		return true;
 	else if(orig == NULL)
 		return false;
-
+	
+	// Check char by char
 	for (uint16_t i = 0; i < lorig && i < lval; i++){
 		if (orig[i] != val[i])
 			return false;
@@ -58,13 +61,15 @@ bool is_str_eq(uint8_t* orig, uint16_t lorig, uint8_t* val, uint16_t lval)
 bool se3_pass_equal(se3_flash_pass* password, se3_flash_it* it)
 {
 	bool areEquals = false;
-    se3_flash_pass tmp;
+    	se3_flash_pass tmp;
 	se3_flash_it_init(it);
+
+	// Continue to iterate for all password
 	while (se3_flash_it_next(it) && !areEquals) {
 		if (it->type == SE3_TYPE_PASS) {
 			se3_pass_read(it, &tmp);
         	if (tmp.id == password->id || (is_str_eq(tmp.host, tmp.host_size, password->host, password->host_size) && is_str_eq(tmp.user, tmp.user_size, password->user, password->user_size))) {
-
+			// If the id is the same or the hostname and passwords are the same
         		areEquals = true;
 			}
 
@@ -81,28 +86,36 @@ bool se3_pass_write(se3_flash_it* it, se3_flash_pass* password)
 {
 	bool success = false;
 	do {
+		// Id
 		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_ID, (uint8_t*)&(password->id), 4)) { // id is uint32_t
 			break;
 		}
+		// Host lenght
 		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_HOST_LEN, (uint8_t*)&(password->host_size), 2)) { // datalen is uint16_t
 			break;
 		}
+		// Username lenght
 		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_USER_LEN, (uint8_t*)&(password->user_size), 2)) { // datalen is uint16_t
 			break;
 		}
+		// Password lenght
 		if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_PASS_LEN, (uint8_t*)&(password->pass_size), 2)) { // datalen is uint16_t
 			break;
 		}
+
+		// Hostname
 		if (password->host_size) {
 			if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_DATA, password->host, password->host_size)) {
 				break;
 			}
 		}
+		// Username
 		if (password->user_size) {
 			if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_DATA + password->host_size, password->user, password->user_size)) {
 				break;
 			}
 		}
+		// Password
 		if (password->pass_size) {
 			if (!se3_flash_it_write(it, SE3_FLASH_PASS_OFF_DATA + password->host_size + password->user_size, password->pass, password->pass_size)) {
 				break;
@@ -120,6 +133,7 @@ bool se3_pass_write(se3_flash_it* it, se3_flash_pass* password)
 
 bool se3_pass_new(se3_flash_it* it, se3_flash_pass* password)
 {
+	// Compute the size to allocate
 	uint16_t size = (SE3_FLASH_PASS_SIZE_HEADER + password->host_size + password->pass_size + password->user_size);
     if (size > SE3_FLASH_NODE_DATA_MAX) {
         return false;
@@ -134,15 +148,18 @@ bool se3_pass_new(se3_flash_it* it, se3_flash_pass* password)
 
 void se3_pass_read(se3_flash_it* it, se3_flash_pass* password)
 {
+	// Fetch from the Flash memory all needed paramenters
     SE3_GET32(it->addr, SE3_FLASH_PASS_OFF_ID, password->id);
     SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_HOST_LEN, password->host_size);
     SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_PASS_LEN, password->pass_size);
     SE3_GET16(it->addr, SE3_FLASH_PASS_OFF_USER_LEN, password->user_size);
 
+	// Allocate all the needed space
 	password->host = (uint8_t*)malloc(password->host_size); 	// allocate space for the host content
 	password->user = (uint8_t*)malloc(password->user_size); 	// allocate space for the user content
 	password->pass = (uint8_t*)malloc(password->pass_size); 	// allocate space for the pass content
 
+	// Copy password information from the memory to the structure
 	if (password->host) {
 		memcpy(password->host, it->addr + SE3_FLASH_PASS_OFF_DATA, password->host_size);
 	}
