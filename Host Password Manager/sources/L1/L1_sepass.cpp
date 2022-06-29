@@ -23,8 +23,8 @@
   */
 
 /**
- * @file	L1_sekey.cpp
- * @date	July, 2017
+ * @file	L1_sepass.cpp
+ * @date	July, 2022
  * @brief	L1 APIs required to implement SEkey. These must not be used explicitly.
  * @version SEcube Open Source SDK 1.5.1
  */
@@ -38,11 +38,15 @@ bool L1::L1SEDeletePassword(uint32_t pass_id){
 	uint16_t resp_len = 0;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_DELETE;
 	uint16_t offset = L1Request::Offset::DATA;
+
+	// Fill the command buffer
 	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
 	offset += 2;
 	this->base.FillSessionBuffer((unsigned char*)&pass_id, offset, 4);
 	offset += 4;
 	data_len = offset - L1Request::Offset::DATA;
+
+	// Send the request
 	try{
 		TXRXData(L1Commands::Codes::SEPASS, data_len, 0, &resp_len);
 	} catch(L1Exception& e){
@@ -60,6 +64,8 @@ bool L1::L1SEGenerateRandomPassword(uint16_t pass_len, uint8_t enable_upper_case
 	uint16_t resp_len = 0;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_GENERATE_RANDOM;
 	uint16_t offset = L1Request::Offset::DATA;
+
+	// Fill the command buffer
 	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
 	offset += 2;
 	this->base.FillSessionBuffer((unsigned char*)&pass_len, offset, 2);
@@ -75,12 +81,14 @@ bool L1::L1SEGenerateRandomPassword(uint16_t pass_len, uint8_t enable_upper_case
 	offset += 1;
 
 	data_len = offset - L1Request::Offset::DATA;
+	// Send the request
 	try{
 		TXRXData(L1Commands::Codes::SEPASS, data_len, 0, &resp_len);
 	} catch(L1Exception& e){
 		return false;
 	}
 
+	// Parse response
 	unique_ptr<uint8_t[]> buffer = make_unique<uint8_t[]>(L1Response::Size::MAX_DATA);
 	memset(buffer.get(), 0, L1Response::Size::MAX_DATA);
 	memcpy(buffer.get(), (this->base.GetSessionBuffer()+L1Request::Offset::DATA), resp_len);
@@ -100,6 +108,7 @@ bool L1::L1SEAddPassword(uint16_t pass_id, uint8_t *host_data, uint16_t host_len
 	pass.user = std::string((const char*)user_data, user_len);
 	pass.pass = std::string((const char*)pass_data, pass_len);
 
+	// Call a wrapped methos
 	return L1::L1SEModifyPassword(pass_id, pass, false);
 }
 
@@ -111,10 +120,14 @@ bool L1::L1SEModifyPassword(uint32_t pass_id, se3Pass& password){
 bool L1::L1SEModifyPassword(uint32_t pass_id, se3Pass& password, bool isModify){
 	uint16_t data_len = 0;
 	uint16_t resp_len = 0;
+
+	// Manage add and modify with a single method to reduce code redundancy
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_ADD;
 	if (isModify) {
 		op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_MODIFY;
 	}
+
+	// Fill the command buffer
 	uint16_t offset = L1Request::Offset::DATA;
 	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
 	offset += 2;
@@ -135,6 +148,8 @@ bool L1::L1SEModifyPassword(uint32_t pass_id, se3Pass& password, bool isModify){
 		offset += password.passSize;
 	}
 	data_len = offset - L1Request::Offset::DATA;
+
+	// Send request
 	try{
 		TXRXData(L1Commands::Codes::SEPASS, data_len, 0, &resp_len);
 	} catch(L1Exception& e){
@@ -143,6 +158,8 @@ bool L1::L1SEModifyPassword(uint32_t pass_id, se3Pass& password, bool isModify){
 	if(resp_len != 2){
 		return false;
 	}
+
+	// Read response
 	char okbuf[] = "OK";
 	if(memcmp((const void*)(this->base.GetSessionBuffer()+L1Response::Offset::DATA), (const void*)okbuf, 2) != 0){
 		return false;
@@ -157,6 +174,8 @@ bool L1::L1SEGetPasswordById(uint32_t pass_id, se3Pass& pass)
 	uint16_t resp_len = 0;
 	uint16_t op = L1Commands::OptionsPasswordManager::SE3_SEPASS_OP_GET_BY_ID;
 	uint16_t offset = L1Request::Offset::DATA;
+
+	// Fill the command buffer
 	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
 	offset += 2;
 	this->base.FillSessionBuffer((unsigned char*)&pass_id, offset, 4);
@@ -192,6 +211,7 @@ bool L1::L1SEGetPasswordById(uint32_t pass_id, se3Pass& pass)
 		return false; // when the SEcube reaches the end of the flash (all keys returned) it sends 0, so we have our condition to terminate
 	}
 
+	// Parse response
 	pass.id = passid;
 	pass.hostSize = host_len;
 	pass.userSize = user_len;
@@ -206,16 +226,19 @@ bool L1::L1SEGetPasswordById(uint32_t pass_id, se3Pass& pass)
 
 bool L1::L1SEGetAllPasswordsByUserName(std::vector<uint8_t> username, std::vector<se3Pass>& passList)
 {
+	// Call the get password wrapper
 	return L1SEGetAllPasswords(USER_FILTER, &username, passList);
 }
 
 bool L1::L1SEGetAllPasswordsByHostName(std::vector<uint8_t> hostname, std::vector<se3Pass>& passList)
 {
+	// Call the get password wrapper
 	return L1SEGetAllPasswords(HOST_FILTER, &hostname, passList);
 }
 
 bool L1::L1SEGetAllPasswords(std::vector<se3Pass>& passList)
 {
+	// Call the get password wrapper
 	return L1SEGetAllPasswords(NO_FILTER, nullptr, passList);
 }
 
@@ -229,6 +252,7 @@ bool L1::L1SEGetAllPasswords(uint8_t filterType, std::vector<uint8_t> *filter, s
 	uint16_t offset = L1Request::Offset::DATA;
 	unique_ptr<uint8_t[]> buffer = make_unique<uint8_t[]>(L1Response::Size::MAX_DATA);
 
+	// Fill the session request buffer
 	this->base.FillSessionBuffer((unsigned char*)&op, offset, 2);
 	offset += 2;
 	if(filterType != NO_FILTER){
@@ -291,7 +315,7 @@ bool L1::L1SEGetAllPasswords(uint8_t filterType, std::vector<uint8_t> *filter, s
 		pass.pass = std::string((const char*)buffer.get() + offset, pass_len);
 		offset += pass_len;
 
-		passList.push_back(pass); // copy ID in list
+		passList.push_back(pass); // copy password record into list
 	}
 
 	return true;
