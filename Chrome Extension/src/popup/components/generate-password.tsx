@@ -1,3 +1,6 @@
+/**
+ * This file contains the UI of the generate-password tab of the extension
+ */
 import * as React from "react";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -40,6 +43,8 @@ function CheckboxLabels(props) {
   const [value, setValue] = React.useState<
     number | string | Array<number | string>
   >(30);
+
+  // Functions to manage all actions on the generate-password tab
 
   const handleUpperChange = (event) => {
     setUpper(event.target.checked);

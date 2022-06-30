@@ -4,6 +4,8 @@ import { getStoredOptions } from "../utils/storage";
 import FixedBottomNavigation from "./components/main";
 
 const App: React.FC<{}> = () => {
+
+  // States to track the hostname, the login e default state
   const [pageHostname, setPageHostname] = useState("");
   const [stateValue, setStateValue] = useState("");
   const [isLogin, setIsLogin] = useState(false);
@@ -38,6 +40,7 @@ const App: React.FC<{}> = () => {
     });
   }, []);
 
+  // return the new page based on the parameters passed
   return (
     <div>
       {/* {console.log("app", isLogin)} */}

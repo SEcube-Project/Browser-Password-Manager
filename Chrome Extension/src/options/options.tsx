@@ -113,6 +113,7 @@ const App: React.FC<{}> = () => {
     });
   }
 
+  // Return the UI of the options page with the connections with the necessary functions to handle changes
   return (
     <div>
       <Box mx="5%" my="5%">

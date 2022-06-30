@@ -44,6 +44,11 @@ export interface returnTime_number {
   time: number;
 }
 
+/**
+ * 
+ * @param requestType Type of the request (GET, POST, PUT, DELETE)
+ * @returns Returns a promise containing all passwords
+ */
 export async function getAllPasswords(
   requestType?: fetchType
 ): Promise<ApiBody> {
@@ -63,6 +68,12 @@ export async function getAllPasswords(
   return data;
 }
 
+/**
+ * 
+ * @param hostname Hostname of the website
+ * @param requestType Type of the request (GET, POST, PUT, DELETE)
+ * @returns Returns a promise containing all passwords with respect to the hostname
+ */
 export async function getAllPasswordsByHostname(
   hostname: string,
   requestType?: fetchType
@@ -90,6 +101,13 @@ export async function getAllPasswordsByHostname(
   }
 }
 
+/**
+ * 
+ * @param hostname Hostname of the website
+ * @param username Username of the website
+ * @param password Password of the website
+ * @param requestType Type of the request (GET, POST, PUT, DELETE)
+ */
 export async function insertNewPassword(
   hostname: string,
   username: string,
@@ -120,6 +138,15 @@ export async function insertNewPassword(
     }
   }
 }
+
+/**
+ * 
+ * @param id ID of the password
+ * @param hostname Hostname of the website
+ * @param username Username of the website
+ * @param password Password of the website
+ * @param requestType Type of the request (GET, POST, PUT, DELETE)
+ */
 
 export async function updatePassword(
   id: number,
@@ -154,6 +181,11 @@ export async function updatePassword(
   }
 }
 
+/**
+ * 
+ * @param requestType Type of the request (GET, POST, PUT, DELETE)
+ * @returns Returns a promise containing all devices
+ */
 export async function getDevices(requestType?: fetchType): Promise<devices> {
   const url = `https://127.0.0.1:5000/api/v0/devices`;
   const res = await fetch(url, {
@@ -170,6 +202,11 @@ export async function getDevices(requestType?: fetchType): Promise<devices> {
   return data;
 }
 
+/**
+ * 
+ * @param id ID of the password entry
+ * @param requestType Type of the request (GET, POST, PUT, DELETE)
+ */
 export async function deletePassword(id: number, requestType?: fetchType) {
   if (id !== undefined) {
     const url = `https://127.0.0.1:5000/api/v0/device/0/password/${id}`;
@@ -188,6 +225,16 @@ export async function deletePassword(id: number, requestType?: fetchType) {
     }
   }
 }
+
+/**
+ * 
+ * @param upper true if the password should contain uppercase letters
+ * @param special true if the password should contain special characters
+ * @param numbers true if the password should contain numbers
+ * @param length length of the password
+ * @param requestType Type of the request (GET, POST, PUT, DELETE)
+ * @returns Returns a promise containing a random password with the given parameters
+ */
 
 export async function generatePassword(
   upper: boolean,
@@ -223,6 +270,13 @@ export async function generatePassword(
   }
 }
 
+/**
+ * 
+ * @param pin PIN of the device
+ * @param timestamp Timestamp of the login
+ * @returns Returns a promise containing the login status
+ */
+
 export async function login(pin: string, timestamp: number): Promise<boolean> {
   // console.log("pin", pin);
   if (pin !== "") {
@@ -245,6 +299,11 @@ export async function login(pin: string, timestamp: number): Promise<boolean> {
 }
 
 
+/**
+ * 
+ * @returns Returns a promise containing the current timestamp
+ */
+
 export async function getTime(): Promise<returnTime_number> {
   const url_time = `https://127.0.0.1:5000/api/v0/time`;
   const res_time = await fetch(url_time, {
@@ -263,6 +322,11 @@ export async function getTime(): Promise<returnTime_number> {
   return time_number;
 }
 
+/**
+ * 
+ * @returns Returns a promise containing the logout status
+ */
+
 export async function logout(): Promise<boolean> {
   const url = `https://127.0.0.1:5000/api/v0/device/0/sessions`;
   const res = await fetch(url, {
@@ -278,6 +342,10 @@ export async function logout(): Promise<boolean> {
   }
 }
 
+/**
+ * 
+ * @param res Response of the fetch request
+ */
 export function setIsLockedValue(res: Response) {
   if (res.status === 403) {
     getStoredOptions().then((options) => {

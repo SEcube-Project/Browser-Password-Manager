@@ -1,3 +1,4 @@
+
 export interface LocalStorage {
   options?: LocalStorageOptions;
 }
@@ -10,6 +11,11 @@ export interface LocalStorageOptions {
 
 export type LocalStorageKeys = keyof LocalStorage;
 
+/**
+ * 
+ * @param options Options to be stored in local storage
+ * @returns Returns a promise containing the status of the operation
+ */
 export function setStoredOptions(options: LocalStorageOptions): Promise<void> {
   const values: LocalStorage = {
     options,
@@ -25,6 +31,10 @@ export function setStoredOptions(options: LocalStorageOptions): Promise<void> {
   });
 }
 
+/**
+ * 
+ * @returns Returns a promise containing the stored options
+ */
 export function getStoredOptions(): Promise<LocalStorageOptions> {
   const keys: LocalStorageKeys[] = ["options"];
   return new Promise((resolve, reject) => {

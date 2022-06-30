@@ -4,6 +4,7 @@ import {
   setStoredOptions,
 } from "../utils/storage";
 
+// When the extension is installed for the first time the default options are stored in local storage
 chrome.runtime.onInstalled.addListener(() => {
   const values: LocalStorageOptions = {
     is_autocomplete_enabled: true,
@@ -14,6 +15,7 @@ chrome.runtime.onInstalled.addListener(() => {
   // console.log(getStoredOptions());
 });
 
+// When a tab of the chrome browser is updated (loaded), the extension execute the script for the autocompletion
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   getStoredOptions().then((options) => {
     console.log(options);

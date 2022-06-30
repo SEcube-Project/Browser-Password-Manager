@@ -1,3 +1,6 @@
+/**
+ * This file contains the UI of the my-vault tab of the extension
+ */
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
@@ -70,6 +73,7 @@ export default function MyVault(props) {
   const [readOnlyPassword, setReadOnlyPassword] = React.useState(true);
   const [deleteId, setDeleteId] = React.useState(-1);
 
+  // Functions to manage all actions on the my-vault tab
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -102,6 +106,11 @@ export default function MyVault(props) {
     setReadOnlyPassword(!readOnlyPassword);
   };
 
+  /**
+   * 
+   * @param URL URL of the website
+   * @param item PasswordElement to update
+   */
   function handleSaveURL(URL: string, item): void {
     if (URL.length > 0) {
       setURL(URL);
@@ -117,6 +126,11 @@ export default function MyVault(props) {
     }
   }
 
+  /**
+   * 
+   * @param username Username of the website
+   * @param item PasswordElement to update
+   */
   function handleSaveUsername(username: string, item): void {
     if (username.length > 0) {
       setUsername(username);
@@ -131,6 +145,12 @@ export default function MyVault(props) {
       }
     }
   }
+
+  /**
+   * 
+   * @param password Password of the website
+   * @param item PasswordElement to update
+   */
 
   function handleSavePassword(password: string, item): void {
     if (password.length > 0) {

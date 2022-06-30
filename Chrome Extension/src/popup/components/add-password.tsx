@@ -1,3 +1,8 @@
+/**
+ * This file contains the UI of the add-password tab of the extension
+ */
+
+
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
@@ -28,6 +33,7 @@ export default function AddPasswordElement(props) {
   const [showPassword, setShowPassword] = useState(false);
 
     
+  // Functions to manage all actions on the add-password tab
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);

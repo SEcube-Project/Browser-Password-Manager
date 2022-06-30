@@ -1,3 +1,6 @@
+/**
+ * This file contains the UI of the main parts of the extension. Common components are contained.
+ */
 import * as React from "react";
 import Box from "@mui/material/Box";
 import BottomNavigation from "@mui/material/BottomNavigation";
@@ -119,6 +122,10 @@ export default function FixedBottomNavigation(props) {
     setPassword(event.target.value);
   };
 
+  /**
+   * 
+   * @param event the event of the button
+   */
   function handleOnClickLock(event: Event) {
     setIsLogin(true);
     setState("lock");

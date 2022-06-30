@@ -14,6 +14,8 @@ function nextField() {
 /** @type {Element | null} */
 let lastFocusedElement = null;
 
+
+// Set an interval without any period so it is polled at the higher resolution possible
 setInterval(() => {
   getStoredOptions().then((options) => {
     if (!options.is_locked && options.is_autocomplete_enabled) {
