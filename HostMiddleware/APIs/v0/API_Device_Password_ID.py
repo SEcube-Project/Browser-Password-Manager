@@ -1,6 +1,10 @@
 from .API_DeviceBase import *
 
 class API_Device_Password_ID(API_DeviceBase):
+    '''
+    Class to manage a single password API endpoint.
+    Supported methods: GET, PUT, DELETE
+    '''
 
     def init(self, logger, l0: L0, l1: L1, utils: Utils) -> None:
         super().__init__(logger, l0, l1, utils)

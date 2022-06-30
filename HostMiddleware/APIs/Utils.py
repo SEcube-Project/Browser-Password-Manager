@@ -3,6 +3,13 @@ from threading import Thread, Event
 import rsa
 
 class Utils:
+    '''
+    The UTILS class is used to:
+    - store the public and private keys used to encrypt and decrypt the PIN and ENDTIME.
+    - store the pin and endtime key to be used as keys in the session dictionary, already encrypted.
+    - manage the timestamp, via a thread that increments every second.
+    - offer functions to obtain the current timestamp, to compare timestamps, and to encrypt and decrypt data.
+    '''
 
     def __init__(self) -> None:
         self._public_key, self._private_key = rsa.newkeys(2048)

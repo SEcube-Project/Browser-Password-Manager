@@ -17,12 +17,16 @@ from APIs.v0 import API_Time, API_Devices, API_Device_Generate, API_Device_Passw
 from APIs.v0 import Middleware as APIV0_Middleware
 
 def wipe_out():
+    '''
+    Wipe out all the session data.
+    '''
     if os.path.exists("flask_session"):
         for f in os.listdir("flask_session"):
             os.remove(os.path.join("flask_session", f))
 
 if __name__ == "__main__":
 
+    # Set up logging
     logger = logging.getLogger("main")
     logger.setLevel(logging.DEBUG)
     c_handler = logging.StreamHandler(stream=sys.stdout)
@@ -44,9 +48,11 @@ if __name__ == "__main__":
     # remove flask_session directory if it exists
     wipe_out()
     
+    # create flask app
     app = Flask(__name__)
     app.wsgi_app = APIV0_Middleware(app.wsgi_app, logger)
 
+    # set up session type
     app.config["SESSION_PERMANENT"] = False
     app.config["SESSION_TYPE"] = "filesystem"
     app.config["SESSION_COOKIE_SAMESITE"] = "None"
@@ -56,11 +62,13 @@ if __name__ == "__main__":
     CORS(app, supports_credentials=True)
     Session(app)
 
+    # set up shared library path
     if os.name == 'nt':
         path_lib = ".\\high_quality_engineering_lib.dll"
     else:
         path_lib = f"{os.getcwd()}/lib.so"
     
+    # instantiate L0 and L1 python wrappers and utils class
     path_lib = os.path.join(application_path, path_lib)
     l0 = L0(path_lib=path_lib)
     l1 = L1(path_lib=path_lib)
@@ -72,6 +80,7 @@ if __name__ == "__main__":
     else:
         logger.info(f"Found {device_cnt} devices")
 
+    # set up API endpoints
     api.add_resource(API_Time, "/api/v0/time", resource_class_args=[utils])
     api.add_resource(API_Devices, "/api/v0/devices", resource_class_args=[l0])
     api.add_resource(API_Device_Sessions, "/api/v0/device/<int:indx>/sessions", resource_class_args=[logger, l0, l1, utils])
@@ -79,6 +88,7 @@ if __name__ == "__main__":
     api.add_resource(API_Device_Passwords, "/api/v0/device/<int:indx>/passwords", resource_class_args=[logger, l0, l1, utils])
     api.add_resource(API_Device_Password_ID, "/api/v0/device/<int:indx>/password/<int:id>", resource_class_args=[logger, l0, l1, utils])
 
+    # run the app 
     certpath = os.path.join(application_path, "cert.pem")
     keypath = os.path.join(application_path, "key.pem")
     app.run(ssl_context=(certpath, keypath), debug=False, threaded=False)

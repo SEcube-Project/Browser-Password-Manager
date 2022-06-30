@@ -2,6 +2,10 @@ from flask_restful import Resource, Api, reqparse
 from L0 import L0
 
 class API_Devices(Resource):
+    '''
+    Class to manage Devices API endpoint.
+    Supported methods: GET
+    '''
 
     def __init__(self, l0: L0) -> None:
         super().__init__()

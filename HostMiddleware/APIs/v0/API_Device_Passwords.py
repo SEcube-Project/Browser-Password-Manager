@@ -1,6 +1,10 @@
 from .API_DeviceBase import *
 
 class API_Device_Passwords(API_DeviceBase):
+    '''
+    Class to manage the passwords API endpoint.
+    Supported methods: GET, POST
+    '''
 
     def init(self, logger, l0: L0, l1: L1, utils: Utils):
         super().__init__(logger, l0, l1, utils)

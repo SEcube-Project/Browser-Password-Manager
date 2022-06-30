@@ -6,6 +6,25 @@ from flask import Response
 
 
 class Middleware:
+    '''
+    Middleware for Flask.
+
+    When a request is made to the server, the middleware checks if the request is allowed.
+    If the request is allowed, the request is passed to the Flask application.
+    If the request is not allowed, the request is denied and a 403 error is returned.
+
+    How it works:
+    1. obtain the origin of the request
+    2. obtain the request path (i.e. the endpoint of the request)
+    3. check if the request is allowed
+
+    3.1. if the origin is null, it is allowed (i.e. the request is from a chrome extension)
+
+    3.2. if the origin is not null, check if the origin is allowed
+
+    3.2.1. the endpoint is allowed if the tuple (origin, endpoint) is matched in the allowed_paths list
+
+    '''
 
     def __init__(self, app, logger: logging.Logger):
         self._app = app
