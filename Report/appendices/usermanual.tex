@@ -161,6 +161,7 @@ Here a few steps to build the host middleware if all the required software is in
 \begin{lstlisting}[language=bash,caption={bash version}]
 $ git clone https://github.com/SEcube-Project/Browser-Password-Manager.git
 $ cd Browser-Password-Manager/HostMiddleware
+$ pip3 install -r requirements.txt
 
 # To build the shared library
 $ make clean
@@ -264,7 +265,7 @@ Now everything should be installed. Open the Visual Studio's Command Prompt, hea
 
 Pay attention to antivirus software, it may block the executable. If it does, you can try to disable the antivirus temporarily. Pay attention to use the right Visual Studio's Command Prompt version: if you are on a 64 bit system, use \texttt{x64} instead of \texttt{x86}.\\
 
-If there are problems in packing the executable, you can always try to run directly the python code as-is (under the condition that the dll has been compiled correctly): run \texttt{python app.py}.
+If there are problems in packing the executable, you can always try to run directly the python code as-is (under the condition that the dll has been compiled correctly): run \texttt{python -m pip install -r requirements.txt} and \texttt{python app.py}.
 
 \subsection{Extension}
 The chrome extension has been already packed into a \textit{.zip} file, available at \href{https://github.com/SEcube-Project/Browser-Password-Manager/releases}{Assets}, that can be simply imported into the Chrome Extension page.
